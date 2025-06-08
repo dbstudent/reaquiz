@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = [
+  {
+    "id": "REA001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "REA Context",
+    "question": "What is the primary mission of Unit D.4 'Central Validation Service' within the European Research Executive Agency (REA)?",
+    "options": [
+      { "text": "To manage all financial transactions for EU research grants", "isCorrect": false },
+      { "text": "To implement part of the Single Electronic Data Interchange Area (SEDIA) by validating legal and financial information of participants", "isCorrect": true },
+      { "text": "To conduct scientific evaluations of all research proposals submitted to the European Commission", "isCorrect": false },
+      { "text": "To provide IT support for all REA internal systems", "isCorrect": false }
+    ],
+    "rationale": "The document states that the mission of Unit D.4 is 'to effectively implement part of the Single Electronic Data Interchange Area (SEDIA). The unit is responsible for the validation of the legal and financial information submitted by participants' (VN - REA-AD-2025-3 - BPM (2).pdf, Section II).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "JOB001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Team Coordination",
+    "question": "As an Administrator - Business Processes Manager, which of the following is a key duty related to operational and administrative support?",
+    "options": [
+      { "text": "Representing the Central Validation Service in external communication networks", "isCorrect": false },
+      { "text": "Coordinating a team responsible for inter-institutional and/or external relations activities", "isCorrect": true },
+      { "text": "Defining and drafting concepts for external communication campaigns", "isCorrect": false },
+      { "text": "Leading negotiations for new international agreements", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description explicitly lists 'Coordinating a team responsible for inter-institutional and/or external relations activities, ensuring business continuity and service provision according to defined quality standards' under Operational and Administrative support (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "COM001",
+    "category": "Communication & External Relations",
+    "sub_category": "Communication Strategy",
+    "question": "Which of the following activities falls under the 'Internal and External Communication' duties of the Administrator - Business Processes Manager specialized in Inter-institutional and External Relations Coordinator?",
+    "options": [
+      { "text": "Managing the REA's annual budget allocation", "isCorrect": false },
+      { "text": "Assisting EUIBAs with events specifically concerning the activities of the Central Validation Service", "isCorrect": true },
+      { "text": "Performing legal checks on participant entities for grant agreements", "isCorrect": false },
+      { "text": "Developing new IT tools for internal financial reporting", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description mentions 'Assisting EUIBAs with events, specifically concerning the activities of the Central Validation Service' under Internal and External Communication (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "HOC001",
+    "category": "Horizontal Coordination Activities",
+    "sub_category": "Network Coordination",
+    "question": "A key horizontal coordination activity for this role involves coordinating and animating networks. What does this specifically entail?",
+    "options": [
+      { "text": "Solely receiving information from various services without active participation", "isCorrect": false },
+      { "text": "Designing, following up on, and reporting on the activities of large networks of correspondents across different EUIBA services", "isCorrect": true },
+      { "text": "Providing direct legal advice to external stakeholders on grant procedures", "isCorrect": false },
+      { "text": "Managing the procurement process for office supplies across REA", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description describes this duty as 'Coordinating and animating large networks of correspondents across different EUIBA services, including designing, following up on, and reporting on their activities' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "SEL001",
+    "category": "Job-Related Competencies",
+    "sub_category": "Problem-Solving",
+    "question": "A grant project faces unexpected technical issues that threaten its timely completion. As the Business Processes Manager, which competency is most critical to address this situation effectively?",
+    "options": [
+      { "text": "Capacity to deliver under pressure in demanding situations and ability to handle several tasks simultaneously", "isCorrect": true },
+      { "text": "Expert knowledge of the specific technical domain of the project", "isCorrect": false },
+      { "text": "Ability to draft official legal documents without supervision", "isCorrect": false },
+      { "text": "Proficiency in a rare non-EU language", "isCorrect": false }
+    ],
+    "rationale": "The scenario implies a need for quick, effective action in a high-stress situation, directly pointing to 'Capacity to deliver under pressure in demanding situations and ability to handle several tasks simultaneously' as per Section VI of the job description (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Hard",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "OCA001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "Under the new MFF 2021-2027, participation in certain calls for proposals for the European Defence Fund (EDF) may be restricted. What is the primary reason for these restrictions?",
+    "options": [
+      { "text": "To limit the number of participants from certain Member States", "isCorrect": false },
+      { "text": "To ensure fair competition among all applicants", "isCorrect": false },
+      { "text": "For duly justified security reasons, to protect essential security and/or defence interests of the Union and/or its Member States", "isCorrect": true },
+      { "text": "To prioritize participation of large enterprises over SMEs", "isCorrect": false }
+    ],
+    "rationale": "The document states that restrictions apply 'for duly justified security reasons, where they are necessary to protect essential security and/or defence interests of the Union and/or its Member States or to maintain public order and public security.' (PDFsam_merge.pdf, Page 4)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 4"
+  },
+  {
+    "id": "OCA002",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "According to the guidance document, which of the following is NOT explicitly considered as an element when assessing 'control' of a participant by an ineligible third country?",
+    "options": [
+      { "text": "Ownership structure and specific rights", "isCorrect": false },
+      { "text": "Corporate governance", "isCorrect": false },
+      { "text": "Commercial links", "isCorrect": false },
+      { "text": "The participant's historical profit margins", "isCorrect": true }
+    ],
+    "rationale": "The document lists ownership structure, corporate governance, commercial links, financial links, and other sources as elements for assessment. Profit margins are not mentioned as a direct element for assessing control (PDFsam_merge.pdf, Page 5).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "OCA003",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "If a participant becomes controlled by an ineligible country/entity during the grant implementation, what is the immediate consequence regarding its related costs?",
+    "options": [
+      { "text": "All costs incurred by the participant become immediately eligible from the date of control change", "isCorrect": false },
+      { "text": "Its related costs will become automatically ineligible as from the date of loss of eligibility", "isCorrect": true },
+      { "text": "The participant can continue without any changes if they notify the granting authority", "isCorrect": false },
+      { "text": "The granting authority will pay a penalty to the participant for the inconvenience", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'If a participant becomes controlled by an ineligible country/ineligible country entity during the action (e.g. as a result of an acquisition by a foreign entity), its related costs will become automatically ineligible as from the date of loss of eligibility and its participation may have to be terminated.' (PDFsam_merge.pdf, Page 11)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 11"
+  },
+  {
+    "id": "DPA001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Data Protection",
+    "question": "Which EU Regulation is cited as governing the processing of personal data by Union institutions, bodies, offices and agencies?",
+    "options": [
+      { "text": "Regulation (EC) No 1049/2001", "isCorrect": false },
+      { "text": "Regulation (EU) 2016/679 (GDPR)", "isCorrect": false },
+      { "text": "Regulation (EU) 2018/1725", "isCorrect": true },
+      { "text": "Regulation (EC) No 45/2001", "isCorrect": false }
+    ],
+    "rationale": "Footnote 4 on Page 8 of PDFsam_merge.pdf explicitly cites 'Regulation (EU) 2018/1725 of the European Parliament and of the Council of 23 October 2018 on the protection of natural persons with regard to the processing of personal data by the Union institutions, bodies, offices and agencies and on the free movement of such data'.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "IT001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "IT Tools & Systems",
+    "question": "The document mentions the European Defence Fund (EDF), Horizon Europe (HE), and Digital Europe Programme (DEP). Where are the precise conditions for restricted calls for each Programme typically set out?",
+    "options": [
+      { "text": "In the European Commission's annual report", "isCorrect": false },
+      { "text": "In the Work Programmes published on the Funding & Tenders Portal", "isCorrect": true },
+      { "text": "Through direct email communication to all potential applicants", "isCorrect": false },
+      { "text": "In the daily official journal of the EU", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'The calls that are subject to such restrictions and the precise conditions for each call are set out, for each Programme, in the Work Programmes published on the Funding & Tenders Portal.' (PDFsam_merge.pdf, Page 2)",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "COM002",
+    "category": "Communication & External Relations",
+    "sub_category": "Communication Strategy",
+    "question": "What is the primary purpose of the 'EU Grants: Participation in DEP, HE and EDF restricted calls' guidance document, as stated in its introduction?",
+    "options": [
+      { "text": "To announce new funding opportunities under the MFF 2021-2027", "isCorrect": false },
+      { "text": "To help applicants become aware of requirements for restricted calls, particularly the ownership control assessment procedure", "isCorrect": true },
+      { "text": "To provide a legal interpretation of all EU grant regulations", "isCorrect": false },
+      { "text": "To offer training materials for new EU project managers", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'This guidance is designed to help applicants that wish to apply in such restricted calls to become aware of the requirements, in particular, the ownership control assessment procedure that will be conducted to determine control and the guarantees that may be required if control by an (ineligible) third country, a third country entity or a third country national is confirmed.' (PDFsam_merge.pdf, Page 2)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "OCA004",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "What is the Central Validation Service's procedure if an evaluated proposal's ownership control assessment outcome is 'controlled' and no acceptable solution (like participant replacement or task redistribution) can be found?",
+    "options": [
+      { "text": "The proposal will automatically proceed to grant signature", "isCorrect": false },
+      { "text": "The proposal will be returned to the applicant for minor revisions", "isCorrect": false },
+      { "text": "The proposal will have to be rejected", "isCorrect": true },
+      { "text": "The Central Validation Service will conduct an internal re-evaluation of the control status", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'If the outcome of the ownership control assessment is 'controlled', the consortium will be asked to replace the participant concerned (or redistribute the tasks between the other participants). If this is not possible and the consortium cannot propose any other acceptable solution, the proposal will have to be rejected.' (PDFsam_merge.pdf, Page 9)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 9"
+  },
+  {
+    "id": "DPA002",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Data Protection",
+    "question": "According to the EDPS guidelines published on June 3, 2024, what is their aim regarding the use of Generative AI systems by EU Institutions, Bodies, and Agencies?",
+    "options": [
+      { "text": "To promote the unrestricted use of Generative AI without specific data protection considerations", "isCorrect": false },
+      { "text": "To ensure data protection compliance when using or developing generative AI tools", "isCorrect": true },
+      { "text": "To strictly prohibit the use of any Generative AI systems within EUIs", "isCorrect": false },
+      { "text": "To provide a framework for monetizing data processed by Generative AI", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'We published on 3 June 2024 first guidelines for EUIs to ensure data protection compliance when using Generative AI systems. The guidelines aim to help EUIs comply with the data protection obligations set out in Regulation (EU) 2018/1725, when using or developing generative AI tools.' (PDFsam_merge.pdf, Page 18)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 18"
+  },
+  {
+    "id": "PROC001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Administrative Procedures",
+    "question": "Who is responsible for notifying the granting authority of any changes in the control/ownership status during the project implementation?",
+    "options": [
+      { "text": "The European Commission", "isCorrect": false },
+      { "text": "The Central Validation Service", "isCorrect": false },
+      { "text": "The coordinator of the grant agreement", "isCorrect": true },
+      { "text": "The legal representative of the ineligible country", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'Such changes must be immediately notified by the coordinator to the granting authority (see art 19.3 of the Grant Agreement).' (PDFsam_merge.pdf, Page 11)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 11"
+  },
+  {
+    "id": "REA002",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "REA Context",
+    "question": "Which unit within the European Research Executive Agency (REA) is primarily responsible for the validation of legal and financial information submitted by participants for grant agreements or contracts?",
+    "options": [
+      { "text": "Unit A.1 - Programme Management", "isCorrect": false },
+      { "text": "Unit B.3 - Legal Affairs", "isCorrect": false },
+      { "text": "Unit D.4 - Central Validation Service", "isCorrect": true },
+      { "text": "Unit C.2 - Human Resources", "isCorrect": false }
+    ],
+    "rationale": "Page 12 of PDFsam_merge.pdf confirms Unit D.4 as REA Central Validation Service, which is responsible for participant validation. The job description (VN - REA-AD-2025-3 - BPM (2).pdf, Section II) also specifies this unit's mission.",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II; PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "OCA005",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "What is the status of an individual owner with dual nationality (one from an eligible country and one from an ineligible country) during an ownership control assessment for restricted calls?",
+    "options": [
+      { "text": "The individual is automatically considered ineligible.", "isCorrect": false },
+      { "text": "The individual's eligibility is determined by their primary place of residence.", "isCorrect": false },
+      { "text": "The individual is considered as an eligible country national.", "isCorrect": true },
+      { "text": "The individual must renounce their ineligible nationality to be considered eligible.", "isCorrect": false }
+    ],
+    "rationale": "The document explicitly states: 'If the ultimate owner is a natural person having dual nationality, one from an eligible country and one from an ineligible country, he/she is considered as an eligible country national.' (PDFsam_merge.pdf, Page 7)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "LEV001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Entity Validation",
+    "question": "Which of the following is NOT sufficient on its own to qualify an entity as a 'public body' according to the 'Rules on Legal Entity Validation'?",
+    "options": [
+      { "text": "The entity is incorporated as a public body in its act of creation and is governed by public law.", "isCorrect": false },
+      { "text": "The entity is 100% owned by the State and performs a public service mission.", "isCorrect": true },
+      { "text": "The entity is a ministry which is part of the public administration of a State.", "isCorrect": false },
+      { "text": "The entity is an intergovernmental organisation established under international public law.", "isCorrect": false }
+    ],
+    "rationale": "The 'Rules on Legal Entity Validation' state that state ownership and having a public service mission are NOT sufficient criteria if the entity is not established as a public body and governed by public law (PDFsam_merge.pdf, Pages 9-10).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 9-10 (Rules on Legal Entity Validation section)"
+  },
+  {
+    "id": "SME001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "SME Status",
+    "question": "Under the EU SME Recommendation, when does the 'two-year rule' for SME status NOT apply?",
+    "options": [
+      { "text": "When a company's turnover increases by more than 50% in a single year.", "isCorrect": false },
+      { "text": "When an enterprise is newly established and does not yet have closed accounts.", "isCorrect": false },
+      { "text": "In case of a merger or acquisition that causes the new entity to exceed the SME ceilings.", "isCorrect": true },
+      { "text": "For companies operating in the digital and technology sectors.", "isCorrect": false }
+    ],
+    "rationale": "The rules state that in case of a merger or acquisition, the SME status is lost immediately from the date of the transaction if ceilings are exceeded (PDFsam_merge.pdf, Page 12 - Rules on Legal Entity Validation section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 12 (Rules on Legal Entity Validation section)"
+  },
+  {
+    "id": "LEAR001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Participant Register",
+    "question": "What is the primary role of a Legal Entity Appointed Representative (LEAR) in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "To be the main scientific contact for a specific research project.", "isCorrect": false },
+      { "text": "To manage the legal and financial data of their organisation in the Funding & Tenders Portal and appoint signatories.", "isCorrect": true },
+      { "text": "To conduct the Financial Capacity Assessment (FCA) on behalf of the European Commission.", "isCorrect": false },
+      { "text": "To draft and submit the technical parts of all grant proposals for their organisation.", "isCorrect": false }
+    ],
+    "rationale": "The LEAR is responsible for managing the legal and financial data of their organisation and appointing persons to sign legal/financial statements (PDFsam_merge.pdf, Page 20 - Rules for LEV, LEAR Appointment section).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 20 (Rules for LEV, LEAR Appointment section)"
+  },
+  {
+    "id": "ADMSC001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Administrative Procedures",
+    "question": "A participant in an EDF restricted call is found to be controlled by an ineligible third-country entity. What is the required form of 'guarantees' for them to potentially remain eligible?",
+    "options": [
+      { "text": "A signed self-declaration from the participant's CEO", "isCorrect": false },
+      { "text": "A letter of intent from their national government", "isCorrect": false },
+      { "text": "Guarantees, accompanied by a document of approval from their country of establishment or the competent authority", "isCorrect": true },
+      { "text": "A bank guarantee covering 100% of the EU contribution", "isCorrect": false }
+    ],
+    "rationale": "The document specifies 'guarantees, accompanied by a document of approval from their country of establishment or the competent authority' (PDFsam_merge.pdf, Page 10).",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 10"
+  },
+  {
+    "id": "EXPSC001",
+    "category": "Job-Related Competencies",
+    "sub_category": "Planning and Organization",
+    "question": "An Administrator - Business Processes Manager is tasked with organizing a series of workshops for external stakeholders on new validation procedures. Which professional experience criterion is most relevant for this task?",
+    "options": [
+      { "text": "Managing procurement contracts for large IT systems", "isCorrect": false },
+      { "text": "Coordinating with a wide range of EU and/or National public administration stakeholders by organising and leading meetings/networks", "isCorrect": true },
+      { "text": "Conducting in-depth financial analyses of participant entities", "isCorrect": false },
+      { "text": "Developing communication campaigns for internal staff only", "isCorrect": false }
+    ],
+    "rationale": "This directly matches the professional experience criterion: 'Coordinating with a wide range of EU and/or National public administration stakeholders by organising and leading meetings/networks and/or setting common guidelines.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3"
+  },
+  {
+    "id": "COMESC01",
+    "category": "Communication & External Relations",
+    "sub_category": "Content Creation",
+    "question": "The Administrator - Business Processes Manager is responsible for creating content for various platforms. Which of the following is explicitly mentioned as a type of content they would manage?",
+    "options": [
+      { "text": "Highly confidential internal HR policy documents", "isCorrect": false },
+      { "text": "Content for websites, social media, print publications, videos, promotional materials, and online advertisements", "isCorrect": true },
+      { "text": "Detailed legal briefs for court proceedings", "isCorrect": false },
+      { "text": "Proprietary software code for REA's IT systems", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description lists 'Creating, editing, or revising content for a wide range of platforms, such as websites, social media, print publications, videos, promotional materials, and online advertisements.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "ITDESC01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "IT Tools",
+    "question": "What is the role of the Administrator - Business Processes Manager in relation to IT tools?",
+    "options": [
+      { "text": "Solely using existing IT tools for data entry", "isCorrect": false },
+      { "text": "Contributing to the design and implementation of IT tools that support the team's activities and the Central Validation Service", "isCorrect": true },
+      { "text": "Developing advanced algorithms for financial fraud detection", "isCorrect": false },
+      { "text": "Managing the entire IT infrastructure of REA", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description mentions 'Contributing to the design and implementation of IT tools that support the team's activities and the Central Validation Service in general.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "HORZ001",
+    "category": "Horizontal Coordination Activities",
+    "sub_category": "Working Arrangements",
+    "question": "The role involves contributing to the proper implementation of working arrangements and/or service level agreements. What is another key aspect of this duty?",
+    "options": [
+      { "text": "Solely negotiating new working arrangements with external bodies", "isCorrect": false },
+      { "text": "Periodically evaluating and reporting on their implementation with internal and external stakeholders", "isCorrect": true },
+      { "text": "Delegating all responsibility for SLA adherence to junior staff", "isCorrect": false },
+      { "text": "Ignoring ad-hoc requests for assistance", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description states this duty includes 'periodically evaluating and reporting on their implementation.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "COMPET01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Decision-Making",
+    "question": "A critical deadline is approaching for a validation process, but conflicting information has emerged. Which competency is essential for the Business Processes Manager to navigate this scenario effectively?",
+    "options": [
+      { "text": "Advanced data entry speed", "isCorrect": false },
+      { "text": "Effective decision-making", "isCorrect": true },
+      { "text": "Strict adherence to existing routines without deviation", "isCorrect": false },
+      { "text": "Avoiding direct communication with stakeholders", "isCorrect": false }
+    ],
+    "rationale": "The scenario requires making sound judgments in a timely manner, which is the definition of 'Effective decision-making' (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "FINVAL01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Financial Validation",
+    "question": "What is a core responsibility of the Financial Validation Sector within Unit D.4 'Central Validation Service'?",
+    "options": [
+      { "text": "Verifying the legal existence and legal statuses of participants", "isCorrect": false },
+      { "text": "Preparing Financial Capacity Assessments (FCAs) for participants in grant and procurement procedures", "isCorrect": true },
+      { "text": "Appointing the Legal Entity Appointed Representative (LEAR)", "isCorrect": false },
+      { "text": "Providing legal advice on complex validation cases", "isCorrect": false }
+    ],
+    "rationale": "Section II of the job description specifies that the Financial Validation Sector's responsibilities include 'preparing Financial Capacity Assessments (FCAs) for participants in grant and procurement procedures.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section II)",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "LEGV001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Validation",
+    "question": "Which of the following tasks is primarily handled by the Legal Validation Sector of REA's Unit D.4?",
+    "options": [
+      { "text": "Conducting Ownership Control Assessments (OCAs)", "isCorrect": false },
+      { "text": "Validating the legal existence and legal statuses of participants and appointing the LEAR", "isCorrect": true },
+      { "text": "Managing the overall validation planning and client relations", "isCorrect": false },
+      { "text": "Performing 'on-demand' assessments for participants with higher risk exposure", "isCorrect": false }
+    ],
+    "rationale": "The Legal Validation Sector is responsible for 'validation of the legal existence and legal statuses of participants... together with the appointment of the Legal Entity Appointed Representative (LEAR)' (VN - REA-AD-2025-3 - BPM (2).pdf, Section II).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "GENCON01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "General Context",
+    "question": "The reserve list for the Administrator - Business Processes Manager will be used to fill new vacant posts in which specific European Research Executive Agency (REA) unit?",
+    "options": [
+      { "text": "Unit D.1 - Programme Management", "isCorrect": false },
+      { "text": "Unit B.2 - Legal Affairs", "isCorrect": false },
+      { "text": "Unit D.4 - Central Validation Service", "isCorrect": true },
+      { "text": "Unit C.1 - Human Resources", "isCorrect": false }
+    ],
+    "rationale": "The document states that the reserve list will be used for 'new vacant posts in the European Research Executive Agency (REA) specifically in Unit D.4 'Central Validation Service'' (VN - REA-AD-2025-3 - BPM (2).pdf, Section II).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "STATR001",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Statistical Reporting",
+    "question": "What is the Administrator - Business Processes Manager's role regarding statistical records and reporting?",
+    "options": [
+      { "text": "Solely collecting raw data without analysis", "isCorrect": false },
+      { "text": "Maintaining statistical records and contributing to the Central Validation Service's periodic reports", "isCorrect": true },
+      { "text": "Outsourcing all statistical work to external consultants", "isCorrect": false },
+      { "text": "Ignoring statistical data if it conflicts with expectations", "isCorrect": false }
+    ],
+    "rationale": "Section III of the job description indicates the duty of 'Maintaining statistical records and contributing to the Central Validation Service's periodic reports.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "COMMFLOW01",
+    "category": "Communication & External Relations",
+    "sub_category": "Communication Flow Management",
+    "question": "What is a key aspect of managing communication flows for the Central Validation Service?",
+    "options": [
+      { "text": "Restricting information flow to only senior management", "isCorrect": false },
+      { "text": "Handling communications between the Central Validation Service and European Union Institutions, Bodies, and Agencies (EUIBAs), as well as with the general public", "isCorrect": true },
+      { "text": "Only communicating through official written letters", "isCorrect": false },
+      { "text": "Avoiding any external communication to prevent misunderstandings", "isCorrect": false }
+    ],
+    "rationale": "This duty includes 'Handling communications between the Central Validation Service and European Union Institutions, Bodies, and Agencies (EUIBAs), as well as with the general public.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "COORD001",
+    "category": "Horizontal Coordination Activities",
+    "sub_category": "Coordination with EU services",
+    "question": "In their horizontal coordination activities, the Administrator - Business Processes Manager is expected to initiate and cooperate on procedures and initiatives with other EUIBA services. What is an additional responsibility in this area?",
+    "options": [
+      { "text": "Dictating procedures to other EUIBA services", "isCorrect": false },
+      { "text": "Performing necessary liaison work between the Central Validation Service, European Commission services, and contractors/third parties", "isCorrect": true },
+      { "text": "Avoiding any involvement with contractors or third parties", "isCorrect": false },
+      { "text": "Limiting cooperation to internal REA units only", "isCorrect": false }
+    ],
+    "rationale": "This duty also involves 'performing necessary liaison work between the Central Validation Service, European Commission services, and contractors/third parties.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "PROFEXP01",
+    "category": "Professional Experience",
+    "sub_category": "Stakeholder Coordination",
+    "question": "Which type of professional experience is explicitly sought for this role concerning stakeholder coordination?",
+    "options": [
+      { "text": "Extensive experience in direct sales and customer service", "isCorrect": false },
+      { "text": "Coordinating with a wide range of EU and/or National public administration stakeholders by organising and leading meetings/networks", "isCorrect": true },
+      { "text": "Developing highly technical scientific proposals for grants", "isCorrect": false },
+      { "text": "Managing a large private sector marketing department", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'Coordinating with a wide range of EU and/or National public administration stakeholders by organising and leading meetings/networks and/or setting common guidelines.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3"
+  },
+  {
+    "id": "COMPET02",
+    "category": "Job-Related Competencies",
+    "sub_category": "Planning, Coordination, and Organisation",
+    "question": "A new complex validation process is being introduced. Which competency is most critical for the Business Processes Manager to ensure its smooth implementation?",
+    "options": [
+      { "text": "Ability to speak five foreign languages", "isCorrect": false },
+      { "text": "Planning, coordination and organisation skills", "isCorrect": true },
+      { "text": "Exceptional artistic design capabilities", "isCorrect": false },
+      { "text": "A strong preference for working independently without team collaboration", "isCorrect": false }
+    ],
+    "rationale": "Implementing a new process requires methodical planning, coordinating resources, and organizing tasks, directly aligning with 'Planning, coordination and organisation skills.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI)",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "GRANTS001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Grants and Procurement",
+    "question": "Managing grants and procurement contracts is listed as a selection criterion for the Administrator - Business Processes Manager. What does this imply about the candidate's required experience?",
+    "options": [
+      { "text": "The candidate must have experience in drafting all clauses of complex international contracts", "isCorrect": false },
+      { "text": "The candidate should have experience in the administrative and financial oversight of grants and procurement processes", "isCorrect": true },
+      { "text": "The candidate is expected to personally approve all REA procurement tenders", "isCorrect": false },
+      { "text": "The candidate needs to be a certified legal counsel for contract law", "isCorrect": false }
+    ],
+    "rationale": "This criterion implies experience in the practical management and oversight aspects, not necessarily drafting legal texts or approving all tenders personally (VN - REA-AD-2025-3 - BPM (2).pdf, Section V).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section V"
+  },
+  {
+    "id": "REARESP01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "REA Responsibilities",
+    "question": "According to the Commission decision on REA's delegated powers, which of the following is NOT a responsibility that REA is mandated to carry out?",
+    "options": [
+      { "text": "Managing certain parts of the Horizon Europe programme", "isCorrect": false },
+      { "text": "Handling all aspects of EU's foreign policy and external representation", "isCorrect": true },
+      { "text": "Providing administrative support to the European Commission", "isCorrect": false },
+      { "text": "Implementing parts of the Digital Europe Programme", "isCorrect": false }
+    ],
+    "rationale": "REA's delegated powers focus on programme implementation and related administrative and financial management. Foreign policy is typically managed directly by the European External Action Service and the Commission, not an executive agency like REA. (PDFsam_merge.pdf, Check pages related to REA's mandate in 'Commission Delegated Decision' section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Check REA Mandate sections"
+  },
+  {
+    "id": "OCADF01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "In the context of 'de facto' control during ownership assessment, what type of influence is considered for determining control?",
+    "options": [
+      { "text": "Only direct financial investments that exceed 50% of the capital", "isCorrect": false },
+      { "text": "Any other means, including commercial agreements or financial dependence, that confer decisive influence on decisions", "isCorrect": true },
+      { "text": "Influence gained solely through membership in international industry associations", "isCorrect": false },
+      { "text": "The mere ability to issue recommendations to the management board", "isCorrect": false }
+    ],
+    "rationale": "'De facto control' refers to the ability to exercise decisive influence by any other means, including commercial agreements, financial dependence, or the right to use all or part of the assets of another entity, as stated in the definition of control. (PDFsam_merge.pdf, Page 5)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "GUAR001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Guarantees",
+    "question": "When are 'guarantees' typically required for participation in restricted calls for Horizon Europe, DEP, or EDF?",
+    "options": [
+      { "text": "Only if the participant is a newly established entity with no prior track record", "isCorrect": false },
+      { "text": "If the participant is controlled by an ineligible third country, third country entity, or third country national, and wishes to still participate", "isCorrect": true },
+      { "text": "For all participants, regardless of their ownership or control status, as a standard procedure", "isCorrect": false },
+      { "text": "If the participant requests an upfront payment exceeding 50% of the grant", "isCorrect": false }
+    ],
+    "rationale": "Guarantees are specific measures required if an entity is confirmed to be controlled by an ineligible third country, entity, or national, to allow their participation under specific conditions (PDFsam_merge.pdf, Page 9).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 9"
+  },
+  {
+    "id": "VALIDP01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Validation Procedures",
+    "question": "The REA Central Validation Service carries out various checks. Which of these checks is usually performed BEFORE a Financial Capacity Assessment (FCA)?",
+    "options": [
+      { "text": "Ownership Control Assessment (OCA)", "isCorrect": false },
+      { "text": "Legal Entity Validation (LEV)", "isCorrect": true },
+      { "text": "Scientific Evaluation of the Proposal", "isCorrect": false },
+      { "text": "Project Progress Review", "isCorrect": false }
+    ],
+    "rationale": "The process generally begins with validating the legal existence and status of the entity (LEV) before assessing its financial capacity (FCA). The document 'REA Central Validation Service: Registration of participants' outlines the sequence (PDFsam_merge.pdf, Pages 13-16).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 13-16 (REA Central Validation Service section)"
+  },
+  {
+    "id": "PTLREG01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Participant Register",
+    "question": "What is the main function of the Funding & Tenders Portal in relation to participants in EU grants?",
+    "options": [
+      { "text": "To serve as a platform for direct communication between research project teams and the European Parliament", "isCorrect": false },
+      { "text": "To be the single entry point for participants to manage their data, apply for funding, and manage their grants/contracts", "isCorrect": true },
+      { "text": "To host a database of all scientific publications funded by the EU", "isCorrect": false },
+      { "text": "To facilitate the recruitment of staff for EU institutions", "isCorrect": false }
+    ],
+    "rationale": "The Funding & Tenders Portal is described as the central hub for all interactions related to EU funding, from registration to project management (PDFsam_merge.pdf, Pages 21-22).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Pages 21-22 (EU Funding & Tenders Portal section)"
+  },
+  {
+    "id": "FINCAP01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Financial Capacity Assessment",
+    "question": "Which of the following entities is typically NOT subject to a Financial Capacity Assessment (FCA) during EU grant application procedures?",
+    "options": [
+      { "text": "A private for-profit company applying for a large grant", "isCorrect": false },
+      { "text": "A public body or an international organisation", "isCorrect": true },
+      { "text": "A university department acting as a legal entity", "isCorrect": false },
+      { "text": "A small non-profit organisation seeking significant funding", "isCorrect": false }
+    ],
+    "rationale": "Public bodies and international organisations are generally presumed to have sufficient financial capacity due to their nature and are therefore usually exempt from the full FCA (PDFsam_merge.pdf, Page 39 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "LEARRESP01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "LEAR Responsibilities",
+    "question": "Beyond managing legal and financial data, what is another key responsibility of a LEAR regarding their organisation's participation in EU funding?",
+    "options": [
+      { "text": "To provide the strategic vision for the organisation's research agenda", "isCorrect": false },
+      { "text": "To ensure accurate and up-to-date data in the Participant Register, including appointing and managing other contacts like FSIGNs/LSIGNs", "isCorrect": true },
+      { "text": "To personally conduct all financial audits for the organisation", "isCorrect": false },
+      { "text": "To develop the IT infrastructure of the Funding & Tenders Portal", "isCorrect": false }
+    ],
+    "rationale": "The LEAR acts as the main administrator for their organisation in the Funding & Tenders Portal, responsible for keeping data current and managing access rights for other users, including signatories (PDFsam_merge.pdf, Page 20 - Rules for LEV, LEAR Appointment section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 20 (Rules for LEV, LEAR Appointment section)"
+  },
+  {
+    "id": "SLA001",
+    "category": "Horizontal Coordination Activities",
+    "sub_category": "Service Level Agreements (SLAs)",
+    "question": "What is the significance of Service Level Agreements (SLAs) in the context of the Business Processes Manager's role in Unit D.4?",
+    "options": [
+      { "text": "They define the quality and performance standards for services provided by the Central Validation Service to internal and external clients", "isCorrect": true },
+      { "text": "They are only relevant for external contractors and have no impact on internal REA operations", "isCorrect": false },
+      { "text": "They determine the salary scales for staff members within Unit D.4", "isCorrect": false },
+      { "text": "They are legally binding contracts for all REA's procurement activities", "isCorrect": false }
+    ],
+    "rationale": "The job description mentions contributing to the proper implementation of working arrangements and/or service level agreements, which implies these agreements set quality standards for service provision (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "VALIDCOMM01",
+    "category": "Communication & External Relations",
+    "sub_category": "Validation Communication",
+    "question": "When the Central Validation Service needs to request additional documents from a participant for validation purposes, what is the standard method of communication?",
+    "options": [
+      { "text": "Sending a certified physical letter via postal mail only", "isCorrect": false },
+      { "text": "Contacting the participant via their direct email address (non-official)", "isCorrect": false },
+      { "text": "Through the electronic exchange system of the Funding & Tenders Portal, specifically targeting the LEAR", "isCorrect": true },
+      { "text": "Making a public announcement on the REA website", "isCorrect": false }
+    ],
+    "rationale": "The communication on participant validation generally takes place via the electronic exchange system of the Funding & Tenders Portal, targeting the LEAR (PDFsam_merge.pdf, Page 22).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 22"
+  },
+  {
+    "id": "CORPGOV01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "In the context of ownership control assessment, what aspect of 'corporate governance' is scrutinized to determine decisive influence?",
+    "options": [
+      { "text": "The number of annual general meetings held by the company", "isCorrect": false },
+      { "text": "The influence exercised on strategic decisions and overall direction of the entity, including board composition and voting rights", "isCorrect": true },
+      { "text": "The company's compliance with national tax regulations", "isCorrect": false },
+      { "text": "The frequency of employee training on corporate values", "isCorrect": false }
+    ],
+    "rationale": "Corporate governance assessment focuses on the ability to exert decisive influence on the strategic decisions of the entity, which includes examining the composition of managing, supervisory, or administrative bodies, and voting rights (PDFsam_merge.pdf, Page 6).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 6"
+  },
+  {
+    "id": "SECUREL01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Restricted Calls",
+    "question": "For calls restricted due to security reasons, what specific eligibility condition must participants fulfill throughout the entire duration of the action?",
+    "options": [
+      { "text": "Maintaining a specific level of financial liquidity", "isCorrect": false },
+      { "text": "Being established in a Member State and not being controlled by an ineligible third country or entity for security purposes", "isCorrect": true },
+      { "text": "Having at least 10 years of prior experience in EU-funded projects", "isCorrect": false },
+      { "text": "Ensuring all project staff hold C-level security clearances", "isCorrect": false }
+    ],
+    "rationale": "The document states that eligibility conditions, including the absence of control by an ineligible third country/entity for security reasons, must be fulfilled throughout the action's duration (PDFsam_merge.pdf, Page 4).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 4"
+  },
+  {
+    "id": "FINLINK01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "Beyond ownership and corporate governance, how can 'financial links' confer decisive influence on an entity from an ineligible third country?",
+    "options": [
+      { "text": "Through philanthropic donations that promote cultural exchange", "isCorrect": false },
+      { "text": "By providing loans, credit facilities, or guarantees that create a dependency, especially if they include veto rights or significant influence over the entity's budget", "isCorrect": true },
+      { "text": "By sponsoring minor marketing events without strategic implications", "isCorrect": false },
+      { "text": "Through small-scale equity investments representing less than 1% of the capital", "isCorrect": false }
+    ],
+    "rationale": "Financial links are assessed when they confer decisive influence, for example, through significant loans, credit facilities, or guarantees that create dependency, or by granting veto rights or a say in the entity's budget (PDFsam_merge.pdf, Page 7).",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "PROPNONP01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Entity Status",
+    "question": "For a private entity to be validated as a 'non-profit' organisation in the Funding & Tenders Portal, what is a key criterion regarding its legal form and statutes?",
+    "options": [
+      { "text": "It must be established as a for-profit commercial company with charitable objectives", "isCorrect": false },
+      { "text": "Its statutes must confirm its non-profit nature, meaning no distribution of profits to shareholders or members", "isCorrect": true },
+      { "text": "It must demonstrate annual revenue exceeding €10 million from donations", "isCorrect": false },
+      { "text": "It needs a special license from a non-EU country to operate as non-profit", "isCorrect": false }
+    ],
+    "rationale": "The rules for legal entity validation state that for private entities, the statutes must confirm their non-profit nature, including that profits are not distributed to shareholders or members (PDFsam_merge.pdf, Page 27 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 27 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "LEAFL01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Entity Form",
+    "question": "When registering a legal entity in the Funding & Tenders Portal, what is the purpose of the 'Legal Entity Form (LEF)'?",
+    "options": [
+      { "text": "To request an advance payment for a grant", "isCorrect": false },
+      { "text": "To declare the legal information of the organisation, such as its name, address, and legal status, to facilitate its validation", "isCorrect": true },
+      { "text": "To provide a scientific summary of the proposed project", "isCorrect": false },
+      { "text": "To request an extension for a project deadline", "isCorrect": false }
+    ],
+    "rationale": "The Legal Entity Form is the standard document for collecting essential legal data about an organisation for its validation in the Participant Register (PDFsam_merge.pdf, Page 26 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "REARESP02",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "REA Responsibilities",
+    "question": "Beyond managing legal and financial validation, what general role does REA play in the context of EU research and innovation programmes?",
+    "options": [
+      { "text": "It acts as the primary legislative body for all EU research policies", "isCorrect": false },
+      { "text": "It manages specific parts of EU programmes under delegated powers from the European Commission, such as Horizon Europe", "isCorrect": true },
+      { "text": "It provides independent scientific peer-review for all global research initiatives", "isCorrect": false },
+      { "text": "It is solely responsible for promoting European research results to the general public", "isCorrect": false }
+    ],
+    "rationale": "REA is an executive agency that implements parts of EU programmes (like Horizon Europe, Digital Europe) under powers delegated by the Commission (PDFsam_merge.pdf, Page 2 - EU Grants context, and general REA mandate information).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2, and other REA mandate pages"
+  },
+  {
+    "id": "OCASUBM01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Ownership Control Declaration",
+    "question": "Who is responsible for submitting the Ownership Control Declaration (OCD) when a consortium applies for a restricted call?",
+    "options": [
+      { "text": "Each individual participant directly to the Central Validation Service", "isCorrect": false },
+      { "text": "The coordinator of the consortium, on behalf of all participating entities", "isCorrect": true },
+      { "text": "The national authority of the lead participant", "isCorrect": false },
+      { "text": "An external legal consultant hired by the consortium", "isCorrect": false }
+    ],
+    "rationale": "The coordinator is responsible for collecting all required declarations and submitting them with the proposal on behalf of the consortium (PDFsam_merge.pdf, Page 8).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "SEDIA001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "SEDIA",
+    "question": "What does SEDIA stand for, and what is its relevance to REA's Unit D.4?",
+    "options": [
+      { "text": "Single European Digital Innovation Area; it promotes digital startups.", "isCorrect": false },
+      { "text": "Single Electronic Data Interchange Area; Unit D.4 is responsible for implementing part of it by validating legal and financial information.", "isCorrect": true },
+      { "text": "Standardised European Data Integrity Alliance; it ensures data security.", "isCorrect": false },
+      { "text": "System for European Defence Industrial Advancement; it manages defence contracts.", "isCorrect": false }
+    ],
+    "rationale": "The job description clearly states: 'The mission of unit D.4 'Central Validation Service' is to effectively implement part of the Single Electronic Data Interchange Area (SEDIA).' (VN - REA-AD-2025-3 - BPM (2).pdf, Section II)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "PROFMNG01",
+    "category": "Professional Experience",
+    "sub_category": "Project Management",
+    "question": "Which of the following professional experiences is particularly relevant for the Administrator - Business Processes Manager role, concerning project or process management?",
+    "options": [
+      { "text": "Experience in professional photography and video editing for promotional purposes", "isCorrect": false },
+      { "text": "Experience in coordinating or managing projects/processes/activities related to communication, external relations, or administrative support", "isCorrect": true },
+      { "text": "Extensive experience in direct legal representation in court", "isCorrect": false },
+      { "text": "Expertise in climate modelling and environmental science", "isCorrect": false }
+    ],
+    "rationale": "The selection criteria for professional experience explicitly mentions: 'Experience in coordinating or managing projects/processes/activities related to communication, external relations, and/or administrative support.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.1)",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.1"
+  },
+  {
+    "id": "LANGSKL01",
+    "category": "Selection Criteria",
+    "sub_category": "Language Knowledge",
+    "question": "For the Administrator - Business Processes Manager position, what is the minimum required knowledge of the second EU language (L2) for spoken interaction and writing?",
+    "options": [
+      { "text": "A1 level (basic user)", "isCorrect": false },
+      { "text": "B2 level (independent user)", "isCorrect": true },
+      { "text": "C1 level (proficient user)", "isCorrect": false },
+      { "text": "C2 level (mastery)", "isCorrect": false }
+    ],
+    "rationale": "The job description states that for L2, the minimum level required for spoken interaction and writing is B2 (VN - REA-AD-2025-3 - BPM (2).pdf, Section III.3).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III.3"
+  },
+  {
+    "id": "DATAPROT01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Data Protection",
+    "question": "Given the sensitivity of legal and financial data, which competency is crucial for the Administrator - Business Processes Manager related to data protection?",
+    "options": [
+      { "text": "Ability to bypass data protection rules for efficiency", "isCorrect": false },
+      { "text": "Sound knowledge of data protection policies and principles, in particular Regulation (EU) 2018/1725", "isCorrect": true },
+      { "text": "Expertise in designing computer hardware", "isCorrect": false },
+      { "text": "Capacity to share sensitive data freely with all stakeholders", "isCorrect": false }
+    ],
+    "rationale": "The job description explicitly mentions 'Sound knowledge of data protection policies and principles, in particular Regulation (EU) 2018/1725' as a job-related competency (VN - REA-AD-2025-3 - BPM (2).pdf, Section V).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section V"
+  },
+  {
+    "id": "RISKMAN01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Risk Management",
+    "question": "In a scenario where a complex validation case presents potential legal risks, which job-related competency is most relevant for the Administrator - Business Processes Manager?",
+    "options": [
+      { "text": "Ability to disregard legal advice for faster processing", "isCorrect": false },
+      { "text": "Capacity to identify potential risks and problems and propose solutions", "isCorrect": true },
+      { "text": "Skill in public speaking for large conferences", "isCorrect": false },
+      { "text": "Proficiency in graphic design software", "isCorrect": false }
+    ],
+    "rationale": "This scenario directly aligns with the competency: 'Capacity to identify potential risks and problems and propose solutions' (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "ITSKILLS01",
+    "category": "Selection Criteria",
+    "sub_category": "IT Skills",
+    "question": "What is the expected level of IT skills for the Administrator - Business Processes Manager?",
+    "options": [
+      { "text": "Basic familiarity with office software only", "isCorrect": false },
+      { "text": "Very good knowledge of Microsoft Office Suite (Word, Excel, PowerPoint, Outlook) and other relevant IT tools for managing, structuring, and analysing data", "isCorrect": true },
+      { "text": "Expertise in complex coding and software development", "isCorrect": false },
+      { "text": "Knowledge limited to social media platforms", "isCorrect": false }
+    ],
+    "rationale": "The selection criteria specify 'Very good knowledge of Microsoft Office Suite (Word, Excel, PowerPoint, Outlook) and other relevant IT tools for managing, structuring, and analysing data.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.4)",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.4"
+  },
+  {
+    "id": "SECTOR01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Unit D.4 Structure",
+    "question": "Which of the following is NOT listed as one of the four sectors composing Unit D.4 'Central Validation Service'?",
+    "options": [
+      { "text": "Legal Validation Sector", "isCorrect": false },
+      { "text": "Financial Validation Sector", "isCorrect": false },
+      { "text": "Data Management and Reporting Sector", "isCorrect": false },
+      { "text": "Programme Implementation Sector", "isCorrect": true }
+    ],
+    "rationale": "The job description mentions the Legal Validation, Financial Validation, and Data Management and Reporting sectors. A specific 'Programme Implementation Sector' is not listed as part of Unit D.4. (VN - REA-AD-2025-3 - BPM (2).pdf, Section II)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section II"
+  },
+  {
+    "id": "EUGRANTTYPES01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "EU Grant Programmes",
+    "question": "Which of the following EU programmes has calls for proposals that may be subject to restrictions under the new MFF 2021-2027, according to the document?",
+    "options": [
+      { "text": "Erasmus+ and Creative Europe", "isCorrect": false },
+      { "text": "Digital Europe Programme (DEP), Horizon Europe (HE), and European Defence Fund (EDF)", "isCorrect": true },
+      { "text": "EU Civil Protection Mechanism and Connecting Europe Facility", "isCorrect": false },
+      { "text": "InvestEU and European Social Fund Plus", "isCorrect": false }
+    ],
+    "rationale": "The document explicitly states that participation in calls for proposals launched under the European Defence Fund, Horizon Europe, and Digital Europe may be restricted (PDFsam_merge.pdf, Page 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "OCAPROC01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Ownership Control Assessment Procedure",
+    "question": "After the submission of an Ownership Control Declaration, who is primarily responsible for contacting the participant to request supporting documents and conducting the assessment?",
+    "options": [
+      { "text": "The European Anti-Fraud Office (OLAF)", "isCorrect": false },
+      { "text": "The REA Central Validation Service", "isCorrect": true },
+      { "text": "The project's scientific evaluator", "isCorrect": false },
+      { "text": "An external audit firm hired by the participant", "isCorrect": false }
+    ],
+    "rationale": "The document states that the 'EU services' (specifically, the Central Validation Service) will contact the participant for supporting documents and conduct the assessment (PDFsam_merge.pdf, Page 8).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "VAT001",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Entity Validation",
+    "question": "For legal entity validation, what is the purpose of requiring a VAT extract, if applicable?",
+    "options": [
+      { "text": "To determine the participant's eligibility for VAT refunds", "isCorrect": false },
+      { "text": "To verify the entity's legal existence and registration in the national VAT system", "isCorrect": true },
+      { "text": "To assess the participant's financial capacity based on their tax declarations", "isCorrect": false },
+      { "text": "To track the participant's international trade activities", "isCorrect": false }
+    ],
+    "rationale": "A VAT extract, along with other registration documents, serves to confirm the legal existence and proper registration of the entity (PDFsam_merge.pdf, Page 26 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "SECRCONF01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Confidentiality",
+    "question": "What is the rule regarding the confidentiality of information and supporting documents provided during the ownership control assessment?",
+    "options": [
+      { "text": "All information becomes publicly accessible once the assessment is complete", "isCorrect": false },
+      { "text": "The information is shared with all other consortium members for transparency", "isCorrect": false },
+      { "text": "The information is treated confidentially by the EU services carrying out the assessment", "isCorrect": true },
+      { "text": "Confidentiality depends on the participant's specific request", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'The information and supporting documents provided will be treated confidentially by the EU services carrying out the assessment.' (PDFsam_merge.pdf, Page 8)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "IRRELEVANT01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "Which factor is explicitly stated as being irrelevant when assessing the nationality of natural persons for ownership control purposes?",
+    "options": [
+      { "text": "Their country of birth", "isCorrect": false },
+      { "text": "Their place of residence", "isCorrect": true },
+      { "text": "The nationality of their parents", "isCorrect": false },
+      { "text": "Whether they hold a valid passport", "isCorrect": false }
+    ],
+    "rationale": "The guidance explicitly states: 'For natural persons, the place of residence is considered irrelevant for the assessment.' (PDFsam_merge.pdf, Page 7)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "GUARCOND01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Guarantees",
+    "question": "What is a key requirement for guarantees to be considered valid and acceptable by the European Commission?",
+    "options": [
+      { "text": "They must be submitted by the participant in a language other than English", "isCorrect": false },
+      { "text": "They must cover all conditions necessary to ensure compliance with relevant security and programme objectives", "isCorrect": true },
+      { "text": "They must be signed by an external auditor and not the participant", "isCorrect": false },
+      { "text": "They are only valid if they are submitted after the grant agreement is signed", "isCorrect": false }
+    ],
+    "rationale": "The document specifies that guarantees must 'cover all conditions necessary to ensure compliance with relevant security and programme objectives' (PDFsam_merge.pdf, Page 10).",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 10"
+  },
+  {
+    "id": "CHANGENOTIF01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Changes during Grant Implementation",
+    "question": "If an entity undergoes a change (e.g., merger, acquisition) during grant implementation that affects its eligibility, what is the coordinator's obligation?",
+    "options": [
+      { "text": "To await the granting authority's annual review to report the change", "isCorrect": false },
+      { "text": "To immediately notify the granting authority of such changes", "isCorrect": true },
+      { "text": "To independently determine if the change impacts eligibility without informing the authority", "isCorrect": false },
+      { "text": "To update the information in the Participant Register only after the project's completion", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'Such changes must be immediately notified by the coordinator to the granting authority (see art 19.3 of the Grant Agreement).' (PDFsam_merge.pdf, Page 11)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 11"
+  },
+  {
+    "id": "POLGUIDE01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "European Commission Guidelines",
+    "question": "The 'Political Guidelines for the next European Commission 2019-2024' mentions a commitment to respond to Parliament's Article 225 resolutions with legislative proposals. What principle must be fully respected in these proposals?",
+    "options": [
+      { "text": "Only proportionality, subsidiarity, and better law-making principles", "isCorrect": true },
+      { "text": "Only the principle of national sovereignty", "isCorrect": false },
+      { "text": "The principle of direct financial intervention in Member States' budgets", "isCorrect": false },
+      { "text": "The principle of unlimited executive power", "isCorrect": false }
+    ],
+    "rationale": "The 'Political Guidelines' document states: 'responding to Parliament's Article 225 resolutions with legislative proposals in full respect of proportionality, subsidiarity and better law-making principles.' (PDFsam_merge.pdf, Page 671, section on Political Guidelines)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 671 (Political Guidelines section)"
+  },
+  {
+    "id": "HEPLAN01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Horizon Europe",
+    "question": "What is the primary aim of the Horizon Europe Strategic Plan 2025-2027 in the context of research and innovation?",
+    "options": [
+      { "text": "To solely fund fundamental research without societal impact", "isCorrect": false },
+      { "text": "To set the strategic orientations for the EU's investment in research and innovation, aligning with EU priorities", "isCorrect": true },
+      { "text": "To provide detailed instructions for writing scientific articles", "isCorrect": false },
+      { "text": "To manage all scientific publications and their peer-review processes", "isCorrect": false }
+    ],
+    "rationale": "Strategic Plans typically define the overall directions and priorities for large-scale funding programmes like Horizon Europe (PDFsam_merge.pdf, check pages related to Horizon Europe Strategic Plan).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Check Horizon Europe Strategic Plan section"
+  },
+  {
+    "id": "COMPET03",
+    "category": "Job-Related Competencies",
+    "sub_category": "Communication",
+    "question": "A complex validation case requires explaining intricate rules to a non-expert audience. Which communication competency is vital for the Business Processes Manager?",
+    "options": [
+      { "text": "Ability to use highly technical jargon exclusively", "isCorrect": false },
+      { "text": "Capacity to communicate clearly, precisely, and effectively, both orally and in writing, tailoring messages to different audiences", "isCorrect": true },
+      { "text": "Skill in public speaking without any preparation", "isCorrect": false },
+      { "text": "Preference for one-way communication without interaction", "isCorrect": false }
+    ],
+    "rationale": "The job description emphasizes 'Capacity to communicate clearly, precisely, and effectively, both orally and in writing, tailoring messages to different audiences' (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "AUDIT01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Financial Validation",
+    "question": "What is the purpose of an 'Audit Certificate' in the context of EU grants, particularly for the Central Validation Service?",
+    "options": [
+      { "text": "To certify the scientific excellence of a research project", "isCorrect": false },
+      { "text": "To provide assurance on the financial statements and declared costs of a grant recipient", "isCorrect": true },
+      { "text": "To confirm the legal representative's nationality", "isCorrect": false },
+      { "text": "To justify deviations from the original project plan", "isCorrect": false }
+    ],
+    "rationale": "Audit certificates are financial documents providing independent assurance on the financial data of grant recipients, relevant for financial validation (PDFsam_merge.pdf, Page 39 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "CORPGOV02",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Ownership Control Assessment",
+    "question": "When assessing corporate governance for ownership control, what key area is scrutinized regarding the composition of the managing bodies?",
+    "options": [
+      { "text": "The number of years of experience of each board member", "isCorrect": false },
+      { "text": "The nationalities of the natural persons who are members of managing, supervisory or administrative bodies, and their respective voting rights", "isCorrect": true },
+      { "text": "The gender diversity of the board members", "isCorrect": false },
+      { "text": "The educational background of the executives", "isCorrect": false }
+    ],
+    "rationale": "The assessment explicitly looks at 'the nationalities of the natural persons who are members of its managing, supervisory or administrative bodies' and 'their respective voting rights' (PDFsam_merge.pdf, Page 6).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 6"
+  },
+  {
+    "id": "ACCRIGHTS01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Funding & Tenders Portal",
+    "question": "What are the roles of 'LSIGNs' and 'FSIGNs' in the Funding & Tenders Portal, as managed by the LEAR?",
+    "options": [
+      { "text": "Legal Scholars and Financial Strategists for project proposals", "isCorrect": false },
+      { "text": "Legal Signatories (for grant agreements and amendments) and Financial Signatories (for financial statements)", "isCorrect": true },
+      { "text": "Leading Scientists and Field Supervisors for project implementation", "isCorrect": false },
+      { "text": "Local IT Support and Foreign Language Interpreters", "isCorrect": false }
+    ],
+    "rationale": "The LEAR appoints LSIGNs (Legal Signatories) for legal commitments like grant agreements and FSIGNs (Financial Signatories) for financial statements (PDFsam_merge.pdf, Page 22).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 22"
+  },
+  {
+    "id": "VALPLAN01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Validation Planning",
+    "question": "Which of the following is a key aspect of 'Validation Planning' within Unit D.4, overseen by the Administrator - Business Processes Manager?",
+    "options": [
+      { "text": "Developing new research methodologies for scientific projects", "isCorrect": false },
+      { "text": "Setting priorities and managing the workload for validation activities across sectors", "isCorrect": true },
+      { "text": "Directly negotiating the terms of all grant agreements with beneficiaries", "isCorrect": false },
+      { "text": "Conducting on-site inspections of project activities in Member States", "isCorrect": false }
+    ],
+    "rationale": "Validation planning involves managing the workflow and setting priorities for the unit's validation activities, ensuring efficient processing of legal and financial information (VN - REA-AD-2025-3 - BPM (2).pdf, Section III, and general context of Unit D.4).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "COMSTRAT01",
+    "category": "Communication & External Relations",
+    "sub_category": "Communication Strategy",
+    "question": "What is the purpose of developing communication strategies for the Central Validation Service?",
+    "options": [
+      { "text": "To enforce internal staff regulations", "isCorrect": false },
+      { "text": "To ensure effective dissemination of information and messaging related to validation processes and rules to diverse audiences", "isCorrect": true },
+      { "text": "To recruit new scientific experts for REA projects", "isCorrect": false },
+      { "text": "To manage the IT infrastructure of the REA headquarters", "isCorrect": false }
+    ],
+    "rationale": "Communication strategies are designed to ensure clear and effective messaging to internal and external stakeholders regarding the unit's activities and policies (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "PROCMAN01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Process Improvement",
+    "question": "An Administrator - Business Processes Manager is expected to contribute to the analysis and simplification of existing administrative procedures. What is the ultimate goal of such an activity?",
+    "options": [
+      { "text": "To increase bureaucratic hurdles for participants", "isCorrect": false },
+      { "text": "To improve efficiency, clarity, and user-friendliness of validation processes", "isCorrect": true },
+      { "text": "To eliminate the need for any human intervention in validation", "isCorrect": false },
+      { "text": "To reduce the number of EU funding opportunities", "isCorrect": false }
+    ],
+    "rationale": "The role description emphasizes contributing to the analysis and simplification of administrative procedures, aiming for improvements in efficiency and user experience (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "OVERSIGHT01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Operational Oversight",
+    "question": "Which of the following is a responsibility of the Administrator - Business Processes Manager concerning the operational oversight of their team?",
+    "options": [
+      { "text": "Assigning daily tasks and monitoring key performance indicators (KPIs) compliance", "isCorrect": true },
+      { "text": "Making final legal judgments on complex validation cases", "isCorrect": false },
+      { "text": "Conducting annual external financial audits of grant recipients", "isCorrect": false },
+      { "text": "Developing the overall IT strategy for the European Commission", "isCorrect": false }
+    ],
+    "rationale": "The duty 'Coordinating a team responsible for inter-institutional and/or external relations activities' includes 'assigning daily tasks and monitoring key performance indicators compliance.' (VN - REA-AD-2025-3 - BPM (2).pdf, Section III)",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "ETHICS01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Ethics and Integrity",
+    "question": "When handling sensitive legal and financial data, which competency is paramount for the Business Processes Manager?",
+    "options": [
+      { "text": "Prioritizing personal relationships over professional ethics", "isCorrect": false },
+      { "text": "Adherence to the highest ethical and integrity standards", "isCorrect": true },
+      { "text": "Ability to quickly dismiss conflicting information", "isCorrect": false },
+      { "text": "Seeking personal gain from sensitive information", "isCorrect": false }
+    ],
+    "rationale": "Working with sensitive data and within an EU institution demands the highest standards of ethics and integrity, implicitly expected for this role.",
+    "difficulty": "Easy",
+    "source": "General professional conduct for EU institutions"
+  },
+  {
+    "id": "TEAMWORK01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Teamwork",
+    "question": "Which quality is crucial for an Administrator - Business Processes Manager in collaborating within Unit D.4 and across other EUIBA services?",
+    "options": [
+      { "text": "A preference for solitary work without team interaction", "isCorrect": false },
+      { "text": "Strong teamwork and cooperation skills", "isCorrect": true },
+      { "text": "A tendency to monopolize tasks and responsibilities", "isCorrect": false },
+      { "text": "Reluctance to share information with colleagues", "isCorrect": false }
+    ],
+    "rationale": "The role's emphasis on coordination, collaboration, and networking with various services highlights the importance of strong teamwork and cooperation skills (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "ADVICE01",
+    "category": "Communication & External Relations",
+    "sub_category": "Guidance Provision",
+    "question": "In their communication role, the Administrator - Business Processes Manager may be asked to provide guidance to applicants or other stakeholders. What type of guidance would this primarily concern?",
+    "options": [
+      { "text": "Advice on specific scientific methodologies for research proposals", "isCorrect": false },
+      { "text": "Guidance on the rules and procedures for participant validation, grant management, and relevant IT tools", "isCorrect": true },
+      { "text": "Legal counseling on intellectual property rights for new inventions", "isCorrect": false },
+      { "text": "Market analysis and business development strategies for beneficiaries", "isCorrect": false }
+    ],
+    "rationale": "Given the role's focus within the Central Validation Service, communication duties would revolve around its core activities: validation rules and procedures, and related IT tools (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "ITSEC01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "IT Security",
+    "question": "When working with sensitive data in IT tools, what is an essential consideration for the Administrator - Business Processes Manager?",
+    "options": [
+      { "text": "Sharing login credentials to facilitate team access", "isCorrect": false },
+      { "text": "Strict adherence to IT security protocols and data confidentiality rules", "isCorrect": true },
+      { "text": "Bypassing security measures to speed up processes", "isCorrect": false },
+      { "text": "Using personal devices for official data processing without authorization", "isCorrect": false }
+    ],
+    "rationale": "Handling sensitive data necessitates strict adherence to IT security protocols and maintaining data confidentiality, which is a fundamental aspect of working within EU institutions.",
+    "difficulty": "Medium",
+    "source": "General IT security best practices in EU institutions, implicit from data handling roles"
+  },
+  {
+    "id": "REPORTING01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Reporting",
+    "question": "What is the primary objective of the periodic reports to which the Administrator - Business Processes Manager contributes?",
+    "options": [
+      { "text": "To create new legislative proposals for the European Commission", "isCorrect": false },
+      { "text": "To monitor the performance, efficiency, and progress of the Central Validation Service's activities", "isCorrect": true },
+      { "text": "To summarize the scientific breakthroughs of EU-funded projects", "isCorrect": false },
+      { "text": "To compile a list of all successful grant applicants annually", "isCorrect": false }
+    ],
+    "rationale": "Periodic reports are typically used for monitoring and evaluating the unit's performance against objectives and KPIs (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "STAKEHOLDER01",
+    "category": "Communication & External Relations",
+    "sub_category": "Stakeholder Management",
+    "question": "The role requires extensive coordination with a wide range of EU and/or National public administration stakeholders. What is the benefit of this coordination?",
+    "options": [
+      { "text": "To limit the number of entities that can interact with REA", "isCorrect": false },
+      { "text": "To ensure effective collaboration, information exchange, and consistent application of rules across different administrative levels and bodies", "isCorrect": true },
+      { "text": "To centralize all decision-making within REA's Unit D.4", "isCorrect": false },
+      { "text": "To reduce the overall budget for EU funding programmes", "isCorrect": false }
+    ],
+    "rationale": "Coordination with diverse stakeholders aims to foster consistency, information sharing, and smooth operational flows within the complex EU administrative environment (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.3"
+  },
+  {
+    "id": "COMPET04",
+    "category": "Job-Related Competencies",
+    "sub_category": "Adaptability",
+    "question": "In a rapidly evolving regulatory environment, which competency is essential for the Business Processes Manager?",
+    "options": [
+      { "text": "Rigid adherence to outdated procedures", "isCorrect": false },
+      { "text": "Ability to adapt to new situations, procedures, and technologies", "isCorrect": true },
+      { "text": "Resistance to any changes in work methods", "isCorrect": false },
+      { "text": "Reliance solely on past experiences without learning new approaches", "isCorrect": false }
+    ],
+    "rationale": "The dynamic nature of EU regulations and processes requires adaptability and continuous learning (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI"
+  },
+  {
+    "id": "LEGALSTATUS01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Entity Validation",
+    "question": "For what purpose does the Central Validation Service verify the 'legal status' of an entity during validation?",
+    "options": [
+      { "text": "To determine its scientific expertise in a particular field", "isCorrect": false },
+      { "text": "To classify it correctly (e.g., public body, private for-profit, non-profit, university) for eligibility and administrative purposes", "isCorrect": true },
+      { "text": "To assess its environmental impact", "isCorrect": false },
+      { "text": "To check its history of participation in national elections", "isCorrect": false }
+    ],
+    "rationale": "Correct classification of an entity's legal status (e.g., public body, private, non-profit, SME) is crucial for applying the correct eligibility rules and validation procedures (PDFsam_merge.pdf, Page 25 - Rules for LEV, LEAR Appointment and FCA section).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 25 (Rules for LEV, LEAR Appointment and FCA section)"
+  },
+  {
+    "id": "OVERSIGHT02",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Process Oversight",
+    "question": "What is meant by 'business continuity and service provision according to defined quality standards' in the context of the Administrator - Business Processes Manager's operational support duties?",
+    "options": [
+      { "text": "Ensuring the availability of coffee breaks for all staff members", "isCorrect": false },
+      { "text": "Maintaining uninterrupted operational functionality and consistent service quality for validation processes, even during challenges", "isCorrect": true },
+      { "text": "Strictly adhering to a 9-to-5 work schedule for all team members", "isCorrect": false },
+      { "text": "Providing the highest quality of catering for official events", "isCorrect": false }
+    ],
+    "rationale": "Business continuity refers to the ability to continue operations without significant disruption, while 'service provision according to defined quality standards' emphasizes maintaining high quality in validation services (VN - REA-AD-2025-3 - BPM (2).pdf, Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III"
+  },
+  {
+    "id": "EUBUDGET01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "MFF 2021-2027",
+    "question": "What is the 'MFF 2021-2027' mentioned in the context of EU grants?",
+    "options": [
+      { "text": "The European Union's annual cultural festival", "isCorrect": false },
+      { "text": "The Multiannual Financial Framework, which sets the EU's long-term budget for 2021-2027", "isCorrect": true },
+      { "text": "A new military alliance within the European Union", "isCorrect": false },
+      { "text": "A framework for managing migration flows in Europe", "isCorrect": false }
+    ],
+    "rationale": "MFF stands for Multiannual Financial Framework, which is the EU's long-term budget plan (PDFsam_merge.pdf, Page 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "VALIDGUILD01",
+    "category": "Communication & External Relations",
+    "sub_category": "Guidance Documents",
+    "question": "What is the purpose of 'guidance documents' like the one on restricted calls, provided by REA's Central Validation Service?",
+    "options": [
+      { "text": "To replace official legal acts and regulations", "isCorrect": false },
+      { "text": "To provide practical clarifications and interpretations of complex rules for applicants and stakeholders", "isCorrect": true },
+      { "text": "To serve as internal meeting minutes for REA staff only", "isCorrect": false },
+      { "text": "To advertise new job vacancies at REA", "isCorrect": false }
+    ],
+    "rationale": "Guidance documents aim to assist applicants by explaining requirements and procedures, making complex rules more accessible (PDFsam_merge.pdf, Page 2 and throughout).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2 and throughout"
+  },
+  {
+    "id": "DOCUVER01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Document Verification",
+    "question": "When validating a legal entity, what is the importance of verifying the authenticity and completeness of supporting documents?",
+    "options": [
+      { "text": "It is an optional step that can be skipped for well-known entities", "isCorrect": false },
+      { "text": "It ensures the accuracy and reliability of the information provided for eligibility and compliance checks", "isCorrect": true },
+      { "text": "It helps in determining the scientific merit of the project proposal", "isCorrect": false },
+      { "text": "It primarily serves as an internal bureaucratic exercise without practical purpose", "isCorrect": false }
+    ],
+    "rationale": "Verification of documents is fundamental to ensuring the integrity and accuracy of the validation process, confirming eligibility and compliance with EU rules (PDFsam_merge.pdf, various pages in validation sections).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, throughout validation sections"
+  },
+  {
+    "id": "PROFEXP02",
+    "category": "Professional Experience",
+    "sub_category": "Administrative Support",
+    "question": "Which type of professional experience related to administrative support is relevant for this Administrator role?",
+    "options": [
+      { "text": "Extensive experience in direct patient care", "isCorrect": false },
+      { "text": "Providing high-level administrative support, including planning, coordinating, and organising activities", "isCorrect": true },
+      { "text": "Being a professional athlete or coach", "isCorrect": false },
+      { "text": "Developing complex financial trading algorithms", "isCorrect": false }
+    ],
+    "rationale": "The job description emphasizes 'Providing high-level administrative support, including planning, coordinating, and organising activities, preferably in a multicultural environment' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.2).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.2"
+  },
+  {
+    "id": "REANAME01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "REA Identity",
+    "question": "What does 'REA' stand for?",
+    "options": [
+      { "text": "Research European Alliance", "isCorrect": false },
+      { "text": "Renewable Energy Agency", "isCorrect": false },
+      { "text": "Research Executive Agency", "isCorrect": true },
+      { "text": "Regional Economic Administration", "isCorrect": false }
+    ],
+    "rationale": "The full name of REA is the European Research Executive Agency (VN - REA-AD-2025-3 - BPM (2).pdf, Page 1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Page 1"
+  },
+  {
+    "id": "LEGALBASE01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Legal Basis",
+    "question": "What is the significance of 'basic acts' in relation to restrictions on participation in EU programmes?",
+    "options": [
+      { "text": "They are internal REA guidelines that are not legally binding", "isCorrect": false },
+      { "text": "They are the legal instruments (regulations, decisions) that establish the programmes and define their rules, including potential restrictions", "isCorrect": true },
+      { "text": "They are non-binding recommendations from Member States", "isCorrect": false },
+      { "text": "They refer to the ethical principles of research only", "isCorrect": false }
+    ],
+    "rationale": "Basic acts are the foundational legal instruments that set up EU programmes and their core rules, including any participation restrictions (PDFsam_merge.pdf, Page 2).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "RISKMAN02",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Risk Management",
+    "question": "In the context of the Central Validation Service, what type of risks might the Business Processes Manager need to identify and propose solutions for?",
+    "options": [
+      { "text": "Risks related to global climate change impacts on EU agriculture", "isCorrect": false },
+      { "text": "Operational risks in validation processes, legal or financial compliance risks, or risks related to IT system vulnerabilities", "isCorrect": true },
+      { "text": "Risks associated with international trade disputes unrelated to EU funding", "isCorrect": false },
+      { "text": "Risks to the personal safety of research participants in field studies", "isCorrect": false }
+    ],
+    "rationale": "The role's focus on business processes, legal/financial validation, and IT tools implies that risk identification would be related to these operational, compliance, and IT security areas (VN - REA-AD-2025-3 - BPM (2).pdf, Section VI and job duties).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section VI and job duties"
+  },
+  {
+    "id": "COLLAB01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Collaboration",
+    "question": "Which attitude best describes a collaborative approach for the Administrator - Business Processes Manager?",
+    "options": [
+      { "text": "Working in isolation to maintain strict control", "isCorrect": false },
+      { "text": "Engaging actively with colleagues, partners, and stakeholders to achieve common goals", "isCorrect": true },
+      { "text": "Minimizing external interactions to avoid distractions", "isCorrect": false },
+      { "text": "Prioritizing individual achievements over team success", "isCorrect": false }
+    ],
+    "rationale": "The role's emphasis on coordination, networking, and inter-institutional relations directly highlights the importance of active collaboration (VN - REA-AD-2025-3 - BPM (2).pdf, Section III & VI).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section III & VI"
+  },
+  {
+    "id": "ADMINSUPPORT01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "Administrative Support",
+    "question": "What kind of 'administrative support' is the Administrator - Business Processes Manager expected to provide?",
+    "options": [
+      { "text": "Only basic secretarial tasks like scheduling meetings", "isCorrect": false },
+      { "text": "High-level support, including planning, coordinating, and organizing activities, managing records, and preparing reports", "isCorrect": true },
+      { "text": "Direct financial accounting for external beneficiaries", "isCorrect": false },
+      { "text": "Exclusive support for the Director-General of REA", "isCorrect": false }
+    ],
+    "rationale": "The job description specifies 'high-level administrative support, including planning, coordinating, and organising activities' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.2).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.2"
+  },
+  {
+    "id": "ITRELEVANCE01",
+    "category": "Business Process Management & Administrative Support",
+    "sub_category": "IT Tools",
+    "question": "Why is 'very good knowledge of Microsoft Office Suite and other relevant IT tools for managing, structuring, and analysing data' a key IT skill for this role?",
+    "options": [
+      { "text": "Because the role primarily involves developing new software for REA", "isCorrect": false },
+      { "text": "Because the role requires extensive data handling, reporting, and process management, which rely on these tools", "isCorrect": true },
+      { "text": "Because it is a generic requirement for all EU staff members, regardless of their specific duties", "isCorrect": false },
+      { "text": "Because the manager needs to teach IT courses to other staff", "isCorrect": false }
+    ],
+    "rationale": "The duties of the role, including statistical reporting, process management, and communication, heavily depend on efficient data handling and presentation, making these IT skills essential (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.4 and Section III).",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.4 and Section III"
+  },
+  {
+    "id": "SECURITYREASON01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Restricted Calls",
+    "question": "What type of interests do restrictions in DEP, HE, and EDF calls primarily aim to protect?",
+    "options": [
+      { "text": "The financial interests of individual Member States' national banks", "isCorrect": false },
+      { "text": "Essential security and/or defence interests of the Union and/or its Member States, or public order/public security", "isCorrect": true },
+      { "text": "The commercial interests of private companies based in eligible third countries", "isCorrect": false },
+      { "text": "The cultural heritage and tourism industries of specific EU regions", "isCorrect": false }
+    ],
+    "rationale": "The document clearly states these restrictions apply 'for duly justified security reasons, where they are necessary to protect essential security and/or defence interests of the Union and/or its Member States or to maintain public order and public security.' (PDFsam_merge.pdf, Page 2)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "ELIGIBILITY01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Eligibility Conditions",
+    "question": "When must the eligibility conditions, particularly those related to control by ineligible entities, be fulfilled by participants in restricted calls?",
+    "options": [
+      { "text": "Only at the time of proposal submission", "isCorrect": false },
+      { "text": "Throughout the entire duration of the action (grant agreement)", "isCorrect": true },
+      { "text": "Only during the final reporting period of the project", "isCorrect": false },
+      { "text": "Only at the time of payment of the final balance", "isCorrect": false }
+    ],
+    "rationale": "The document specifies that eligibility conditions 'must be fulfilled throughout the action duration' (PDFsam_merge.pdf, Page 4).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 4"
+  },
+  {
+    "id": "AD6GRADE01",
+    "category": "General Context",
+    "sub_category": "Grade",
+    "question": "What is the grade level for the 'Administrator - Business Processes Manager' position in this call for expression of interest?",
+    "options": [
+      { "text": "AD5", "isCorrect": false },
+      { "text": "AD6", "isCorrect": true },
+      { "text": "AD7", "isCorrect": false },
+      { "text": "AST6", "isCorrect": false }
+    ],
+    "rationale": "The job title explicitly states 'GRADE: AD6' (VN - REA-AD-2025-3 - BPM (2).pdf, Page 1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Page 1"
+  },
+  {
+    "id": "LOCAT01",
+    "category": "General Context",
+    "sub_category": "Location",
+    "question": "Where is the location for the 'Administrator - Business Processes Manager' position?",
+    "options": [
+      { "text": "Luxembourg", "isCorrect": false },
+      { "text": "Strasbourg", "isCorrect": false },
+      { "text": "Brussels", "isCorrect": true },
+      { "text": "Frankfurt", "isCorrect": false }
+    ],
+    "rationale": "The job description states 'LOCATION: BRUSSELS' (VN - REA-AD-2025-3 - BPM (2).pdf, Page 1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Page 1"
+  },
+  {
+    "id": "MAXCAND01",
+    "category": "General Context",
+    "sub_category": "Candidates",
+    "question": "What is the maximum number of successful candidates sought for this position?",
+    "options": [
+      { "text": "5", "isCorrect": false },
+      { "text": "10", "isCorrect": true },
+      { "text": "15", "isCorrect": false },
+      { "text": "20", "isCorrect": false }
+    ],
+    "rationale": "The job description specifies 'Maximum number of successful candidates sought: 10' (VN - REA-AD-2025-3 - BPM (2).pdf, Page 1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Page 1"
+  },
+  {
+    "id": "EXPERIENCETYPE01",
+    "category": "Selection Criteria",
+    "sub_category": "Professional Experience",
+    "question": "Which of the following describes the type of professional experience relevant for this role?",
+    "options": [
+      { "text": "Only experience gained within private sector startups", "isCorrect": false },
+      { "text": "At least 3 years of relevant professional experience gained after the university degree", "isCorrect": true },
+      { "text": "Only experience as a research scientist", "isCorrect": false },
+      { "text": "Experience must be from non-EU countries only", "isCorrect": false }
+    ],
+    "rationale": "The job description states 'Relevant professional experience of at least 3 years gained after the university degree' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1"
+  },
+  {
+    "id": "UNIQUAL01",
+    "category": "Selection Criteria",
+    "sub_category": "University Qualifications",
+    "question": "What is the minimum university qualification required for this Administrator position?",
+    "options": [
+      { "text": "A doctoral degree in any field", "isCorrect": false },
+      { "text": "A university degree of at least 3 years attested by a diploma", "isCorrect": true },
+      { "text": "A Master's degree exclusively in business administration", "isCorrect": false },
+      { "text": "Completion of a high school diploma and a professional certificate", "isCorrect": false }
+    ],
+    "rationale": "The job description specifies 'A university degree of at least 3 years attested by a diploma' (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.A.1).",
+    "difficulty": "Easy",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.A.1"
+  },
+  {
+    "id": "EUBUDGETTYPE01",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "MFF",
+    "question": "The 'Multiannual Financial Framework' (MFF) governs the EU's long-term budget. What is the standard duration of an MFF?",
+    "options": [
+      { "text": "3 years", "isCorrect": false },
+      { "text": "5 years", "isCorrect": false },
+      { "text": "7 years", "isCorrect": true },
+      { "text": "10 years", "isCorrect": false }
+    ],
+    "rationale": "The MFF 2021-2027 is a 7-year framework, which is the standard duration for the EU's long-term budget (Implicit from 'MFF 2021-2027' in PDFsam_merge.pdf, Page 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "SECUREASONS02",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Restricted Calls",
+    "question": "Beyond protecting essential security and/or defence interests, what other broad reason can justify participation restrictions in DEP, HE, and EDF calls?",
+    "options": [
+      { "text": "To increase cultural exchange programs", "isCorrect": false },
+      { "text": "To maintain public order and public security", "isCorrect": true },
+      { "text": "To promote artistic expression", "isCorrect": false },
+      { "text": "To support small businesses exclusively", "isCorrect": false }
+    ],
+    "rationale": "The document states that restrictions apply to 'maintain public order and public security' in addition to security/defence interests (PDFsam_merge.pdf, Page 2).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "CONFLOFINT01",
+    "category": "Job-Related Competencies",
+    "sub_category": "Conflict of Interest",
+    "question": "What is the primary responsibility of an EU official, including the Administrator - Business Processes Manager, concerning potential conflicts of interest?",
+    "options": [
+      { "text": "To exploit conflicts of interest for personal gain", "isCorrect": false },
+      { "text": "To identify, prevent, and manage potential conflicts of interest in accordance with EU staff regulations and ethical guidelines", "isCorrect": true },
+      { "text": "To ignore any perceived conflicts of interest unless directly instructed otherwise", "isCorrect": false },
+      { "text": "To delegate all conflict of interest management to external bodies", "isCorrect": false }
+    ],
+    "rationale": "Public officials in the EU are expected to uphold the highest standards of integrity and manage conflicts of interest (Implicit from working in an EU institution).",
+    "difficulty": "Medium",
+    "source": "General ethical standards for EU officials"
+  },
+  {
+    "id": "MNGTEAM01",
+    "category": "Selection Criteria",
+    "sub_category": "Team Management",
+    "question": "Which of the following reflects a key aspect of the 'experience in coordinating or managing a team' criterion?",
+    "options": [
+      { "text": "Solely assigning tasks without follow-up", "isCorrect": false },
+      { "text": "Providing guidance, support, and oversight to team members to achieve common objectives", "isCorrect": true },
+      { "text": "Working independently without any team interaction", "isCorrect": false },
+      { "text": "Only being a team member with no leadership responsibilities", "isCorrect": false }
+    ],
+    "rationale": "Managing a team implies leadership, guidance, and oversight to ensure collective goals are met (VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.1, if applicable to 'managing projects/processes/activities').",
+    "difficulty": "Medium",
+    "source": "VN - REA-AD-2025-3 - BPM (2).pdf, Section IV.B.1.1 (implied from 'coordinating or managing')"
+  }
+];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null); // To store user's selected option index for each question
+        let isAnswerLocked = false; // To prevent changing answer after selecting
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        function loadQuestion() {
+            isAnswerLocked = false; // Reset lock for new question
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; // Reset feedback styling
+
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                li.dataset.index = index;
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) {
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                        displayFeedback(option.isCorrect, currentQuestion.rationale);
+                    } else if (option.isCorrect) {
+                        // Also show the correct answer if an incorrect one was selected
+                        li.classList.add('correct');
+                    }
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; // Don't allow changing answer
+
+            // Mark all options as disabled for clicking
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; // Further disable clicks
+            });
+
+            // Visually mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling and update score if it's the first time answering
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                if (userAnswers[currentQuestionIndex] === selectedIndex) { // Only add score once
+                    score++;
+                }
+            } else {
+                clickedElement.classList.add('incorrect');
+                // Highlight the correct answer if the user picked wrong
+                Array.from(optionsContainer.children).forEach(option => {
+                    const optionIndex = parseInt(option.dataset.index);
+                    if (questions[currentQuestionIndex].options[optionIndex].isCorrect) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons(); // Enable next button after selection
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length -1; // Must answer before moving to next (unless it's the last question and already answered)
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+            if (userAnswers[currentQuestionIndex] !== null) { // If answered, next can be enabled
+                nextBtn.disabled = false;
+            }
+        }
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null); // Reset all answers
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+            loadQuestion();
+        });
+
+        // Initial load
+        loadQuestion();
+    </script>
+</body>
+</html>
