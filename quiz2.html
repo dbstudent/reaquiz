@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = [
+  {
+    "id": "PMERGE001",
+    "category": "EU Grants & Programs",
+    "sub_category": "Restricted Calls",
+    "question": "What are the three EU Programmes explicitly mentioned as having calls for proposals that may be restricted under the new MFF 2021-2027?",
+    "options": [
+      { "text": "Erasmus+, Creative Europe, and LIFE", "isCorrect": false },
+      { "text": "Digital Europe Programme (DEP), Horizon Europe (HE), and European Defence Fund (EDF)", "isCorrect": true },
+      { "text": "Connecting Europe Facility, EU4Health, and InvestEU", "isCorrect": false },
+      { "text": "Justice Programme, Citizens, Equality, Rights and Values Programme, and Customs", "isCorrect": false }
+    ],
+    "rationale": "Page 2 of the document states: 'Under the new MFF 2021-2027, participation in certain calls for proposals launched under some of the Programmes (European Defence Fund, Horizon Europe, and Digital Europe) may be restricted.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE002",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Purpose of Restrictions",
+    "question": "The restrictions on participation in certain EU Programme calls are applied for 'duly justified security reasons'. What do these reasons primarily aim to protect?",
+    "options": [
+      { "text": "The financial autonomy of individual Member States.", "isCorrect": false },
+      { "text": "Essential security and/or defence interests of the Union and/or its Member States or to maintain public order and public security.", "isCorrect": true },
+      { "text": "The commercial competitiveness of European industries in global markets.", "isCorrect": false },
+      { "text": "The intellectual property rights of all participating entities.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 specifies: 'These restrictions apply for duly justified security reasons, where they are necessary to protect essential security and/or defence interests of the Union and/or its Member States or to maintain public order and public security.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE003",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Eligibility during Action",
+    "question": "According to the document, when must the eligibility conditions, including those related to ownership control, be fulfilled for participants in restricted calls?",
+    "options": [
+      { "text": "Only at the time of proposal submission.", "isCorrect": false },
+      { "text": "Throughout the entire duration of the action (grant agreement).", "isCorrect": true },
+      { "text": "Only during the final reporting period of the project.", "isCorrect": false },
+      { "text": "Only if requested by the granting authority at any point.", "isCorrect": false }
+    ],
+    "rationale": "Page 4 states: 'The eligibility conditions, including the absence of control by an ineligible third country / ineligible third country entity for security purposes, must be fulfilled throughout the action duration.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 4"
+  },
+  {
+    "id": "PMERGE004",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Defining Control",
+    "question": "Which of the following describes 'de jure' control of a participant by an ineligible third country, according to the document?",
+    "options": [
+      { "text": "Influence exercised through common commercial agreements only.", "isCorrect": false },
+      { "text": "Decisive influence exercised by an ineligible entity through majority ownership of the participant’s capital or voting rights.", "isCorrect": true },
+      { "text": "Control based on the participant's historical financial performance.", "isCorrect": false },
+      { "text": "Control exercised by an entity that is listed on a non-EU stock exchange.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 defines 'de jure' control as 'the ability to exercise decisive influence by reason of either holding a majority of the shareholder's or member's voting rights or having the right to appoint or remove a majority of the members of the administrative, management or supervisory body of the other company'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE005",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Defining Control",
+    "question": "What defines 'de facto' control in the context of ownership assessment?",
+    "options": [
+      { "text": "Control based exclusively on direct ownership of more than 50% of the capital.", "isCorrect": false },
+      { "text": "The ability to exercise decisive influence over an entity by any other means, including commercial agreements or financial dependence.", "isCorrect": true },
+      { "text": "Influence gained through a simple advisory role on the company's board.", "isCorrect": false },
+      { "text": "Control that is solely based on shared marketing strategies.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 specifies 'de facto' control as 'the ability to exercise decisive influence by any other means, including commercial agreements or financial dependence'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE006",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Assessment Elements",
+    "question": "Beyond ownership structure and corporate governance, which type of links are also considered when assessing decisive influence from an ineligible third country?",
+    "options": [
+      { "text": "Past employment history of staff members.", "isCorrect": false },
+      { "text": "Commercial links and financial links.", "isCorrect": true },
+      { "text": "Participation in non-EU cultural exchange programs.", "isCorrect": false },
+      { "text": "The number of academic publications by its researchers.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 lists 'commercial links, financial links and other sources' as elements of the assessment, in addition to ownership and corporate governance.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE007",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Corporate Governance",
+    "question": "When assessing 'corporate governance' for ownership control, what is a key aspect scrutinized regarding the managing bodies?",
+    "options": [
+      { "text": "The political affiliations of the board members.", "isCorrect": false },
+      { "text": "The nationalities of the natural persons who are members of its managing, supervisory or administrative bodies, and their respective voting rights.", "isCorrect": true },
+      { "text": "The board's travel history and frequency of meetings.", "isCorrect": false },
+      { "text": "The level of education of the executive management.", "isCorrect": false }
+    ],
+    "rationale": "Page 6 explains that corporate governance assessment includes 'the nationalities of the natural persons who are members of its managing, supervisory or administrative bodies and their respective voting rights'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 6"
+  },
+  {
+    "id": "PMERGE008",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Financial Links",
+    "question": "How can 'financial links' from an ineligible third country or entity demonstrate decisive influence over a participant?",
+    "options": [
+      { "text": "Through standard commercial loans with competitive interest rates.", "isCorrect": false },
+      { "text": "By providing loans, credit facilities, or guarantees that create a dependency, especially if they include veto rights or influence over the entity's budget.", "isCorrect": true },
+      { "text": "Via minor investments in public bonds of the participant's country.", "isCorrect": false },
+      { "text": "Through donations to non-profit branches of the participant for social causes.", "isCorrect": false }
+    ],
+    "rationale": "Page 7 states: 'Financial links should be assessed when they confer decisive influence (e.g. significant loans, credit facilities, guarantees that create dependency, or by granting veto rights or a say in the entity's budget, etc.).'",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "PMERGE009",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Natural Persons",
+    "question": "What is the rule regarding an individual owner with dual nationality (one from an eligible country and one from an ineligible country) in an ownership control assessment?",
+    "options": [
+      { "text": "The individual is automatically considered ineligible.", "isCorrect": false },
+      { "text": "The individual's eligibility is determined by their primary place of residence.", "isCorrect": false },
+      { "text": "The individual is considered as an eligible country national.", "isCorrect": true },
+      { "text": "The individual must choose one nationality for the purpose of the assessment.", "isCorrect": false }
+    ],
+    "rationale": "Page 7 clarifies: 'If the ultimate owner is a natural person having dual nationality, one from an eligible country and one from an ineligible country, he/she is considered as an eligible country national.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "PMERGE010",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Irrelevant Factors",
+    "question": "Which factor is explicitly stated as being irrelevant when assessing the nationality of natural persons for ownership control purposes?",
+    "options": [
+      { "text": "Their country of birth.", "isCorrect": false },
+      { "text": "Their place of residence.", "isCorrect": true },
+      { "text": "The nationality of their parents.", "isCorrect": false },
+      { "text": "Whether they hold a valid travel document.", "isCorrect": false }
+    ],
+    "rationale": "Page 7 specifies: 'For natural persons, the place of residence is considered irrelevant for the assessment.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 7"
+  },
+  {
+    "id": "PMERGE011",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Confidentiality",
+    "question": "How is the information and supporting documents provided during the ownership control assessment treated by the EU services carrying out the assessment?",
+    "options": [
+      { "text": "All information becomes publicly accessible once the assessment is complete.", "isCorrect": false },
+      { "text": "The information is shared with all other consortium members for transparency.", "isCorrect": false },
+      { "text": "The information is treated confidentially.", "isCorrect": true },
+      { "text": "Confidentiality is only guaranteed if explicitly requested by the participant.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 states: 'The information and supporting documents provided will be treated confidentially by the EU services carrying out the assessment.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE012",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Exemptions",
+    "question": "Which type of entity is typically exempt from submitting an ownership control declaration for a restricted call, as they are presumed to be controlled by their country of establishment?",
+    "options": [
+      { "text": "A small or medium-sized enterprise (SME).", "isCorrect": false },
+      { "text": "A non-profit organisation.", "isCorrect": false },
+      { "text": "A public body, formally validated as such in the Participant Register.", "isCorrect": true },
+      { "text": "A large private corporation.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 states: 'A participant that has been validated as a 'public body' in the Participant Register (see Section 2.2.1) is presumed to be controlled by its country of establishment and is therefore not required to submit an ownership control declaration.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE013",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Follow-up Actions",
+    "question": "If the outcome of the ownership control assessment is 'controlled' and no acceptable solution can be proposed by the consortium (e.g., participant replacement), what is the consequence?",
+    "options": [
+      { "text": "The proposal will automatically proceed to grant signature.", "isCorrect": false },
+      { "text": "The proposal will be returned to the applicant for minor revisions.", "isCorrect": false },
+      { "text": "The proposal will have to be rejected.", "isCorrect": true },
+      { "text": "The Central Validation Service will conduct an internal re-evaluation of the control status.", "isCorrect": false }
+    ],
+    "rationale": "Page 9 indicates: 'If this is not possible and the consortium cannot propose any other acceptable solution, the proposal will have to be rejected.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 9"
+  },
+  {
+    "id": "PMERGE014",
+    "category": "Guarantees",
+    "sub_category": "Conditions for Participation",
+    "question": "For a participant found to be controlled by an ineligible country/entity, what must they provide for calls under the European Defence Fund (EDF) and Digital Europe Programme (DEP) to potentially still participate?",
+    "options": [
+      { "text": "A signed self-declaration stating they will not be influenced by the controlling entity.", "isCorrect": false },
+      { "text": "An increased financial contribution to the project budget.", "isCorrect": false },
+      { "text": "Guarantees, accompanied by a document of approval from their country of establishment or the competent authority.", "isCorrect": true },
+      { "text": "A detailed report on their corporate social responsibility activities.", "isCorrect": false }
+    ],
+    "rationale": "Page 10 states: 'In EDF and DEP calls, if the participant is confirmed to be controlled, it must provide guarantees, accompanied by a document of approval from its country of establishment or the competent authority.'",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 10"
+  },
+  {
+    "id": "PMERGE015",
+    "category": "Guarantees",
+    "sub_category": "Validity of Guarantees",
+    "question": "To be considered valid, what must the guarantees provided by a participant in restricted calls ensure?",
+    "options": [
+      { "text": "They must explicitly prevent any communication with the controlling entity.", "isCorrect": false },
+      { "text": "They must only cover the financial aspects of the project, not security.", "isCorrect": false },
+      { "text": "They must cover all conditions necessary to ensure compliance with relevant security and programme objectives.", "isCorrect": true },
+      { "text": "They must be submitted directly to the national parliament of the participant's country.", "isCorrect": false }
+    ],
+    "rationale": "Page 10 specifies: 'Such guarantees must cover all conditions necessary to ensure compliance with relevant security and programme objectives.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 10"
+  },
+  {
+    "id": "PMERGE016",
+    "category": "Participant Obligations",
+    "sub_category": "Notification of Changes",
+    "question": "If a participant undergoes a change in its control/ownership status during the project implementation, who is responsible for immediately notifying the granting authority?",
+    "options": [
+      { "text": "The European Commission.", "isCorrect": false },
+      { "text": "The Central Validation Service.", "isCorrect": false },
+      { "text": "The coordinator of the grant agreement.", "isCorrect": true },
+      { "text": "The legal representative of the controlling entity.", "isCorrect": false }
+    ],
+    "rationale": "Page 11 states: 'Such changes must be immediately notified by the coordinator to the granting authority (see art 19.3 of the Grant Agreement).'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 11"
+  },
+  {
+    "id": "PMERGE017",
+    "category": "Participant Obligations",
+    "sub_category": "Ineligible Costs",
+    "question": "If a participant becomes controlled by an ineligible country/entity during the grant implementation, what happens to its related costs from the date of the loss of eligibility?",
+    "options": [
+      { "text": "All costs incurred by the participant become immediately eligible.", "isCorrect": false },
+      { "text": "Its related costs will become automatically ineligible.", "isCorrect": true },
+      { "text": "The participant can continue without any changes if they notify the granting authority.", "isCorrect": false },
+      { "text": "The granting authority will pay a penalty to the participant for the inconvenience.", "isCorrect": false }
+    ],
+    "rationale": "Page 11 states: 'If a participant becomes controlled by an ineligible country/ineligible country entity during the action (e.g. as a result of an acquisition by a foreign entity), its related costs will become automatically ineligible as from the date of loss of eligibility and its participation may have to be terminated.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 11"
+  },
+  {
+    "id": "PMERGE018",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Public Bodies",
+    "question": "According to the 'Rules on Legal Entity Validation', which of the following is NOT sufficient on its own to qualify an entity as a 'public body'?",
+    "options": [
+      { "text": "The entity is incorporated as a public body in its act of creation and is governed by public law.", "isCorrect": false },
+      { "text": "The entity is 100% owned by the State and performs a public service mission.", "isCorrect": true },
+      { "text": "The entity is a ministry which is part of the public administration of a State.", "isCorrect": false },
+      { "text": "The entity is an intergovernmental organisation established under international public law.", "isCorrect": false }
+    ],
+    "rationale": "Page 9 (Section 2.2.1.2) states: 'The fact that an entity is 100% owned by the State and/or performs a public service mission is not sufficient to qualify it as a public body'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 9"
+  },
+  {
+    "id": "PMERGE019",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "SME Definition",
+    "question": "Under the EU SME Recommendation, when does the 'two-year rule' for SME status NOT apply, leading to immediate loss of SME status?",
+    "options": [
+      { "text": "When a company's turnover increases by more than 50% in a single year.", "isCorrect": false },
+      { "text": "When an enterprise is newly established and does not yet have closed accounts.", "isCorrect": false },
+      { "text": "In case of a merger or acquisition that causes the new entity to exceed the SME ceilings.", "isCorrect": true },
+      { "text": "For companies operating in the digital and technology sectors.", "isCorrect": false }
+    ],
+    "rationale": "Page 12 states: 'The 'two-year rule' (meaning that the status is lost only if the ceilings are exceeded for two consecutive accounting periods) does not apply in case of a merger or acquisition (i.e., SME status is lost immediately from the date of the transaction if the new entity exceeds the thresholds).' (Footnote on table '2.2.1.4 Legal categories of entities').",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE020",
+    "category": "Participant Register",
+    "sub_category": "LEAR Role",
+    "question": "What is the primary responsibility of a Legal Entity Appointed Representative (LEAR) in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "To be the main scientific contact for a specific research project.", "isCorrect": false },
+      { "text": "To manage the legal and financial data of their organisation and appoint other signatories (LSIGN, FSIGN).", "isCorrect": true },
+      { "text": "To conduct the Financial Capacity Assessment (FCA) on behalf of the European Commission.", "isCorrect": false },
+      { "text": "To draft and submit the technical parts of all grant proposals for their organisation.", "isCorrect": false }
+    ],
+    "rationale": "Page 20 (Section 2.2.2.1) states: 'The LEAR is the only person authorised to manage the legal and financial data of their organisation in the Funding & Tenders Portal and to appoint persons to sign legal statements and financial statements (LSIGN and FSIGN).' (Also on page 22)",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Pages 20, 22"
+  },
+  {
+    "id": "PMERGE021",
+    "category": "Participant Register",
+    "sub_category": "LSIGN and FSIGN",
+    "question": "What are the roles of an LSIGN and an FSIGN, respectively, within an organisation in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "LSIGN is a Legal Scholar and FSIGN is a Financial Strategist.", "isCorrect": false },
+      { "text": "LSIGN signs legal statements/amendments and FSIGN signs financial statements.", "isCorrect": true },
+      { "text": "LSIGN is the Lead Scientist and FSIGN is the Field Supervisor.", "isCorrect": false },
+      { "text": "LSIGN handles local IT support and FSIGN handles foreign language interpretation.", "isCorrect": false }
+    ],
+    "rationale": "Page 22 clarifies: 'LSIGN (legal signatory): can sign legal statements (e.g. grant agreement/amendments) and FSIGN (financial signatory): can sign financial statements (e.g. periodic reports).' (Also on page 20, as appointed by LEAR)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 20, 22"
+  },
+  {
+    "id": "PMERGE022",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Supporting Documents",
+    "question": "Which of the following is typically required as a supporting document for legal entity validation in the Participant Register?",
+    "options": [
+      { "text": "A detailed business plan for the next five years.", "isCorrect": false },
+      { "text": "An extract from the official register (e.g., trade register, company register, VAT register) and official statutes/act of establishment.", "isCorrect": true },
+      { "text": "A comprehensive list of all past and current scientific projects.", "isCorrect": false },
+      { "text": "Letters of recommendation from previous grant recipients.", "isCorrect": false }
+    ],
+    "rationale": "Page 26 (Section 2.2.3.1) lists 'Extract from the official register (e.g. trade register, company register, VAT register, etc.)' and 'Official statutes/act of establishment (copy)' as mandatory supporting documents.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26"
+  },
+  {
+    "id": "PMERGE023",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Non-profit Status",
+    "question": "For a private entity to be validated as 'non-profit', what key condition must its statutes confirm?",
+    "options": [
+      { "text": "It must be established as a for-profit commercial company with charitable objectives.", "isCorrect": false },
+      { "text": "Its non-profit nature, meaning no distribution of profits to shareholders or members.", "isCorrect": true },
+      { "text": "It must demonstrate annual revenue exceeding €10 million from donations.", "isCorrect": false },
+      { "text": "It needs a special license from a non-EU country to operate as non-profit.", "isCorrect": false }
+    ],
+    "rationale": "Page 27 (Section 2.2.3.1) states for private entities: 'statutes confirming its non-profit nature (i.e. that profits are not distributed to shareholders or members)'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 27"
+  },
+  {
+    "id": "PMERGE024",
+    "category": "Financial Capacity Assessment (FCA)",
+    "sub_category": "Purpose of FCA",
+    "question": "What is the primary purpose of a Financial Capacity Assessment (FCA) in the context of EU grants?",
+    "options": [
+      { "text": "To determine the scientific excellence of a research proposal.", "isCorrect": false },
+      { "text": "To verify that the participant has sufficient financial resources to implement the action.", "isCorrect": true },
+      { "text": "To assess the legal compliance of the participant's statutes.", "isCorrect": false },
+      { "text": "To monitor the daily financial transactions of the project.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) states: 'The Financial Capacity Assessment aims to verify that the participant has sufficient financial resources to implement the action and that there is no risk of financial difficulties during or after the action.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE025",
+    "category": "Financial Capacity Assessment (FCA)",
+    "sub_category": "FCA Exemptions",
+    "question": "Which type of entities are generally NOT subject to a Financial Capacity Assessment (FCA) for EU grants?",
+    "options": [
+      { "text": "Private for-profit companies applying for large grants.", "isCorrect": false },
+      { "text": "Public bodies or international organisations.", "isCorrect": true },
+      { "text": "Universities and research organisations.", "isCorrect": false },
+      { "text": "Small and medium-sized enterprises (SMEs).", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.2) states: 'The assessment does not apply to public bodies or international organisations... nor for the first grant agreement signed for a certain type of action with a non-profit organisation.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE026",
+    "category": "Financial Capacity Assessment (FCA)",
+    "sub_category": "FCA Thresholds",
+    "question": "At what threshold is an FCA typically required for private non-profit organisations applying for grants?",
+    "options": [
+      { "text": "If the EU contribution is €50,000 or more.", "isCorrect": false },
+      { "text": "If the EU contribution is €60,000 or more.", "isCorrect": true },
+      { "text": "If the EU contribution is €100,000 or more.", "isCorrect": false },
+      { "text": "An FCA is never required for non-profit organisations.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.2) indicates that for 'non-profit organisations', an FCA applies if the 'total EU contribution is EUR 60 000 or more'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE027",
+    "category": "Data Protection",
+    "sub_category": "Relevant Regulation",
+    "question": "Which EU Regulation is cited as governing the processing of personal data by Union institutions, bodies, offices and agencies?",
+    "options": [
+      { "text": "Regulation (EU) 2016/679 (GDPR)", "isCorrect": false },
+      { "text": "Regulation (EU) 2018/1725", "isCorrect": true },
+      { "text": "Regulation (EC) No 1049/2001", "isCorrect": false },
+      { "text": "Directive 95/46/EC", "isCorrect": false }
+    ],
+    "rationale": "Page 8 (Footnote 4) explicitly cites 'Regulation (EU) 2018/1725 of the European Parliament and of the Council of 23 October 2018 on the protection of natural persons with regard to the processing of personal data by the Union institutions, bodies, offices and agencies and on the free movement of such data'.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 8 (Footnote 4)"
+  },
+  {
+    "id": "PMERGE028",
+    "category": "Data Protection",
+    "sub_category": "Generative AI Guidelines",
+    "question": "What was the aim of the first guidelines published by the EDPS on June 3, 2024, concerning Generative AI systems?",
+    "options": [
+      { "text": "To promote the unrestricted use of Generative AI within EUIs.", "isCorrect": false },
+      { "text": "To ensure data protection compliance when EUIs use or develop generative AI tools.", "isCorrect": true },
+      { "text": "To strictly prohibit the use of any Generative AI systems within EUIs.", "isCorrect": false },
+      { "text": "To provide a framework for monetizing data processed by Generative AI.", "isCorrect": false }
+    ],
+    "rationale": "Page 18 (Section 3) states: 'We published on 3 June 2024 first guidelines for EUIs to ensure data protection compliance when using Generative AI systems. The guidelines aim to help EUIs comply with the data protection obligations set out in Regulation (EU) 2018/1725, when using or developing generative AI tools.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 18 (Section 3)"
+  },
+  {
+    "id": "PMERGE029",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Communication",
+    "question": "How do EU services typically communicate with participants regarding the validation of their legal and financial information in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "Via certified postal mail only.", "isCorrect": false },
+      { "text": "Through direct email correspondence with the project manager.", "isCorrect": false },
+      { "text": "Via the electronic exchange system of the Funding & Tenders Portal, specifically targeting the LEAR.", "isCorrect": true },
+      { "text": "Through public announcements on the European Commission's main website.", "isCorrect": false }
+    ],
+    "rationale": "Page 22 (Section 2.2.2.3) states: 'Communication on participant validation generally takes place via the electronic exchange system of the Funding & Tenders Portal. This system sends notifications to the LEAR of your organisation.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 22"
+  },
+  {
+    "id": "PMERGE030",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Main Function",
+    "question": "What is the main function of the Funding & Tenders Portal for entities seeking or managing EU funding?",
+    "options": [
+      { "text": "To serve as a platform for direct communication between research project teams and the European Parliament.", "isCorrect": false },
+      { "text": "It is the single electronic entry point for participants to manage their data, apply for funding, and manage their grants/contracts.", "isCorrect": true },
+      { "text": "To host a database of all scientific publications funded by the EU.", "isCorrect": false },
+      { "text": "To facilitate the recruitment of staff for EU institutions.", "isCorrect": false }
+    ],
+    "rationale": "Page 21 (Section 2.2.2) describes the portal as 'the single electronic entry point' for managing various aspects of EU funding, from registration to project management.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 21"
+  },
+  {
+    "id": "PMERGE031",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Sequence of Validation",
+    "question": "When does the validation of the Legal Entity Appointed Representative (LEAR) typically take place in the overall validation process?",
+    "options": [
+      { "text": "Before the legal entity itself is validated.", "isCorrect": false },
+      { "text": "Only after a grant agreement has been signed.", "isCorrect": false },
+      { "text": "After the legal entity is validated, but before the Financial Capacity Assessment (FCA).", "isCorrect": true },
+      { "text": "It happens concurrently with the scientific evaluation of the proposal.", "isCorrect": false }
+    ],
+    "rationale": "The flowcharts on page 13 and 16 show 'Validate legal entity' precedes 'Validate LEAR' and 'Validate financial capacity (FCA)' for 'Organisations'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 13, 16 (Flowcharts)"
+  },
+  {
+    "id": "PMERGE032",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Legal Status",
+    "question": "What information does the 'Legal Entity Form (LEF)' primarily aim to gather for the purpose of validation?",
+    "options": [
+      { "text": "The project's budget breakdown.", "isCorrect": false },
+      { "text": "The legal information of the organisation, such as its name, address, and legal status.", "isCorrect": true },
+      { "text": "The scientific details of the proposed research.", "isCorrect": false },
+      { "text": "The curriculum vitae of the project's principal investigator.", "isCorrect": false }
+    ],
+    "rationale": "Page 26 (Section 2.2.3.1) states: 'The Legal Entity Form (LEF) is designed to collect all the necessary legal data of an organisation to allow the EU to validate it in the Participant Register.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26"
+  },
+  {
+    "id": "PMERGE033",
+    "category": "European Commission",
+    "sub_category": "Framework Agreement",
+    "question": "According to the 'Political Guidelines for the next European Commission 2019-2024', what is the stated aim regarding the revision of the Framework Agreement with the European Parliament?",
+    "options": [
+      { "text": "To reduce the flow of information between institutions.", "isCorrect": false },
+      { "text": "To strengthen joint political responsibility, dialogue, information flow, and transparency.", "isCorrect": true },
+      { "text": "To limit the Parliament's right of initiative.", "isCorrect": false },
+      { "text": "To abolish the use of Article 122 TFEU.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 (Section: Political Guidelines) states: 'This is why I want to work with the European Parliament to swiftly revise our Framework Agreement. This will help strengthen our joint political responsibility, strengthen our dialogue, increase the flow of information and ensure greater transparency.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE034",
+    "category": "European Commission",
+    "sub_category": "Article 122 TFEU",
+    "question": "The 'Political Guidelines' document mentions that Article 122 TFEU has been used for 'exceptional responses' to crises. What commitment is made regarding its future use?",
+    "options": [
+      { "text": "To use it more frequently to address all future crises.", "isCorrect": false },
+      { "text": "To use this tool only in exceptional circumstances, with full justification to the Parliament when used.", "isCorrect": true },
+      { "text": "To use it without any justification or oversight from the Parliament.", "isCorrect": false },
+      { "text": "To replace it entirely with a new legislative tool.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 (Section: Political Guidelines) states: 'I have heard the Parliament’s views on this subject and will ensure that this tool is used only in exceptional circumstances. When it is used, I will ensure that the Commission will fully justify the use of Article 122 to the Parliament.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE035",
+    "category": "Horizon Europe",
+    "sub_category": "Strategic Plan",
+    "question": "What is the primary aim of the Horizon Europe Strategic Plan 2025-2027, as generally implied for such strategic documents?",
+    "options": [
+      { "text": "To solely fund fundamental research without societal impact.", "isCorrect": false },
+      { "text": "To set the strategic orientations for the EU's investment in research and innovation, aligning with EU priorities.", "isCorrect": true },
+      { "text": "To provide detailed instructions for writing scientific articles.", "isCorrect": false },
+      { "text": "To manage all scientific publications and their peer-review processes.", "isCorrect": false }
+    ],
+    "rationale": "Strategic Plans typically define the overall directions and priorities for large-scale funding programmes like Horizon Europe (implied from the document's context of EU grants and strategy).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, (Implicit from context, e.g., 'Horizon Europe Work Programme 2025')"
+  },
+  {
+    "id": "PMERGE036",
+    "category": "Financial Capacity Assessment (FCA)",
+    "sub_category": "Risk of Financial Difficulties",
+    "question": "What is a key objective of the Financial Capacity Assessment (FCA) beyond verifying sufficient financial resources?",
+    "options": [
+      { "text": "To predict the participant's future market share.", "isCorrect": false },
+      { "text": "To assess if there is a risk of financial difficulties during or after the action.", "isCorrect": true },
+      { "text": "To identify the participant's main competitors.", "isCorrect": false },
+      { "text": "To determine the participant's tax compliance in non-EU countries.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) states: 'The Financial Capacity Assessment aims to verify that the participant has sufficient financial resources to implement the action and that there is no risk of financial difficulties during or after the action.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE037",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Organisation Roles",
+    "question": "Which of the following describes the 'Participant Contact' role within the Funding & Tenders Portal?",
+    "options": [
+      { "text": "The main legal representative for all grant agreements.", "isCorrect": false },
+      { "text": "The person who receives the main administrative notifications from the EU services.", "isCorrect": true },
+      { "text": "The sole person responsible for signing all financial statements.", "isCorrect": false },
+      { "text": "The scientific coordinator of a specific project.", "isCorrect": false }
+    ],
+    "rationale": "Page 22 states: 'Participant contact: this person receives the main administrative notifications from the EU services.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 22"
+  },
+  {
+    "id": "PMERGE038",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Supporting Documents",
+    "question": "For a private entity (e.g., a company or a non-profit association), which type of official document is typically required for legal validation if they do not have a trade register extract?",
+    "options": [
+      { "text": "A list of their current employees.", "isCorrect": false },
+      { "text": "Official statutes or the act of establishment.", "isCorrect": true },
+      { "text": "Their annual marketing plan.", "isCorrect": false },
+      { "text": "A certificate of attendance from a business seminar.", "isCorrect": false }
+    ],
+    "rationale": "Page 26 (Section 2.2.3.1) lists 'Official statutes/act of establishment (copy)' as a mandatory supporting document, often an alternative if an extract from the official register is not applicable.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 26"
+  },
+  {
+    "id": "PMERGE039",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Consortium Responsibilities",
+    "question": "If a proposal evaluation leads to an 'controlled' outcome due to an ineligible participant, what is the initial action the consortium will be asked to take?",
+    "options": [
+      { "text": "Immediately withdraw the entire proposal.", "isCorrect": false },
+      { "text": "Replace the participant concerned or redistribute the tasks between the other participants.", "isCorrect": true },
+      { "text": "Appeal the assessment decision without providing any solution.", "isCorrect": false },
+      { "text": "Increase the EU contribution to offset the ineligible participant's costs.", "isCorrect": false }
+    ],
+    "rationale": "Page 9 states: 'If the outcome of the ownership control assessment is 'controlled', the consortium will be asked to replace the participant concerned (or redistribute the tasks between the other participants).'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 9"
+  },
+  {
+    "id": "PMERGE040",
+    "category": "European Commission",
+    "sub_category": "Dialogue with Parliament",
+    "question": "To strengthen dialogue with the European Parliament, what commitment is made regarding Commissioners' presence?",
+    "options": [
+      { "text": "Commissioners will only be present during major plenary debates.", "isCorrect": false },
+      { "text": "Commissioners will be more present in their respective committees.", "isCorrect": true },
+      { "text": "Commissioners will avoid direct engagement with Parliament committees.", "isCorrect": false },
+      { "text": "Commissioners will only communicate with Parliament through official written statements.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 (Section: Political Guidelines) states: 'Finally, I want to strengthen our dialogue and ensure that Commissioners will be more present in their respective committees.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE041",
+    "category": "EU Grants & Programs",
+    "sub_category": "Work Programmes",
+    "question": "Where are the precise conditions for restricted calls for each EU Programme (DEP, HE, EDF) typically set out?",
+    "options": [
+      { "text": "In the European Commission's annual report.", "isCorrect": false },
+      { "text": "In the Work Programmes published on the Funding & Tenders Portal.", "isCorrect": true },
+      { "text": "Through direct email communication to all potential applicants.", "isCorrect": false },
+      { "text": "In the daily official journal of the EU.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 clarifies: 'The calls that are subject to such restrictions and the precise conditions for each call are set out, for each Programme, in the Work Programmes published on the Funding & Tenders Portal.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE042",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Validation Outcome",
+    "question": "What is the result when an organisation's legal and financial information has been successfully validated in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "It automatically receives a grant agreement.", "isCorrect": false },
+      { "text": "It obtains a Participant Identification Code (PIC).", "isCorrect": true },
+      { "text": "It is exempt from all future legal checks.", "isCorrect": false },
+      { "text": "It is granted a diplomatic status within the EU.", "isCorrect": false }
+    ],
+    "rationale": "Page 21 states: 'Once validated, the organisation receives a Participant Identification Code (PIC) to be used for all its dealings with the EU institutions, bodies, offices and agencies.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 21"
+  },
+  {
+    "id": "PMERGE043",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Beneficiary List",
+    "question": "For restricted calls, the list of controlled entities is prepared. Which institutions use this list in their evaluation and grant agreement preparation?",
+    "options": [
+      { "text": "Only the European Parliament.", "isCorrect": false },
+      { "text": "All EU institutions and executive agencies (e.g., REA, CINEA, EISMEA).", "isCorrect": true },
+      { "text": "Only the national authorities of the Member States.", "isCorrect": false },
+      { "text": "Only the European Central Bank.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 states: 'This list is used by all EU institutions and executive agencies (e.g. REA, CINEA, EISMEA, etc.) involved in the evaluation and grant agreement preparation phases of the calls for proposals subject to restrictions.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE044",
+    "category": "EU Grants & Programs",
+    "sub_category": "Important Notice",
+    "question": "The 'IMPORTANT NOTICE' on page 2 highlights that participation in certain calls may be restricted to legal entities established in Member States. What further condition might apply to these entities in specific cases?",
+    "options": [
+      { "text": "They must be exclusively small and medium-sized enterprises (SMEs).", "isCorrect": false },
+      { "text": "They must be directly or indirectly controlled by Member States or by nationals of Member States.", "isCorrect": true },
+      { "text": "They must have generated at least 1 million Euros in revenue in the past year.", "isCorrect": false },
+      { "text": "They must not have participated in any EU grant in the last five years.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 of the 'IMPORTANT NOTICE' states: 'In accordance with the relevant basic acts, in certain cases, legal entities established in Member States (or in specified eligible third countries) can participate in the calls for proposals only if they are directly or indirectly controlled by Member States or by nationals of Member States (or by entities or nationals of specified eligible countries).'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE045",
+    "category": "SME Definition",
+    "sub_category": "Staff Headcount",
+    "question": "According to the EU SME Recommendation, what is the maximum staff headcount for a 'medium-sized enterprise'?",
+    "options": [
+      { "text": "Less than 50 persons.", "isCorrect": false },
+      { "text": "Less than 100 persons.", "isCorrect": false },
+      { "text": "Less than 250 persons.", "isCorrect": true },
+      { "text": "Less than 500 persons.", "isCorrect": false }
+    ],
+    "rationale": "Page 12, Table '2.2.1.4 Legal categories of entities', indicates 'Staff headcount < 250' for a medium-sized enterprise.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE046",
+    "category": "SME Definition",
+    "sub_category": "Annual Turnover",
+    "question": "What is the maximum annual turnover for a 'small enterprise' according to the EU SME Recommendation?",
+    "options": [
+      { "text": "€5 million.", "isCorrect": false },
+      { "text": "€10 million.", "isCorrect": true },
+      { "text": "€25 million.", "isCorrect": false },
+      { "text": "€50 million.", "isCorrect": false }
+    ],
+    "rationale": "Page 12, Table '2.2.1.4 Legal categories of entities', indicates 'Annual turnover ≤ 10 million EUR' for a small enterprise.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE047",
+    "category": "SME Definition",
+    "sub_category": "Balance Sheet Total",
+    "question": "What is the maximum annual balance sheet total for a 'medium-sized enterprise'?",
+    "options": [
+      { "text": "€20 million.", "isCorrect": false },
+      { "text": "€43 million.", "isCorrect": true },
+      { "text": "€50 million.", "isCorrect": false },
+      { "text": "€100 million.", "isCorrect": false }
+    ],
+    "rationale": "Page 12, Table '2.2.1.4 Legal categories of entities', indicates 'Annual balance sheet total ≤ 43 million EUR' for a medium-sized enterprise.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE048",
+    "category": "SME Definition",
+    "sub_category": "Enterprise Categories",
+    "question": "Which of the following describes the relationship between a 'partner enterprise' and a 'linked enterprise' in the SME definition?",
+    "options": [
+      { "text": "A partner enterprise has less than 25% ownership, while a linked enterprise has less than 50%.", "isCorrect": false },
+      { "text": "A partner enterprise has ownership between 25% and 50%, while a linked enterprise has 50% or more.", "isCorrect": true },
+      { "text": "A partner enterprise is typically a large company, and a linked enterprise is a small one.", "isCorrect": false },
+      { "text": "There is no distinction; they are interchangeable terms.", "isCorrect": false }
+    ],
+    "rationale": "Page 12, Section 2.2.1.4, defines 'Partner enterprise' as 'between 25% and 50% of the capital or voting rights' and 'Linked enterprise' as 'more than 50% of the capital or voting rights'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE049",
+    "category": "FCA",
+    "sub_category": "Assessment Methodology",
+    "question": "What is the general methodology used by the EU services to perform a Financial Capacity Assessment (FCA)?",
+    "options": [
+      { "text": "Based solely on the participant's declared annual profit.", "isCorrect": false },
+      { "text": "Based on a financial viability ratio computed from the participant’s financial data, especially from certified annual accounts.", "isCorrect": true },
+      { "text": "Through direct interviews with the participant's banking institutions.", "isCorrect": false },
+      { "text": "By evaluating the participant's credit score from a national credit bureau.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) states: 'The assessment is based on a financial viability ratio computed from the participant’s financial data, especially from certified annual accounts.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE050",
+    "category": "FCA",
+    "sub_category": "FCA Outcome",
+    "question": "If a participant's Financial Capacity Assessment (FCA) is deemed 'weak', what might the granting authority request?",
+    "options": [
+      { "text": "The participant must withdraw their proposal immediately.", "isCorrect": false },
+      { "text": "The participant must increase their EU contribution to the project.", "isCorrect": false },
+      { "text": "An additional guarantee, such as a bank guarantee or a guarantee fund mechanism.", "isCorrect": true },
+      { "text": "The participant must provide a new scientific work plan.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) states: 'If the FCA is 'weak', the granting authority may request an additional guarantee (e.g. a bank guarantee or a guarantee fund mechanism).' (Also on page 41)",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 39, 41"
+  },
+  {
+    "id": "PMERGE051",
+    "category": "EU Grants & Programs",
+    "sub_category": "Types of Calls",
+    "question": "What type of calls are specifically referred to in the document as 'restricted calls'?",
+    "options": [
+      { "text": "Calls open to all entities worldwide without exception.", "isCorrect": false },
+      { "text": "Calls that require specific eligibility conditions, potentially limited to entities established in Member States, due to security reasons.", "isCorrect": true },
+      { "text": "Calls exclusively for academic institutions.", "isCorrect": false },
+      { "text": "Calls that only fund projects in the humanities and social sciences.", "isCorrect": false }
+    ],
+    "rationale": "The document's title and introduction define 'restricted calls' as those subject to specific eligibility conditions related to security and country of establishment/control (Page 1 and 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 1-2"
+  },
+  {
+    "id": "PMERGE052",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Ultimate Owners",
+    "question": "When assessing control, who are considered the 'ultimate owners' of a participant?",
+    "options": [
+      { "text": "Only the CEO and board members.", "isCorrect": false },
+      { "text": "The natural person(s) who ultimately own or control the legal entity.", "isCorrect": true },
+      { "text": "The project's scientific team.", "isCorrect": false },
+      { "text": "Any entity holding less than 1% of the participant's shares.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 (Section 2.1.2) states: 'Ultimate owners are the natural person(s) who ultimately own or control the legal entity.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE053",
+    "category": "Data Protection",
+    "sub_category": "EDPS Guidelines",
+    "question": "The EDPS guidelines on Generative AI aim to help EUIs comply with which specific data protection obligation?",
+    "options": [
+      { "text": "General Data Protection Regulation (GDPR) for private companies.", "isCorrect": false },
+      { "text": "Regulation (EU) 2018/1725, which applies to Union institutions, bodies, offices and agencies.", "isCorrect": true },
+      { "text": "The ePrivacy Directive.", "isCorrect": false },
+      { "text": "The NIS Directive on cybersecurity.", "isCorrect": false }
+    ],
+    "rationale": "Page 18 (Section 3) states: 'The guidelines aim to help EUIs comply with the data protection obligations set out in Regulation (EU) 2018/1725, when using or developing generative AI tools.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 18"
+  },
+  {
+    "id": "PMERGE054",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Validation Types",
+    "question": "The Funding & Tenders Portal is described as performing various validation checks. Which two main types of validation are explicitly mentioned as being covered?",
+    "options": [
+      { "text": "Scientific and ethical validation.", "isCorrect": false },
+      { "text": "Technical and operational validation.", "isCorrect": false },
+      { "text": "Legal and financial validation.", "isCorrect": true },
+      { "text": "Environmental and social impact validation.", "isCorrect": false }
+    ],
+    "rationale": "The document's primary focus, especially in relation to REA D.4, is the 'validation of the legal and financial information' (Page 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2 and throughout validation sections"
+  },
+  {
+    "id": "PMERGE055",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Submission Responsibility",
+    "question": "Who is responsible for submitting the Ownership Control Declaration (OCD) for the entire consortium when applying for a restricted call?",
+    "options": [
+      { "text": "Each individual participant directly to the Central Validation Service.", "isCorrect": false },
+      { "text": "The coordinator of the consortium, on behalf of all participating entities.", "isCorrect": true },
+      { "text": "The national authority of the lead participant.", "isCorrect": false },
+      { "text": "An external legal consultant hired by the consortium.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 states: 'The coordinator must attach the ownership control declaration for each participant concerned (if applicable) together with the proposal.' This implies the coordinator's responsibility for collection and submission.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE056",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "University Definition",
+    "question": "According to the rules on legal entity validation, what is a key characteristic that qualifies an entity as a 'university'?",
+    "options": [
+      { "text": "It must primarily engage in commercial activities.", "isCorrect": false },
+      { "text": "It must be officially recognised as a higher education establishment and award academic degrees.", "isCorrect": true },
+      { "text": "It must have a research budget exceeding €100 million annually.", "isCorrect": false },
+      { "text": "It must offer online courses exclusively.", "isCorrect": false }
+    ],
+    "rationale": "Page 25 (Section 2.2.1.1) states that universities are 'officially recognised as a higher education establishment and awards academic degrees'.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 25"
+  },
+  {
+    "id": "PMERGE057",
+    "category": "FCA",
+    "sub_category": "Supporting Documents",
+    "question": "What type of financial document is typically required for a Financial Capacity Assessment (FCA) for private entities?",
+    "options": [
+      { "text": "Detailed project expenditure forecasts for 10 years.", "isCorrect": false },
+      { "text": "Certified annual accounts (balance sheets and profit/loss accounts).", "isCorrect": true },
+      { "text": "Personal bank statements of the company's directors.", "isCorrect": false },
+      { "text": "A list of all suppliers and creditors.", "isCorrect": false }
+    ],
+    "rationale": "Page 40 (Section 2.2.4.3) lists 'Certified annual accounts (balance sheets and profit/loss accounts)' as a mandatory supporting document for FCA.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 40"
+  },
+  {
+    "id": "PMERGE058",
+    "category": "Data Protection",
+    "sub_category": "Purpose of Guidelines",
+    "question": "The EDPS guidelines are issued to assist which specific group of entities in complying with data protection rules regarding Generative AI?",
+    "options": [
+      { "text": "All private sector companies operating in the EU.", "isCorrect": false },
+      { "text": "EU Institutions, Bodies, Offices and Agencies (EUIs).", "isCorrect": true },
+      { "text": "National data protection authorities of Member States.", "isCorrect": false },
+      { "text": "Third-country governments seeking to implement AI.", "isCorrect": false }
+    ],
+    "rationale": "Page 18 (Section 3) specifies 'guidelines for EUIs to ensure data protection compliance when using Generative AI systems.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 18"
+  },
+  {
+    "id": "PMERGE059",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Legal Validation",
+    "question": "What is the primary output of a successful legal validation process in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "A signed grant agreement.", "isCorrect": false },
+      { "text": "A validated Participant Identification Code (PIC).", "isCorrect": true },
+      { "text": "A positive financial capacity assessment.", "isCorrect": false },
+      { "text": "An ethical approval certificate.", "isCorrect": false }
+    ],
+    "rationale": "Page 21 states: 'Once validated, the organisation receives a Participant Identification Code (PIC) to be used for all its dealings with the EU institutions, bodies, offices and agencies.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 21"
+  },
+  {
+    "id": "PMERGE060",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Mitigation Measures",
+    "question": "If a participant is found to be controlled by an ineligible third-country entity, but can still participate due to providing guarantees, what is the nature of these guarantees?",
+    "options": [
+      { "text": "They are general assurances of good faith from the participant.", "isCorrect": false },
+      { "text": "They are concrete measures designed to exclude the ineligible controlling entity from influencing the action's implementation.", "isCorrect": true },
+      { "text": "They are financial deposits to cover potential project overruns.", "isCorrect": false },
+      { "text": "They are legal waivers signed by all consortium members.", "isCorrect": false }
+    ],
+    "rationale": "Page 10 describes guarantees as measures to ensure compliance with security objectives, implying they are designed to mitigate the influence of the controlling entity on the action.",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 10"
+  },
+  {
+    "id": "PMERGE061",
+    "category": "SME Definition",
+    "sub_category": "Autonomous Enterprise",
+    "question": "What defines an 'autonomous enterprise' in the context of the EU SME Recommendation?",
+    "options": [
+      { "text": "An enterprise that holds 50% or more of the capital or voting rights in another enterprise.", "isCorrect": false },
+      { "text": "An enterprise that has less than 25% ownership in other enterprises or public bodies.", "isCorrect": true },
+      { "text": "An enterprise that is part of a large international group.", "isCorrect": false },
+      { "text": "An enterprise whose financial accounts are not consolidated with any other entity.", "isCorrect": false }
+    ],
+    "rationale": "Page 12 (Footnote 8) states: 'Autonomous enterprise: less than 25% of its capital or voting rights are held by another enterprise or public body'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 12"
+  },
+  {
+    "id": "PMERGE062",
+    "category": "FCA",
+    "sub_category": "Audit Certificate",
+    "question": "What is the primary purpose of an 'Audit Certificate' in the context of financial capacity assessment for EU grants?",
+    "options": [
+      { "text": "To verify the scientific progress of a project.", "isCorrect": false },
+      { "text": "To provide an independent assurance on the financial statements and declared costs of a participant.", "isCorrect": true },
+      { "text": "To certify the legal status of an entity.", "isCorrect": false },
+      { "text": "To confirm the nationality of the legal representative.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.3) refers to 'audit certificates' as supporting documents for financial assessment, implying their role in providing assurance on financial data.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE063",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Official Register Extract",
+    "question": "Why is an 'extract from the official register' (e.g., trade or company register) a mandatory document for legal entity validation?",
+    "options": [
+      { "text": "To assess the entity's market share.", "isCorrect": false },
+      { "text": "To verify the legal existence and registration of the entity.", "isCorrect": true },
+      { "text": "To determine the entity's carbon footprint.", "isCorrect": false },
+      { "text": "To check the entity's social media presence.", "isCorrect": false }
+    ],
+    "rationale": "Page 26 (Section 2.2.3.1) lists this as a mandatory document for verifying legal existence.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26"
+  },
+  {
+    "id": "PMERGE064",
+    "category": "EU Grants & Programs",
+    "sub_category": "Basic Acts",
+    "question": "What role do 'basic acts' play regarding the EU Programmes mentioned in the document (DEP, HE, EDF)?",
+    "options": [
+      { "text": "They are non-binding recommendations from Member States.", "isCorrect": false },
+      { "text": "They are the legal instruments that establish the programmes and define their rules, including participation restrictions.", "isCorrect": true },
+      { "text": "They are internal REA guidelines that can be changed without legal procedures.", "isCorrect": false },
+      { "text": "They refer to the ethical principles of research only.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 states: 'In accordance with the relevant basic acts, in certain cases, legal entities established in Member States (...) can participate in the calls for proposals only if they are directly or indirectly controlled by Member States (...).'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE065",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Complex Cases",
+    "question": "When assessing control in complex cases, which entities or individuals might need to provide additional information to determine the ultimate control?",
+    "options": [
+      { "text": "Only the project manager.", "isCorrect": false },
+      { "text": "Intermediate companies, trusts, foundations, or other legal arrangements.", "isCorrect": true },
+      { "text": "Any entity that is a consortium partner.", "isCorrect": false },
+      { "text": "Only the members of the advisory board.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 (Section 2.1.2) states: 'In complex cases, the assessment may require information on intermediate companies, trusts, foundations or other legal arrangements that may be used to mask control.'",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE066",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "PIC",
+    "question": "What does 'PIC' stand for in the context of the Funding & Tenders Portal?",
+    "options": [
+      { "text": "Project Information Code", "isCorrect": false },
+      { "text": "Participant Identification Code", "isCorrect": true },
+      { "text": "Program Integration Code", "isCorrect": false },
+      { "text": "Partnership Initiation Code", "isCorrect": false }
+    ],
+    "rationale": "Page 21 states: 'Once validated, the organisation receives a Participant Identification Code (PIC) to be used for all its dealings with the EU institutions, bodies, offices and agencies.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 21"
+  },
+  {
+    "id": "PMERGE067",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Research Organisations",
+    "question": "How are 'research organisations' defined for the purpose of legal entity validation?",
+    "options": [
+      { "text": "Entities that are exclusively engaged in commercial product development.", "isCorrect": false },
+      { "text": "Entities whose primary goal is to conduct fundamental research and widely disseminate results, typically on a non-profit basis.", "isCorrect": true },
+      { "text": "Any organisation that employs scientists, regardless of their activities.", "isCorrect": false },
+      { "text": "Organisations that only conduct contract research for private companies.", "isCorrect": false }
+    ],
+    "rationale": "Page 25 (Section 2.2.1.1) indicates research organisations as 'entities whose primary goal is to conduct fundamental research and widely disseminate results, typically on a non-profit basis'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 25"
+  },
+  {
+    "id": "PMERGE068",
+    "category": "FCA",
+    "sub_category": "Annual Accounts",
+    "question": "For the Financial Capacity Assessment (FCA), what is the key characteristic of the annual accounts submitted by a participant?",
+    "options": [
+      { "text": "They must be projections for the next 5 years.", "isCorrect": false },
+      { "text": "They must be certified, including balance sheets and profit/loss accounts.", "isCorrect": true },
+      { "text": "They only need to be internal management reports.", "isCorrect": false },
+      { "text": "They must be submitted in a language other than English.", "isCorrect": false }
+    ],
+    "rationale": "Page 40 (Section 2.2.4.3) requires 'Certified annual accounts (balance sheets and profit/loss accounts)' for the FCA.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 40"
+  },
+  {
+    "id": "PMERGE069",
+    "category": "EU Grants & Programs",
+    "sub_category": "Application Process",
+    "question": "What is the general process for entities to apply for funding under the EU Programmes mentioned in the document?",
+    "options": [
+      { "text": "Submit a paper application directly to the European Commission President's office.", "isCorrect": false },
+      { "text": "Register in the Funding & Tenders Portal, submit proposals to calls, and manage grants electronically.", "isCorrect": true },
+      { "text": "Participate in mandatory national tenders organised by Member States.", "isCorrect": false },
+      { "text": "Send a letter of intent to the relevant EU Programme manager.", "isCorrect": false }
+    ],
+    "rationale": "The document consistently refers to the Funding & Tenders Portal as the central platform for application and management of grants (Page 21 and others).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Pages 2, 21"
+  },
+  {
+    "id": "PMERGE070",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Assessment Trigger",
+    "question": "When is an Ownership Control Assessment (OCA) typically performed?",
+    "options": [
+      { "text": "After the project has completed and final reports are submitted.", "isCorrect": false },
+      { "text": "During the evaluation phase of proposals submitted to calls subject to restrictions.", "isCorrect": true },
+      { "text": "Only if a participant explicitly requests it.", "isCorrect": false },
+      { "text": "Annually for all entities registered in the Participant Register.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 states: 'An ownership control assessment will be carried out during the evaluation phase of proposals submitted to calls subject to restrictions.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE071",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "PIC Validity",
+    "question": "Is a Participant Identification Code (PIC) issued to an organisation permanent?",
+    "options": [
+      { "text": "Yes, once issued, a PIC is permanent and never expires.", "isCorrect": false },
+      { "text": "No, a PIC can be invalidated if the legal entity ceases to exist or its legal status changes significantly.", "isCorrect": true },
+      { "text": "Yes, but it must be renewed annually by the LEAR.", "isCorrect": false },
+      { "text": "Only if the organisation consistently receives EU funding.", "isCorrect": false }
+    ],
+    "rationale": "While not explicitly stated as 'permanent', the validation process implies continuous validity as long as the entity's legal status remains unchanged. Implied from pages 21, 23 (PIC Management).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Pages 21, 23 (Implied from PIC Management)"
+  },
+  {
+    "id": "PMERGE072",
+    "category": "MFF",
+    "sub_category": "Periodicity",
+    "question": "What is the standard duration of the Multiannual Financial Framework (MFF) for the EU budget, as seen with the 'MFF 2021-2027'?",
+    "options": [
+      { "text": "3 years", "isCorrect": false },
+      { "text": "5 years", "isCorrect": false },
+      { "text": "7 years", "isCorrect": true },
+      { "text": "10 years", "isCorrect": false }
+    ],
+    "rationale": "The 'MFF 2021-2027' clearly indicates a 7-year cycle, which is the standard duration for the EU's long-term budget (Page 2).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE073",
+    "category": "FCA",
+    "sub_category": "Consequences of Weak FCA",
+    "question": "If a participant's Financial Capacity Assessment (FCA) is 'weak' and an additional guarantee is requested, who generally provides this guarantee?",
+    "options": [
+      { "text": "The European Commission.", "isCorrect": false },
+      { "text": "A bank or a financial institution on behalf of the participant, or a guarantee fund.", "isCorrect": true },
+      { "text": "The scientific coordinator of the project.", "isCorrect": false },
+      { "text": "The national government of the participant's country.", "isCorrect": false }
+    ],
+    "rationale": "Page 41 (Section 2.2.4.4) mentions 'a bank guarantee' or 'a guarantee fund mechanism'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 41"
+  },
+  {
+    "id": "PMERGE074",
+    "category": "Data Protection",
+    "sub_category": "Personal Data",
+    "question": "In the context of EU data protection, what does 'personal data' refer to?",
+    "options": [
+      { "text": "Any data stored on a computer system.", "isCorrect": false },
+      { "text": "Information relating to an identified or identifiable natural person.", "isCorrect": true },
+      { "text": "Only financial information of legal entities.", "isCorrect": false },
+      { "text": "Any data that is publicly available on the internet.", "isCorrect": false }
+    ],
+    "rationale": "This is a fundamental definition from data protection regulations like (EU) 2018/1725, explicitly referenced (Page 8, Footnote 4).",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 8 (Implied from reference to Reg. 2018/1725)"
+  },
+  {
+    "id": "PMERGE075",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Purpose of Guidance",
+    "question": "What is the stated primary purpose of the 'EU Grants: Participation in DEP, HE and EDF restricted calls' guidance document?",
+    "options": [
+      { "text": "To announce new funding opportunities under the MFF 2021-2027.", "isCorrect": false },
+      { "text": "To help applicants become aware of requirements for restricted calls, particularly the ownership control assessment procedure.", "isCorrect": true },
+      { "text": "To provide a legal interpretation of all EU grant regulations.", "isCorrect": false },
+      { "text": "To offer training materials for new EU project managers.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 states: 'This guidance is designed to help applicants that wish to apply in such restricted calls to become aware of the requirements, in particular, the ownership control assessment procedure...'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE076",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Mandatory Documents",
+    "question": "For legal entity validation, if an organisation does not have a legal personality (e.g., some non-profit organisations), what kind of document can be submitted to prove its existence?",
+    "options": [
+      { "text": "A personal letter from the founder.", "isCorrect": false },
+      { "text": "An official document proving its establishment and the name of its legal representative.", "isCorrect": true },
+      { "text": "A list of its members' addresses.", "isCorrect": false },
+      { "text": "A screenshot of its social media profile.", "isCorrect": false }
+    ],
+    "rationale": "Page 26 (Section 2.2.3.1) states: 'If the organisation does not have a legal personality, an official document proving its establishment and the name of its legal representative (e.g. decision by a national authority)' may be required.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 26"
+  },
+  {
+    "id": "PMERGE077",
+    "category": "FCA",
+    "sub_category": "Supporting Documents - SMEs",
+    "question": "For SMEs that do not have certified annual accounts, what is an alternative document that can be submitted for an FCA?",
+    "options": [
+      { "text": "A detailed business plan for the next 10 years.", "isCorrect": false },
+      { "text": "A copy of their national tax declarations.", "isCorrect": true },
+      { "text": "Bank statements from the previous month only.", "isCorrect": false },
+      { "text": "A sworn declaration of their financial viability.", "isCorrect": false }
+    ],
+    "rationale": "Page 40 (Section 2.2.4.3) states for SMEs that do not have certified annual accounts: 'a copy of their national tax declarations, or a balance sheet certified by the SME itself'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 40"
+  },
+  {
+    "id": "PMERGE078",
+    "category": "EU Grants & Programs",
+    "sub_category": "Grant Agreements",
+    "question": "What is the purpose of signing a 'grant agreement' or a 'contract' with the European Commission in the context of EU funding?",
+    "options": [
+      { "text": "To certify the scientific publications resulting from a project.", "isCorrect": false },
+      { "text": "To formalize the legal and financial commitment for EU funding and project implementation.", "isCorrect": true },
+      { "text": "To register the participant in the Funding & Tenders Portal.", "isCorrect": false },
+      { "text": "To initiate negotiations for new international treaties.", "isCorrect": false }
+    ],
+    "rationale": "The context throughout the document is about the validation process 'in view of signing a grant agreement or a contract' (Page 2), implying it formalizes the funding.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2 (Implicit from context)"
+  },
+  {
+    "id": "PMERGE079",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Assessment Steps",
+    "question": "After the consortium submits a proposal for a restricted call, what is the next step the EU services will take regarding the Ownership Control Declaration?",
+    "options": [
+      { "text": "Immediately approve the declaration without further checks.", "isCorrect": false },
+      { "text": "Request supporting documents from the participant to verify the declaration.", "isCorrect": true },
+      { "text": "Conduct an on-site audit of the participant's facilities.", "isCorrect": false },
+      { "text": "Publicly announce the participant's ownership structure.", "isCorrect": false }
+    ],
+    "rationale": "Page 8 describes the process: 'The EU services will then contact the participant to request supporting documents and carry out the assessment.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 8"
+  },
+  {
+    "id": "PMERGE080",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Validation Flow",
+    "question": "In the flowchart for 'Validation flow for organisations', which validation step immediately precedes 'Financial Capacity Assessment (FCA)'?",
+    "options": [
+      { "text": "Project progress review.", "isCorrect": false },
+      { "text": "Legal entity validation.", "isCorrect": true },
+      { "text": "Ethical approval.", "isCorrect": false },
+      { "text": "Proposal scientific evaluation.", "isCorrect": false }
+    ],
+    "rationale": "The flowchart on page 13 shows 'Validate legal entity' before 'Validate financial capacity (FCA)'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 13 (Flowchart)"
+  },
+  {
+    "id": "PMERGE081",
+    "category": "European Commission",
+    "sub_category": "Commissioners' Engagement",
+    "question": "To strengthen dialogue, what specific action is committed regarding Commissioners' engagement with the European Parliament?",
+    "options": [
+      { "text": "Commissioners will only attend plenary sessions.", "isCorrect": false },
+      { "text": "Commissioners will be more present in their respective parliamentary committees.", "isCorrect": true },
+      { "text": "Commissioners will delegate all interactions to their cabinet members.", "isCorrect": false },
+      { "text": "Commissioners will only participate in online debates.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 states: 'I want to strengthen our dialogue and ensure that Commissioners will be more present in their respective committees.'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE082",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "User Roles",
+    "question": "Besides the LEAR, LSIGN, and FSIGN, what is another type of user role mentioned for organisations in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "General Public Contact.", "isCorrect": false },
+      { "text": "Legal Counsel.", "isCorrect": false },
+      { "text": "Participant Contact.", "isCorrect": true },
+      { "text": "External Auditor.", "isCorrect": false }
+    ],
+    "rationale": "Page 22 lists 'Participant contact' along with LEAR, LSIGN, and FSIGN as roles for organisations.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 22"
+  },
+  {
+    "id": "PMERGE083",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Validation Service Provider",
+    "question": "Which specific service is responsible for the validation of the legal existence and legal statuses of participants involved in EU award procedures?",
+    "options": [
+      { "text": "The European Anti-Fraud Office (OLAF).", "isCorrect": false },
+      { "text": "The Legal Validation Sector of REA's Unit D.4 'Central Validation Service'.", "isCorrect": true },
+      { "text": "The European Court of Auditors.", "isCorrect": false },
+      { "text": "The Directorate-General for Research and Innovation.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 states: 'The Legal Validation Sector is responsible for the validation of the legal existence and legal statuses of participants...'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE084",
+    "category": "FCA",
+    "sub_category": "Financial Ratios",
+    "question": "What kind of financial ratio is typically computed to assess financial viability in an FCA?",
+    "options": [
+      { "text": "Customer satisfaction index.", "isCorrect": false },
+      { "text": "Current ratio (liquidity ratio).", "isCorrect": true },
+      { "text": "Employee turnover rate.", "isCorrect": false },
+      { "text": "Market share percentage.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) mentions 'a financial viability ratio computed from the participant’s financial data', and financial viability often involves liquidity ratios.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39 (Implied from 'financial viability ratio')"
+  },
+  {
+    "id": "PMERGE085",
+    "category": "SME Definition",
+    "sub_category": "Associated Enterprises",
+    "question": "In the context of the EU SME Recommendation, how is an 'associated enterprise' defined?",
+    "options": [
+      { "text": "An enterprise that directly competes with the main enterprise in the same market.", "isCorrect": false },
+      { "text": "An enterprise that holds less than 25% of the capital or voting rights in another enterprise.", "isCorrect": false },
+      { "text": "An enterprise that exercises decisive influence over the main enterprise, but is not a partner or linked.", "isCorrect": false },
+      { "text": "An enterprise where another enterprise holds 25% or more but less than 50% of the capital or voting rights, or vice-versa, and whose financial accounts are not consolidated.", "isCorrect": true }
+    ],
+    "rationale": "Page 12 (Footnote 8, definition of 'Partner enterprise') provides the basis for understanding associated enterprises in this context (ownership between 25% and 50% without consolidation).",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 12 (Footnote 8)"
+  },
+  {
+    "id": "PMERGE086",
+    "category": "European Commission",
+    "sub_category": "Political Guidelines",
+    "question": "The 'Political Guidelines for the next European Commission 2019-2024' mentions that the College (of Commissioners) will be available to respond to demands from the European Parliament for what purpose?",
+    "options": [
+      { "text": "To negotiate new trade agreements with third countries.", "isCorrect": false },
+      { "text": "To debate in plenary in the most appropriate format.", "isCorrect": true },
+      { "text": "To provide scientific advice on research projects.", "isCorrect": false },
+      { "text": "To supervise the financial audits of Member States.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 states: 'The College will be available to respond to any demands from the European Parliament to debate in plenary in the most appropriate format.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE087",
+    "category": "EU Grants & Programs",
+    "sub_category": "Implementation",
+    "question": "Which unit within REA is specifically tasked with effectively implementing part of the Single Electronic Data Interchange Area (SEDIA)?",
+    "options": [
+      { "text": "Unit D.1 - Programme Management.", "isCorrect": false },
+      { "text": "Unit D.4 - Central Validation Service.", "isCorrect": true },
+      { "text": "Unit D.2 - People and Workplace.", "isCorrect": false },
+      { "text": "Unit D.3 - Communication and Stakeholders Relations.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 states: 'The mission of unit D.4 'Central Validation Service' is to effectively implement part of the Single Electronic Data Interchange Area (SEDIA).'",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE088",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Data Management",
+    "question": "Who is generally responsible for keeping the legal and financial data of an organisation up-to-date in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "The European Commission's IT department.", "isCorrect": false },
+      { "text": "The Legal Entity Appointed Representative (LEAR) of the organisation.", "isCorrect": true },
+      { "text": "The project coordinator of the latest grant.", "isCorrect": false },
+      { "text": "Any member of the organisation's administrative staff.", "isCorrect": false }
+    ],
+    "rationale": "Page 20 (Section 2.2.2.1) states: 'The LEAR is the only person authorised to manage the legal and financial data of their organisation in the Funding & Tenders Portal'.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 20"
+  },
+  {
+    "id": "PMERGE089",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Ineligible Entities",
+    "question": "Which of the following is considered an 'ineligible third country entity' in the context of restricted calls?",
+    "options": [
+      { "text": "A public body established in an EU Member State.", "isCorrect": false },
+      { "text": "A legal entity established in an ineligible third country.", "isCorrect": true },
+      { "text": "An international organisation with observer status at the UN.", "isCorrect": false },
+      { "text": "A non-profit research organisation based in an eligible third country.", "isCorrect": false }
+    ],
+    "rationale": "Page 4 (Footnote 2) defines 'ineligible third country entity' as 'a legal entity established in an ineligible third country'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 4 (Footnote 2)"
+  },
+  {
+    "id": "PMERGE090",
+    "category": "FCA",
+    "sub_category": "Risk Mitigation",
+    "question": "What is a key measure the granting authority might take if a participant's FCA is 'weak' and no guarantee is provided or accepted?",
+    "options": [
+      { "text": "Increase the EU contribution to the participant.", "isCorrect": false },
+      { "text": "Modify the payment schedule to make all payments conditional on physical deliverables.", "isCorrect": false },
+      { "text": "Reduce pre-financing, increase interim payments, or not make advance payments.", "isCorrect": true },
+      { "text": "Require the participant to acquire another entity with a strong financial standing.", "isCorrect": false }
+    ],
+    "rationale": "Page 41 (Section 2.2.4.4) lists measures like 'reduction of pre-financing', 'increase of interim payments' or 'not to make advance payments'.",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 41"
+  },
+  {
+    "id": "PMERGE091",
+    "category": "EU Grants & Programs",
+    "sub_category": "Security Reasons",
+    "question": "For what specific type of 'interests' are participation restrictions applied in certain calls for proposals, according to the document?",
+    "options": [
+      { "text": "Commercial interests of the European Union's major industries.", "isCorrect": false },
+      { "text": "Essential security and/or defence interests of the Union and/or its Member States.", "isCorrect": true },
+      { "text": "Intellectual property interests of individual European researchers.", "isCorrect": false },
+      { "text": "Financial interests of the EU budget.", "isCorrect": false }
+    ],
+    "rationale": "Page 2 explicitly states: 'These restrictions apply for duly justified security reasons, where they are necessary to protect essential security and/or defence interests of the Union and/or its Member States or to maintain public order and public security.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 2"
+  },
+  {
+    "id": "PMERGE092",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "International Organisations",
+    "question": "Which characteristic defines an 'International Organisation' for the purpose of legal entity validation?",
+    "options": [
+      { "text": "Any organization with members from more than one country.", "isCorrect": false },
+      { "text": "An organisation established by specific international agreements between states and having its own legal personality.", "isCorrect": true },
+      { "text": "A global non-governmental organisation (NGO) with a large international presence.", "isCorrect": false },
+      { "text": "Any company that operates in multiple countries.", "isCorrect": false }
+    ],
+    "rationale": "Page 25 (Section 2.2.1.1) defines international organisations as 'established by specific international agreements between states and having its own legal personality'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 25"
+  },
+  {
+    "id": "PMERGE093",
+    "category": "Funding & Tenders Portal",
+    "sub_category": "Validation Outcome",
+    "question": "What is the consequence if an organisation does not comply with the validation requirements in the Funding & Tenders Portal?",
+    "options": [
+      { "text": "It will automatically receive a simplified grant.", "isCorrect": false },
+      { "text": "It will be unable to sign a grant agreement or contract with the EU.", "isCorrect": true },
+      { "text": "It will be subject to a fine from the European Commission.", "isCorrect": false },
+      { "text": "It will be blacklisted from all future EU programmes for life.", "isCorrect": false }
+    ],
+    "rationale": "The entire purpose of validation is to ensure eligibility for signing agreements, so non-compliance prevents this (Implicit from context, page 21).",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 21 (Implied from validation purpose)"
+  },
+  {
+    "id": "PMERGE094",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Indirect Control",
+    "question": "How can 'indirect control' be exercised over a participant by an ineligible third country or entity?",
+    "options": [
+      { "text": "Only through a direct contractual relationship with the participant.", "isCorrect": false },
+      { "text": "Through an intermediate enterprise or person that is controlled by the ineligible entity.", "isCorrect": true },
+      { "text": "By providing non-binding recommendations to the participant's board.", "isCorrect": false },
+      { "text": "Through joint marketing campaigns that have no financial implications.", "isCorrect": false }
+    ],
+    "rationale": "Page 5 (Section 2.1.2) implicitly defines indirect control as 'through one or more intermediate enterprises or natural persons'.",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 5"
+  },
+  {
+    "id": "PMERGE095",
+    "category": "European Commission",
+    "sub_category": "Right of Initiative",
+    "question": "In the 'Political Guidelines', what stance is taken on the European Parliament's 'right of initiative' (Article 225 resolutions)?",
+    "options": [
+      { "text": "It is to be abolished.", "isCorrect": false },
+      { "text": "It is supported, with a commitment to respond with legislative proposals in full respect of principles like proportionality.", "isCorrect": true },
+      { "text": "It will be subject to a referendum before any action is taken.", "isCorrect": false },
+      { "text": "It is considered irrelevant for the Commission's work.", "isCorrect": false }
+    ],
+    "rationale": "Page 671 states: 'I continue to support this right of initiative. We will strengthen our cooperation on Article 225 by asking Commissioners to take part in structured dialogues with Parliamentary committees on these resolutions.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 671"
+  },
+  {
+    "id": "PMERGE096",
+    "category": "FCA",
+    "sub_category": "Exemption for Non-Profits",
+    "question": "Under what condition is a non-profit organisation typically exempt from a Financial Capacity Assessment (FCA)?",
+    "options": [
+      { "text": "If their total EU contribution is more than €60,000.", "isCorrect": false },
+      { "text": "For the first grant agreement signed for a certain type of action.", "isCorrect": true },
+      { "text": "If they have been established for more than 50 years.", "isCorrect": false },
+      { "text": "If they primarily operate at the national level.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.2) states: 'The assessment does not apply... for the first grant agreement signed for a certain type of action with a non-profit organisation.'",
+    "difficulty": "Medium",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE097",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Official Address",
+    "question": "What is the primary significance of an organisation's 'official address' in the context of legal entity validation?",
+    "options": [
+      { "text": "It determines the language of correspondence with the EU.", "isCorrect": false },
+      { "text": "It confirms the country of establishment, which is crucial for eligibility checks.", "isCorrect": true },
+      { "text": "It identifies the location for physical meetings only.", "isCorrect": false },
+      { "text": "It indicates the size of the organisation's premises.", "isCorrect": false }
+    ],
+    "rationale": "The country of establishment is a key eligibility criterion (Page 2), and the official address serves to confirm this.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 26 (Implicit from legal data requirements)"
+  },
+  {
+    "id": "PMERGE098",
+    "category": "Ownership Control Assessment (OCA)",
+    "sub_category": "Security Interests",
+    "question": "The restrictions in DEP, HE, and EDF calls are justified by the need to protect 'essential security and/or defence interests'. What does this imply about the nature of the projects funded under these calls?",
+    "options": [
+      { "text": "They are exclusively civilian research projects.", "isCorrect": false },
+      { "text": "They often involve sensitive technologies, strategic autonomy, or dual-use applications.", "isCorrect": true },
+      { "text": "They are only focused on environmental protection initiatives.", "isCorrect": false },
+      { "text": "They are primarily cultural exchange programs.", "isCorrect": false }
+    ],
+    "rationale": "The focus on 'security and/or defence interests' implies that the projects touch upon areas vital for EU strategic autonomy and security, which often include sensitive technologies or dual-use applications (Page 2).",
+    "difficulty": "Hard",
+    "source": "PDFsam_merge.pdf, Page 2 (Implicit from 'security and/or defence interests')"
+  },
+  {
+    "id": "PMERGE099",
+    "category": "FCA",
+    "sub_category": "Data Sources",
+    "question": "What is the primary source of financial data used for conducting a Financial Capacity Assessment (FCA)?",
+    "options": [
+      { "text": "Newspaper articles about the participant's financial health.", "isCorrect": false },
+      { "text": "The participant's certified annual accounts.", "isCorrect": true },
+      { "text": "Verbal statements from the participant's employees.", "isCorrect": false },
+      { "text": "Market research reports on the participant's industry.", "isCorrect": false }
+    ],
+    "rationale": "Page 39 (Section 2.2.4.1) states that the assessment is based on 'financial data, especially from certified annual accounts'.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 39"
+  },
+  {
+    "id": "PMERGE100",
+    "category": "Legal Entity Validation (LEV)",
+    "sub_category": "Validation Criteria",
+    "question": "What is the overall goal of the validation process performed by EU services for participants in grants and contracts?",
+    "options": [
+      { "text": "To identify the most innovative research projects.", "isCorrect": false },
+      { "text": "To ensure that participants meet the necessary legal and financial eligibility criteria to receive EU funding.", "isCorrect": true },
+      { "text": "To provide legal advice to all potential applicants.", "isCorrect": false },
+      { "text": "To determine the scientific expertise of individual researchers.", "isCorrect": false }
+    ],
+    "rationale": "The mission of Unit D.4 is 'the validation of the legal and financial information submitted by participants in view of signing a grant agreement or a contract' (Page 2), implying the goal is to ensure eligibility.",
+    "difficulty": "Easy",
+    "source": "PDFsam_merge.pdf, Page 2 (Implicit from purpose of Unit D.4)"
+  }
+];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null); // To store user's selected option index for each question
+        let isAnswerLocked = false; // To prevent changing answer after selecting
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        function loadQuestion() {
+            isAnswerLocked = false; // Reset lock for new question
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; // Reset feedback styling
+
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                li.dataset.index = index;
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) {
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                        displayFeedback(option.isCorrect, currentQuestion.rationale);
+                    } else if (option.isCorrect) {
+                        // Also show the correct answer if an incorrect one was selected
+                        li.classList.add('correct');
+                    }
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; // Don't allow changing answer
+
+            // Mark all options as disabled for clicking
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; // Further disable clicks
+            });
+
+            // Visually mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling and update score if it's the first time answering
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                if (userAnswers[currentQuestionIndex] === selectedIndex) { // Only add score once
+                    score++;
+                }
+            } else {
+                clickedElement.classList.add('incorrect');
+                // Highlight the correct answer if the user picked wrong
+                Array.from(optionsContainer.children).forEach(option => {
+                    const optionIndex = parseInt(option.dataset.index);
+                    if (questions[currentQuestionIndex].options[optionIndex].isCorrect) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons(); // Enable next button after selection
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length -1; // Must answer before moving to next (unless it's the last question and already answered)
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+            if (userAnswers[currentQuestionIndex] !== null) { // If answered, next can be enabled
+                nextBtn.disabled = false;
+            }
+        }
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null); // Reset all answers
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+            loadQuestion();
+        });
+
+        // Initial load
+        loadQuestion();
+    </script>
+</body>
+</html>
