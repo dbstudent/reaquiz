@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = 
+[
+  {
+    "id": "REA-MCQ-001",
+    "category": "REA Mandate and Structure",
+    "sub_category": "REA Mission",
+    "question": "What is the primary mission of the European Research Executive Agency (REA)?",
+    "options": [
+      {
+        "text": "To serve as the central procurement office for all EU institutions and bodies.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fund and manage pioneering projects across various domains of research and innovation to support EU policy.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide advisory services on economic policy to the European Commission and Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "To supervise financial markets and ensure stability within the Eurozone.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Research Executive Agency (REA) is mandated by the European Commission to support the EU research and innovation (R&I) policy and funds and manages pioneering projects in virtually all domains of R&I. Its mission is to help build a greener Europe with prosperous, inclusive societies and economies that fully utilise the digital age.",
+    "difficulty": "Easy",
+    "source": "556"
+  },
+  {
+    "id": "REA-MCQ-002",
+    "category": "REA Operations",
+    "sub_category": "Central Validation Service",
+    "question": "Which of the following tasks is NOT among the responsibilities of REA's Central Validation Service?",
+    "options": [
+      {
+        "text": "Legal entity validation (PIC validation).",
+        "isCorrect": false
+      },
+      {
+        "text": "Performing financial capacity assessments (FCA).",
+        "isCorrect": false
+      },
+      {
+        "text": "Managing the overall strategic planning for Horizon Europe.",
+        "isCorrect": true
+      },
+      {
+        "text": "Conducting ownership control assessments (OCA).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Central Validation Service is responsible for legal entity validation (PIC validation), LEAR appointment, collecting financial information for financial capacity assessment (FCA), and ownership control assessment (OCA). While it assists EU services with these tasks, it is not responsible for the overall strategic planning for Horizon Europe.",
+    "difficulty": "Medium",
+    "source": "335, 561, 699, 712, 713, 802"
+  },
+  {
+    "id": "REA-MCQ-003",
+    "category": "REA Mandate and Structure",
+    "sub_category": "Parent Directorates-General",
+    "question": "Which Directorate-General is designated as the lead parent Directorate-General for the European Research Executive Agency (REA)?",
+    "options": [
+      {
+        "text": "Directorate-General for Education, Youth, Sport and Culture.",
+        "isCorrect": false
+      },
+      {
+        "text": "Directorate-General for Agriculture and Rural Development.",
+        "isCorrect": false
+      },
+      {
+        "text": "Directorate-General for Research and Innovation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Directorate-General for Communications Networks, Content and Technology.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Directorate-General for Research and Innovation is designated as the lead parent Directorate-General for REA, responsible for monitoring and supervising horizontal issues like internal control, human resources, and IT systems.",
+    "difficulty": "Easy",
+    "source": "9, 11, 12"
+  },
+  {
+    "id": "REA-MCQ-004",
+    "category": "EU Funding Programmes",
+    "sub_category": "Horizon Europe",
+    "question": "What is the approximate budget allocated to the Horizon Europe research and innovation programme?",
+    "options": [
+      {
+        "text": "EUR 50 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 95.5 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 120 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 75 billion.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Horizon Europe has a budget of EUR 95.5 billion, aiming to position the EU at the forefront of research and innovation and support green and digital transitions.",
+    "difficulty": "Easy",
+    "source": "557, 883"
+  },
+  {
+    "id": "REA-MCQ-005",
+    "category": "EU Policy Initiatives",
+    "sub_category": "EU Missions",
+    "question": "What is the specific target for the EU Mission 'A Soil Deal for Europe' by 2030?",
+    "options": [
+      {
+        "text": "To reduce soil erosion by 50% across Europe.",
+        "isCorrect": false
+      },
+      {
+        "text": "To establish 100 soil health living labs.",
+        "isCorrect": true
+      },
+      {
+        "text": "To convert 75% of agricultural land to organic farming.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fully digitalise soil monitoring systems in all Member States.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EU Mission 'A Soil Deal for Europe' aims to set up 100 soil health living labs by 2030.",
+    "difficulty": "Medium",
+    "source": "278"
+  },
+  {
+    "id": "REA-MCQ-006",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Simplification Agenda",
+    "question": "Which of the following areas is a key focus for simplification measures in the 2025 Commission Work Programme?",
+    "options": [
+      {
+        "text": "International trade agreements and tariffs.",
+        "isCorrect": false
+      },
+      {
+        "text": "Sustainable finance reporting and sustainability due diligence.",
+        "isCorrect": true
+      },
+      {
+        "text": "Security protocols for diplomatic missions.",
+        "isCorrect": false
+      },
+      {
+        "text": "Inter-Member State judicial cooperation frameworks.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 2025 Commission Work Programme includes far-reaching simplification in fields like sustainable finance reporting, sustainability due diligence, and taxonomy. It also mentions streamlining permit granting and reporting requirements, and addressing administrative burden for farmers under the Common Agriculture Policy.",
+    "difficulty": "Easy",
+    "source": "1, 207, 208, 282"
+  },
+  {
+    "id": "REA-MCQ-007",
+    "category": "Data Protection",
+    "sub_category": "Regulation (EU) 2018/1725",
+    "question": "What is the primary scope of Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "To protect personal data processed by national governments of Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "To regulate data processing by private companies across the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "To protect natural persons with regard to the processing of personal data by Union institutions, bodies, offices and agencies.",
+        "isCorrect": true
+      },
+      {
+        "text": "To establish rules for the free movement of non-personal data within the EU.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Regulation (EU) 2018/1725 governs the protection of natural persons concerning the processing of personal data by Union institutions, bodies, offices, and agencies, and the free movement of such data.",
+    "difficulty": "Easy",
+    "source": "32, 33, 375"
+  },
+  {
+    "id": "REA-MCQ-008",
+    "category": "Data Protection",
+    "sub_category": "Personal Data Definition",
+    "question": "Under Regulation (EU) 2018/1725, what constitutes 'personal data'?",
+    "options": [
+      {
+        "text": "Any information relating to legal persons, such as company names and contact details.",
+        "isCorrect": false
+      },
+      {
+        "text": "Information that does not relate to an identified or identifiable natural person.",
+        "isCorrect": false
+      },
+      {
+        "text": "Any information concerning an identified or identifiable natural person, including pseudonymised data that can be attributed using additional information.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only highly sensitive information, such as health data or racial origin.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Personal data refers to any information concerning an identified or identifiable natural person. This also includes pseudonymised data if it can be attributed to a natural person with additional information. The regulation explicitly states it does not cover legal persons or anonymous information.",
+    "difficulty": "Medium",
+    "source": "32, 35"
+  },
+  {
+    "id": "REA-MCQ-009",
+    "category": "Data Protection",
+    "sub_category": "DPO Role",
+    "question": "What is a key responsibility of the Data Protection Officer (DPO) in an EU institution or body?",
+    "options": [
+      {
+        "text": "To directly manage all IT security systems of the institution.",
+        "isCorrect": false
+      },
+      {
+        "text": "To serve as the primary contact point for all external communication with the public.",
+        "isCorrect": false
+      },
+      {
+        "text": "To advise operational controllers on their data protection obligations and ensure internal application of the Regulation.",
+        "isCorrect": true
+      },
+      {
+        "text": "To approve all financial transactions and procurement contracts.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Data Protection Officer (DPO) ensures in an independent manner the internal application of the Regulation (EU) 2018/1725 in the Commission and advises operational controllers on their data protection obligations. They also provide advice on DPIAs, prior consultations, and personal data breaches.",
+    "difficulty": "Easy",
+    "source": "133, 134, 330, 457"
+  },
+  {
+    "id": "REA-MCQ-0010",
+    "category": "Data Protection",
+    "sub_category": "Lawful Processing",
+    "question": "Under what condition is the processing of personal data generally considered lawful according to Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "When the data subject has implicitly agreed through continued use of a service.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if explicit consent is obtained from the data subject for all processing activities.",
+        "isCorrect": false
+      },
+      {
+        "text": "Based on the necessity for a task carried out in the public interest or compliance with a legal obligation, among other legitimate bases.",
+        "isCorrect": true
+      },
+      {
+        "text": "Solely for statistical or research purposes, without any other justification.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For processing to be lawful, personal data should be processed on the basis of necessity for the performance of a task carried out in the public interest by Union institutions and bodies, compliance with a legal obligation, or other legitimate bases such as the data subject's consent or contract performance.",
+    "difficulty": "Medium",
+    "source": "40"
+  },
+  {
+    "id": "REA-MCQ-0011",
+    "category": "Data Protection",
+    "sub_category": "Data Subject Rights",
+    "question": "What is the standard timeframe for a controller to respond to a data subject's request concerning their personal data under Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "Within 7 working days, with no possibility of extension.",
+        "isCorrect": false
+      },
+      {
+        "text": "Without undue delay and in any event within one month of receipt, with a possible extension of two further months.",
+        "isCorrect": true
+      },
+      {
+        "text": "Within three months for all requests, regardless of complexity.",
+        "isCorrect": false
+      },
+      {
+        "text": "As soon as technically feasible, typically within 24 hours.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The controller must provide information on action taken on a request without undue delay and in any event within one month of receipt. This period can be extended by two further months if necessary, due to complexity and number of requests.",
+    "difficulty": "Medium",
+    "source": "80"
+  },
+  {
+    "id": "REA-MCQ-0012",
+    "category": "Data Protection",
+    "sub_category": "Terminology",
+    "question": "According to Regulation (EU) 2018/1725, what does 'pseudonymisation' mean?",
+    "options": [
+      {
+        "text": "The irreversible process of rendering personal data anonymous.",
+        "isCorrect": false
+      },
+      {
+        "text": "The encryption of personal data to prevent all access.",
+        "isCorrect": false
+      },
+      {
+        "text": "Processing personal data so it can no longer be attributed to a specific data subject without additional, separately kept information.",
+        "isCorrect": true
+      },
+      {
+        "text": "The process of collecting personal data from publicly available sources only.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Pseudonymisation means processing personal data so that it can no longer be attributed to a specific data subject without the use of additional information, provided that such additional information is kept separately and is subject to technical and organisational measures to ensure non-attribution.",
+    "difficulty": "Easy",
+    "source": "70"
+  },
+  {
+    "id": "REA-MCQ-0013",
+    "category": "Data Protection",
+    "sub_category": "Consent",
+    "question": "Which of the following is a valid condition for consent to the processing of personal data, as per Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "Silence or inactivity after a data protection notice.",
+        "isCorrect": false
+      },
+      {
+        "text": "Pre-ticked boxes on an online form, provided they are clearly visible.",
+        "isCorrect": false
+      },
+      {
+        "text": "A clear affirmative act establishing a freely given, specific, informed, and unambiguous indication of agreement.",
+        "isCorrect": true
+      },
+      {
+        "text": "Consent implied by the necessity of performing a contract, even if unrelated to the data processing.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Consent must be given by a clear affirmative act, freely given, specific, informed, and unambiguous. Silence, pre-ticked boxes, or inactivity do not constitute consent. It must also be as easy to withdraw as to give.",
+    "difficulty": "Medium",
+    "source": "36, 76"
+  },
+  {
+    "id": "REA-MCQ-0014",
+    "category": "Data Protection",
+    "sub_category": "Principles",
+    "question": "What do the principles of 'data protection by design' and 'data protection by default' entail for controllers?",
+    "options": [
+      {
+        "text": "Implementing basic security measures after a system is fully developed and deployed.",
+        "isCorrect": false
+      },
+      {
+        "text": "Developing systems that allow data subjects to monitor all processing activities at all times.",
+        "isCorrect": false
+      },
+      {
+        "text": "Integrating necessary safeguards and data protection principles, such as data minimisation, into processing systems from the outset.",
+        "isCorrect": true
+      },
+      {
+        "text": "Relying solely on external audits to ensure compliance with data protection laws.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The principles of data protection by design and by default require controllers to implement appropriate technical and organisational measures, such as pseudonymisation and data minimisation, from the very beginning of system development to ensure compliance with the Regulation and protect data subjects' rights.",
+    "difficulty": "Medium",
+    "source": "55, 110"
+  },
+  {
+    "id": "REA-MCQ-0015",
+    "category": "Data Protection",
+    "sub_category": "Data Breach Notification",
+    "question": "When must a controller notify the European Data Protection Supervisor (EDPS) of a personal data breach, according to Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "Within 24 hours of discovery, only if sensitive data is involved.",
+        "isCorrect": false
+      },
+      {
+        "text": "Within 72 hours of becoming aware of it, unless unlikely to result in a risk to rights and freedoms.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if mandated by a national supervisory authority.",
+        "isCorrect": false
+      },
+      {
+        "text": "At the end of the financial year, as part of an annual report.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The controller must notify the EDPS of a personal data breach without undue delay and, where feasible, no later than 72 hours after becoming aware of it, unless the breach is unlikely to result in a risk to the rights and freedoms of natural persons.",
+    "difficulty": "Medium",
+    "source": "57, 502"
+  },
+  {
+    "id": "REA-MCQ-0016",
+    "category": "Data Protection",
+    "sub_category": "International Transfers",
+    "question": "In the absence of an adequacy decision, what is a valid safeguard for transferring personal data to a third country or international organisation under Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "Only through explicit consent from the data subject, without further conditions.",
+        "isCorrect": false
+      },
+      {
+        "text": "A unilateral declaration by the controller that the recipient country has sufficient protections.",
+        "isCorrect": false
+      },
+      {
+        "text": "Standard data protection clauses adopted by the Commission or EDPS, or contractual clauses authorised by the EDPS.",
+        "isCorrect": true
+      },
+      {
+        "text": "Any informal agreement with the third country, provided it is documented.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In the absence of an adequacy decision, appropriate safeguards for data transfer to third countries or international organisations can include legally binding instruments, standard data protection clauses adopted by the Commission or EDPS, or contractual clauses and administrative arrangements authorised by the EDPS.",
+    "difficulty": "Hard",
+    "source": "63, 136, 137, 138"
+  },
+  {
+    "id": "REA-MCQ-0017",
+    "category": "Data Protection",
+    "sub_category": "Roles and Responsibilities",
+    "question": "Under Regulation (EU) 2018/1725, who is defined as the 'controller'?",
+    "options": [
+      {
+        "text": "Any natural person whose data is being processed.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Union institution or body that determines the purposes and means of personal data processing.",
+        "isCorrect": true
+      },
+      {
+        "text": "The external service provider that processes data on behalf of an institution.",
+        "isCorrect": false
+      },
+      {
+        "text": "An independent body that supervises data protection compliance.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 'controller' is defined as the Union institution or body, or any other organisational entity, which alone or jointly with others, determines the purposes and means of the processing of personal data.",
+    "difficulty": "Easy",
+    "source": "71"
+  },
+  {
+    "id": "REA-MCQ-0018",
+    "category": "Data Protection",
+    "sub_category": "Data Breach Statistics",
+    "question": "According to the EDPS Annual Report 2024, which type of personal data breach was most prevalent in 2024?",
+    "options": [
+      {
+        "text": "Availability breaches.",
+        "isCorrect": false
+      },
+      {
+        "text": "Integrity breaches.",
+        "isCorrect": false
+      },
+      {
+        "text": "Confidentiality breaches.",
+        "isCorrect": true
+      },
+      {
+        "text": "Data loss due to technical failures.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In 2024, 93% of the personal data breach notifications received by the EDPS were confidentiality breaches, making them the most prevalent.",
+    "difficulty": "Medium",
+    "source": "505, 506"
+  },
+  {
+    "id": "REA-MCQ-0019",
+    "category": "Data Protection",
+    "sub_category": "Data Breach Causes",
+    "question": "What was identified as the most common cause of personal data breaches in the EDPS Annual Report 2024?",
+    "options": [
+      {
+        "text": "External cyberattacks.",
+        "isCorrect": false
+      },
+      {
+        "text": "System malfunctions.",
+        "isCorrect": false
+      },
+      {
+        "text": "Human error.",
+        "isCorrect": true
+      },
+      {
+        "text": "Insider threats with malicious intent.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EDPS Annual Report 2024 states that human error remains the most common cause of personal data breaches. This often includes sending emails with confidential information to the wrong recipients or publishing documents without removing personal data.",
+    "difficulty": "Easy",
+    "source": "508, 509"
+  },
+  {
+    "id": "REA-MCQ-0020",
+    "category": "EU Funding Management",
+    "sub_category": "Funding & Tenders Portal",
+    "question": "Which of the following is considered a core activity of the EU Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "Direct management of Member State national budgets.",
+        "isCorrect": false
+      },
+      {
+        "text": "Expert registration, selection, and management.",
+        "isCorrect": true
+      },
+      {
+        "text": "Policy-making for EU legislative acts.",
+        "isCorrect": false
+      },
+      {
+        "text": "Monitoring individual compliance with national laws.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The core activities of the EU Funding & Tenders Portal include expert registration, selection and management; grants and prizes award and management; procurement award and management; participant registration, assessment and validation management; and domain-specific facts registration, assessment and validation management.",
+    "difficulty": "Easy",
+    "source": "688, 689"
+  },
+  {
+    "id": "REA-MCQ-0021",
+    "category": "EU Funding Management",
+    "sub_category": "Participant Registration",
+    "question": "What is the primary purpose of appointing a Legal Entity Appointed Representative (LEAR) in the EU Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "To serve as the project's scientific coordinator.",
+        "isCorrect": false
+      },
+      {
+        "text": "To handle the organisation's access rights and key data in the Participant Register.",
+        "isCorrect": true
+      },
+      {
+        "text": "To conduct all financial audits for the organisation.",
+        "isCorrect": false
+      },
+      {
+        "text": "To act as the legal representative in all court proceedings.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR is the person officially appointed by the participant to handle their access rights and key data in the Participant Register. Their appointment is mandatory for all validated participants, as it enables updates to legal entity data and electronic contract signing.",
+    "difficulty": "Easy",
+    "source": "757"
+  },
+  {
+    "id": "REA-MCQ-0022",
+    "category": "EU Funding Management",
+    "sub_category": "Financial Capacity Assessment",
+    "question": "How long is a financial capacity assessment (FCA) performed by the Central Validation Service generally valid?",
+    "options": [
+      {
+        "text": "6 months after the assessment date.",
+        "isCorrect": false
+      },
+      {
+        "text": "12 months after the closure date of the most recent assessed accounting period.",
+        "isCorrect": false
+      },
+      {
+        "text": "18 months after the closure date of the most recent assessed accounting period.",
+        "isCorrect": true
+      },
+      {
+        "text": "Indefinitely, unless major financial changes occur.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The financial assessment performed by the Central Validation Service is valid for 18 months after the closure date of the most recent assessed accounting period.",
+    "difficulty": "Medium",
+    "source": "800"
+  },
+  {
+    "id": "REA-MCQ-0023",
+    "category": "EU Funding Management",
+    "sub_category": "SME Status",
+    "question": "What happens to an SME's status if its aggregated headcount and financial data exceed the SME ceilings due to a merger or acquisition?",
+    "options": [
+      {
+        "text": "The SME status is lost after two consecutive accounting periods above the ceilings.",
+        "isCorrect": false
+      },
+      {
+        "text": "The SME status is maintained for all existing contracts but lost for new applications.",
+        "isCorrect": false
+      },
+      {
+        "text": "The SME status is lost immediately from the date of the transaction.",
+        "isCorrect": true
+      },
+      {
+        "text": "The entity automatically becomes a 'mid-cap' regardless of size.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For changes due to a merger or acquisition, the SME status is lost immediately from the date of the transaction if the aggregated headcount and financial data of the new structure exceed the SME ceilings. Participants must update their data in the Participant Register.",
+    "difficulty": "Hard",
+    "source": "733"
+  },
+  {
+    "id": "REA-MCQ-0024",
+    "category": "EU Funding Management",
+    "sub_category": "Horizon Results Platform",
+    "question": "Who is responsible for maintaining the Horizon Results Platform?",
+    "options": [
+      {
+        "text": "Individual project beneficiaries.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Parliament.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Union.",
+        "isCorrect": true
+      },
+      {
+        "text": "An external consortium of research institutes.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Union maintains the Horizon Results Platform to allow its beneficiaries to showcase results from Framework Programmes like FP7 and Horizon 2020.",
+    "difficulty": "Easy",
+    "source": "289"
+  },
+  {
+    "id": "REA-MCQ-0025",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Union of Skills",
+    "question": "What is a core objective of the European Commission's 'Union of Skills' initiative?",
+    "options": [
+      {
+        "text": "To centralise all national education systems under EU control.",
+        "isCorrect": false
+      },
+      {
+        "text": "To enhance skills to access quality jobs, promote skills portability, and attract talent for Europe's future competitiveness.",
+        "isCorrect": true
+      },
+      {
+        "text": "To exclusively fund vocational training programs without university involvement.",
+        "isCorrect": false
+      },
+      {
+        "text": "To introduce mandatory language proficiency tests for all EU citizens.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 'Union of Skills' aims to empower people by enhancing skills to access quality jobs, make skills portable across the EU, and enhance companies' competitiveness by helping them attract, develop, and retain talent for Europe's future, particularly for the digital and green transitions.",
+    "difficulty": "Medium",
+    "source": "284, 286, 306"
+  },
+  {
+    "id": "REA-MCQ-0026",
+    "category": "EU Policy Initiatives",
+    "sub_category": "EU Missions",
+    "question": "What is the primary goal of establishing 'Living Labs' under the EU Mission 'A Soil Deal for Europe'?",
+    "options": [
+      {
+        "text": "To conduct academic research exclusively in controlled laboratory settings.",
+        "isCorrect": false
+      },
+      {
+        "text": "To accelerate the adoption of sustainable practices and develop solutions adapted to local conditions through multi-actor involvement.",
+        "isCorrect": true
+      },
+      {
+        "text": "To centralize all soil data collection under a single European authority.",
+        "isCorrect": false
+      },
+      {
+        "text": "To regulate the import and export of agricultural products across the EU.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Living labs and lighthouses are key to accelerating the adoption of sustainable practices by users and to developing solutions adapted to local conditions, involving a diversity of actors for co-creation across sectors and disciplines.",
+    "difficulty": "Easy",
+    "source": "277"
+  },
+  {
+    "id": "REA-MCQ-0027",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Simplification Agenda",
+    "question": "Which of the following is a stated objective of the EU's simplification agenda for businesses?",
+    "options": [
+      {
+        "text": "Increasing the number of regulatory requirements for multinational corporations.",
+        "isCorrect": false
+      },
+      {
+        "text": "Ensuring businesses spend less time and resources on complying with red tape.",
+        "isCorrect": true
+      },
+      {
+        "text": "Introducing more complex reporting standards for sustainable finance.",
+        "isCorrect": false
+      },
+      {
+        "text": "Prioritising new legislation over the simplification of existing rules.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The simplification agenda aims to deliver fast and visible improvements for people and businesses, ensuring European businesses spend less time and resources complying with red tape so they can focus on innovation and job creation. Key measures include streamlining sustainable finance reporting, due diligence, and taxonomy, and creating a new category for small mid-caps.",
+    "difficulty": "Easy",
+    "source": "1, 4, 205, 207"
+  },
+  {
+    "id": "REA-MCQ-0028",
+    "category": "Internal Operations",
+    "sub_category": "IT Security",
+    "question": "In the European Commission, who is formally responsible for the IT security of a specific Communication and Information System (CIS)?",
+    "options": [
+      {
+        "text": "The Head of the Commission department.",
+        "isCorrect": false
+      },
+      {
+        "text": "The data owner for each data set handled in the CIS.",
+        "isCorrect": false
+      },
+      {
+        "text": "The system owner for that CIS.",
+        "isCorrect": true
+      },
+      {
+        "text": "The Directorate-General for Informatics.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The system owner is formally appointed for each CIS and is responsible for its IT security, reporting to the Head of the Commission department. The data owner is responsible for the IT security of a specific data set.",
+    "difficulty": "Medium",
+    "source": "197, 198, 200"
+  },
+  {
+    "id": "REA-MCQ-0029",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Artificial Intelligence",
+    "question": "What is the key characteristic of 'Generative AI' as described in the sources?",
+    "options": [
+      {
+        "text": "AI systems capable of performing only one specific, predefined task.",
+        "isCorrect": false
+      },
+      {
+        "text": "AI systems that primarily focus on identifying patterns in existing data without creating new content.",
+        "isCorrect": false
+      },
+      {
+        "text": "General purpose AI capable of performing a wide array of tasks, including the generation of various forms of new content.",
+        "isCorrect": true
+      },
+      {
+        "text": "AI models that solely focus on human-machine interaction, without broader applications.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Generative AI is described as a 'General purpose AI' capable of performing a wide array of tasks, including the generation of various forms of new content such as text, images, sounds, and code.",
+    "difficulty": "Easy",
+    "source": "214, 215"
+  },
+  {
+    "id": "REA-MCQ-0030",
+    "category": "EU Funding Programmes",
+    "sub_category": "Horizon Europe - Pillar III",
+    "question": "Which of the following entities are specifically supported by the European Innovation Council (EIC) under Horizon Europe's Pillar III?",
+    "options": [
+      {
+        "text": "Only large corporations with established market presence.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only public sector bodies and academic research institutions.",
+        "isCorrect": false
+      },
+      {
+        "text": "SMEs and start-ups with high-impact innovations that are deemed too financially risky for the market.",
+        "isCorrect": true
+      },
+      {
+        "text": "Non-governmental organisations focusing on social welfare programs.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Under Pillar III, the European Innovation Council (EIC) supports SMEs and start-ups with high-impact innovations that are deemed too financially risky for the market to invest alone, with a particular focus on deep-tech and game-changing innovations.",
+    "difficulty": "Medium",
+    "source": "626"
+  },
+  {
+    "id": "REA-MCQ-0031",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Digital Transformation",
+    "question": "What is the primary objective of the Alliance for Language Technologies European Digital Infrastructure Consortium (ALT-EDIC) initiative?",
+    "options": [
+      {
+        "text": "To enforce a single official language across all EU Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "To provide centralised access to language resources for the development of European Large Language Models.",
+        "isCorrect": true
+      },
+      {
+        "text": "To establish a new regulatory framework for digital content moderation.",
+        "isCorrect": false
+      },
+      {
+        "text": "To promote English as the sole language for scientific publications in the EU.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The ALT-EDIC initiative aims to provide centralised access to language resources for the development of European Large Language Models, offering valuable tools for Member States with limited language data and empowering users to engage with digital content in their native languages.",
+    "difficulty": "Medium",
+    "source": "230, 231"
+  },
+  {
+    "id": "REA-MCQ-0032",
+    "category": "Data Protection",
+    "sub_category": "Prior Consultation",
+    "question": "When is a controller required to consult the European Data Protection Supervisor (EDPS) prior to processing personal data?",
+    "options": [
+      {
+        "text": "Only when the processing involves data transfer outside the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "Whenever a Data Protection Impact Assessment (DPIA) indicates a high risk that cannot be mitigated by reasonable means.",
+        "isCorrect": true
+      },
+      {
+        "text": "For all new data processing operations, regardless of risk level.",
+        "isCorrect": false
+      },
+      {
+        "text": "If the processing involves fewer than 100 data subjects.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The controller must consult the EDPS prior to processing where a Data Protection Impact Assessment (DPIA) indicates that the processing would, in the absence of safeguards, result in a high risk to the rights and freedoms of natural persons, and the controller is of the opinion that the risk cannot be mitigated by reasonable means.",
+    "difficulty": "Hard",
+    "source": "119, 125, 407"
+  },
+  {
+    "id": "REA-MCQ-0033",
+    "category": "Data Protection",
+    "sub_category": "EDPS Role",
+    "question": "Which independent body is responsible for supervising the processing of personal data by European Union institutions, bodies, offices, and agencies (EUIs)?",
+    "options": [
+      {
+        "text": "The European Anti-Fraud Office (OLAF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Board (EDPB).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Supervisor (EDPS).",
+        "isCorrect": true
+      },
+      {
+        "text": "The European Court of Justice.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Data Protection Supervisor (EDPS) is the European Union’s independent data protection authority responsible for supervising the processing of personal data by the European institutions, bodies, offices and agencies (EUIs).",
+    "difficulty": "Easy",
+    "source": "388"
+  },
+  {
+    "id": "REA-MCQ-0034",
+    "category": "Data Protection",
+    "sub_category": "EDPS Term of Office",
+    "question": "What is the standard term of office for the European Data Protection Supervisor (EDPS), and can it be renewed?",
+    "options": [
+      {
+        "text": "Four years, renewable once.",
+        "isCorrect": false
+      },
+      {
+        "text": "Five years, non-renewable.",
+        "isCorrect": false
+      },
+      {
+        "text": "Five years, renewable once.",
+        "isCorrect": true
+      },
+      {
+        "text": "Seven years, renewable indefinitely.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Data Protection Supervisor is appointed for a term of five years and is eligible for reappointment once.",
+    "difficulty": "Medium",
+    "source": "145, 146"
+  },
+  {
+    "id": "REA-MCQ-0035",
+    "category": "Data Protection",
+    "sub_category": "EDPS Enforcement",
+    "question": "What action did the EDPS take against the European Commission in March 2024 regarding its use of Microsoft 365?",
+    "options": [
+      {
+        "text": "Issued a commendation for its robust data protection measures.",
+        "isCorrect": false
+      },
+      {
+        "text": "Provided general recommendations without specific findings.",
+        "isCorrect": false
+      },
+      {
+        "text": "Issued a decision finding infringements of data protection rules and requiring compliance measures.",
+        "isCorrect": true
+      },
+      {
+        "text": "Initiated a new joint venture for data processing with Microsoft.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In March 2024, the EDPS issued a decision following an investigation into the European Commission’s use of Microsoft 365, finding that the Commission infringed several key data protection rules and required compliance measures, including the suspension of relevant data flows.",
+    "difficulty": "Medium",
+    "source": "411, 412, 413, 429"
+  },
+  {
+    "id": "REA-MCQ-0036",
+    "category": "Data Protection",
+    "sub_category": "Special Categories of Data",
+    "question": "Which type of personal data is given specific protection under Regulation (EU) 2018/1725 due to its sensitive nature?",
+    "options": [
+      {
+        "text": "Contact details and publicly available information.",
+        "isCorrect": false
+      },
+      {
+        "text": "Data revealing racial or ethnic origin, political opinions, religious beliefs, or trade union membership.",
+        "isCorrect": true
+      },
+      {
+        "text": "Financial transaction records of an individual.",
+        "isCorrect": false
+      },
+      {
+        "text": "Information contained in official public registers.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Regulation (EU) 2018/1725 specifies that personal data revealing racial or ethnic origin, political opinions, religious or philosophical beliefs, or trade union membership, as well as genetic data, biometric data for unique identification, health data, or data concerning a natural person's sex life or sexual orientation, are particularly sensitive and merit specific protection.",
+    "difficulty": "Easy",
+    "source": "44, 160"
+  },
+  {
+    "id": "REA-MCQ-0037",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Union of Skills",
+    "question": "What broad challenge is the European Commission's 'Union of Skills' initiative primarily designed to address?",
+    "options": [
+      {
+        "text": "Over-qualification in the EU labour market.",
+        "isCorrect": false
+      },
+      {
+        "text": "Lack of professional experience among recent graduates.",
+        "isCorrect": false
+      },
+      {
+        "text": "Skills shortages and gaps hindering EU competitiveness.",
+        "isCorrect": true
+      },
+      {
+        "text": "The decline of traditional manufacturing industries.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 'Union of Skills' initiative is explicitly designed to address skills shortages and gaps that are hindering EU competitiveness, by combining education, training, and employment policies.",
+    "difficulty": "Easy",
+    "source": "284, 285"
+  },
+  {
+    "id": "REA-MCQ-0038",
+    "category": "Data Protection",
+    "sub_category": "General Principles",
+    "question": "Which of the following is NOT one of the general principles relating to the processing of personal data under Regulation (EU) 2018/1725?",
+    "options": [
+      {
+        "text": "Lawfulness and fairness.",
+        "isCorrect": false
+      },
+      {
+        "text": "Data minimisation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Profit maximisation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Accuracy and storage limitation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The general principles of data processing include lawfulness, fairness, transparency, purpose limitation, data minimisation, accuracy, storage limitation, and integrity and confidentiality. Profit maximisation is not a stated principle.",
+    "difficulty": "Easy",
+    "source": "38, 73, 157"
+  },
+  {
+    "id": "REA-MCQ-0039",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Simplification Agenda",
+    "question": "What is the primary overarching goal of the EU's 'Simplification & Implementation' agenda?",
+    "options": [
+      {
+        "text": "To increase bureaucratic oversight over all EU projects.",
+        "isCorrect": false
+      },
+      {
+        "text": "To centralise all legislative powers at the European level.",
+        "isCorrect": false
+      },
+      {
+        "text": "To reduce red tape and administrative burdens for businesses and citizens to enhance competitiveness and innovation.",
+        "isCorrect": true
+      },
+      {
+        "text": "To introduce new taxes on digital services.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 'Simplification & Implementation' agenda aims to deliver fast and visible improvements for people and business by reducing red tape and administrative burdens, enabling them to focus on innovation, business, and job creation.",
+    "difficulty": "Easy",
+    "source": "4, 205, 302"
+  },
+  {
+    "id": "REA-MCQ-0040",
+    "category": "EU Funding Programmes",
+    "sub_category": "Horizon Europe - EIC",
+    "question": "Which type of innovation is a specific focus for support by the European Innovation Council (EIC) Accelerator under Horizon Europe's Pillar III?",
+    "options": [
+      {
+        "text": "Incremental innovations in established industries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Low-risk, mature technologies ready for market.",
+        "isCorrect": false
+      },
+      {
+        "text": "Deep-tech and game-changing innovations with high financial risk.",
+        "isCorrect": true
+      },
+      {
+        "text": "Innovations primarily for military applications.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EIC Accelerator notably supports SMEs and start-ups with high-impact innovations that are deemed too financially risky for the market, with a particular focus on deep-tech and game-changing innovations.",
+    "difficulty": "Medium",
+    "source": "626"
+  },
+  {
+    "id": "REA-MCQ-0041",
+    "category": "REA Mandate and Structure",
+    "sub_category": "REA Role",
+    "question": "What is the key role of the European Research Executive Agency (REA) within the EU's research and innovation policy?",
+    "options": [
+      {
+        "text": "To define the overall strategic direction of EU research policy.",
+        "isCorrect": false
+      },
+      {
+        "text": "To independently conduct all research projects across the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "To support the EU research and innovation policy by funding and managing pioneering projects.",
+        "isCorrect": true
+      },
+      {
+        "text": "To regulate intellectual property rights for all EU-funded research.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "REA's primary role is to support the EU research and innovation (R&I) policy by funding and managing pioneering projects in virtually all domains of R&I.",
+    "difficulty": "Easy",
+    "source": "556"
+  },
+  {
+    "id": "REA-MCQ-0042",
+    "category": "Data Protection",
+    "sub_category": "EDPS Statistics",
+    "question": "According to the EDPS Annual Report 2024, what was the approximate percentage increase in personal data breach notifications received by the EDPS in 202 year compared to 2023?",
+    "options": [
+      {
+        "text": "10% increase.",
+        "isCorrect": false
+      },
+      {
+        "text": "20% increase.",
+        "isCorrect": false
+      },
+      {
+        "text": "30% increase.",
+        "isCorrect": true
+      },
+      {
+        "text": "No significant change.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In 2024, the EDPS received 109 admissible personal data breach notifications, representing nearly a 30% increase compared to 77 notifications in 2023.",
+    "difficulty": "Medium",
+    "source": "505"
+  },
+  {
+    "id": "REA-MCQ-0043",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Climate Action",
+    "question": "What is the stated goal for the European Union regarding climate neutrality?",
+    "options": [
+      {
+        "text": "To achieve climate neutrality by 2030 for all sectors.",
+        "isCorrect": false
+      },
+      {
+        "text": "To transition to climate neutrality in the energy and mobility sectors by 2050 at the latest, as a key driver for the entire EU.",
+        "isCorrect": true
+      },
+      {
+        "text": "To focus solely on climate adaptation, without targeting neutrality.",
+        "isCorrect": false
+      },
+      {
+        "text": "To reduce carbon emissions by 50% by 2040.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The overarching driver for Cluster 5 (Climate, Energy & Mobility) is the ambition to achieve climate neutrality in Europe by 2050, specifically entailing the transition to climate neutrality of the energy and mobility sectors by 2050 at the latest.",
+    "difficulty": "Easy",
+    "source": "671"
+  },
+  {
+    "id": "REA-MCQ-0044",
+    "category": "EU Digital Services",
+    "sub_category": "Website Functionality",
+    "question": "How do European Commission websites typically store a user's preferences for cookies?",
+    "options": [
+      {
+        "text": "By requiring manual re-selection upon each visit.",
+        "isCorrect": false
+      },
+      {
+        "text": "Through third-party advertising cookies exclusively.",
+        "isCorrect": false
+      },
+      {
+        "text": "Using first-party session or persistent cookies.",
+        "isCorrect": true
+      },
+      {
+        "text": "By storing preferences directly on the user's IP address.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Commission's websites use first-party cookies to store visitor preferences, such as cookie policy agreement, so users are not asked again. Examples include 'eu_cookie_consent' and 'cck1' which are first-party session or persistent cookies.",
+    "difficulty": "Medium",
+    "source": "255, 256, 257"
+  },
+  {
+    "id": "REA-MCQ-0045",
+    "category": "EU Funding Management",
+    "sub_category": "Restricted Calls",
+    "question": "What is the main objective of the 'Ownership Control Assessment' (OCA) for participants in certain restricted EU funding programs?",
+    "options": [
+      {
+        "text": "To determine the participant's financial stability and creditworthiness.",
+        "isCorrect": false
+      },
+      {
+        "text": "To identify instances of non-EU country/entity control over participants for security and public order reasons.",
+        "isCorrect": true
+      },
+      {
+        "text": "To assess the scientific excellence of the proposed project.",
+        "isCorrect": false
+      },
+      {
+        "text": "To evaluate the participant's compliance with environmental regulations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Ownership Control Assessment (OCA) aims at identifying possible instances of non-EU country/entity control over participants in certain restricted EU funding programmes. These restrictions apply for duly justified security reasons or to maintain public order and security.",
+    "difficulty": "Medium",
+    "source": "336, 572, 573, 802"
+  },
+  {
+    "id": "REA-MCQ-0046",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Simplification Agenda",
+    "question": "What is the administrative burden reduction target for all companies and for SMEs, respectively, under the Commission's simplification agenda?",
+    "options": [
+      {
+        "text": "At least 15% for all companies, 20% for SMEs.",
+        "isCorrect": false
+      },
+      {
+        "text": "At least 25% for all companies, 35% for SMEs.",
+        "isCorrect": true
+      },
+      {
+        "text": "At least 30% for all companies, 40% for SMEs.",
+        "isCorrect": false
+      },
+      {
+        "text": "At least 50% for all companies, 60% for SMEs.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission's simplification agenda sets an ambitious target of at least 25% administrative burden reduction for all companies and at least 35% for SMEs.",
+    "difficulty": "Medium",
+    "source": "206, 282"
+  },
+  {
+    "id": "REA-MCQ-0047",
+    "category": "EU Policy Priorities",
+    "sub_category": "Business Support",
+    "question": "According to the 2025 Commission Work Programme, which issue is a key focus for supporting new and growing businesses in the EU?",
+    "options": [
+      {
+        "text": "Increasing their direct subsidies from Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "Addressing issues around access to finance, infrastructure, market entry, data, and talent.",
+        "isCorrect": true
+      },
+      {
+        "text": "Regulating their internal hiring processes to ensure diversity.",
+        "isCorrect": false
+      },
+      {
+        "text": "Mandating their participation in all EU research projects.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 2025 Commission Work Programme focuses on new and growing businesses, addressing issues such as access to finance and infrastructure, entering new markets, obtaining data, and attracting necessary talent.",
+    "difficulty": "Easy",
+    "source": "209"
+  },
+  {
+    "id": "REA-MCQ-0048",
+    "category": "EU Policy Initiatives",
+    "sub_category": "Industrial Decarbonisation",
+    "question": "What is the main goal of the Industrial Decarbonisation Accelerator Act, as mentioned in the 2025 Commission Work Programme?",
+    "options": [
+      {
+        "text": "To establish new carbon taxes for industrial sectors.",
+        "isCorrect": false
+      },
+      {
+        "text": "To streamline permit granting, authorisations, and reporting requirements for industries.",
+        "isCorrect": true
+      },
+      {
+        "text": "To mandate specific decarbonisation technologies for all factories.",
+        "isCorrect": false
+      },
+      {
+        "text": "To provide direct financial aid to highly polluting industries.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Industrial Decarbonisation Accelerator Act is an initiative designed to streamline permit granting, authorisations, and reporting requirements for industries.",
+    "difficulty": "Easy",
+    "source": "1"
+  },
+  {
+    "id": "REA-MCQ-0049",
+    "category": "REA Operations",
+    "sub_category": "Expert Management",
+    "question": "How does the European Research Executive Agency (REA) ensure scientific excellence across the Horizon Europe programme?",
+    "options": [
+      {
+        "text": "By directly conducting all research within its own laboratories.",
+        "isCorrect": false
+      },
+      {
+        "text": "By exclusively relying on peer review from within EU institutions.",
+        "isCorrect": false
+      },
+      {
+        "text": "By working with numerous independent external experts for evaluation and monitoring.",
+        "isCorrect": true
+      },
+      {
+        "text": "By only funding projects that have already received national recognition.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "REA works with numerous independent external experts to ensure scientific excellence across the Horizon Europe programme, managing the contracting of these expert evaluators and those who monitor the implementation of REA-funded projects.",
+    "difficulty": "Easy",
+    "source": "561"
+  },
+  {
+    "id": "REA-MCQ-0050",
+    "category": "REA Mandate and Structure",
+    "sub_category": "Staffing",
+    "question": "Approximately how many staff members did the European Research Executive Agency (REA) employ as of March 2024?",
+    "options": [
+      {
+        "text": "Around 500 staff.",
+        "isCorrect": false
+      },
+      {
+        "text": "Almost 900 staff.",
+        "isCorrect": true
+      },
+      {
+        "text": "Over 1,200 staff.",
+        "isCorrect": false
+      },
+      {
+        "text": "Less than 300 staff.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "As of March 2024, the European Research Executive Agency (REA) employed almost 900 staff.",
+    "difficulty": "Easy",
+    "source": "563"
+  }
+]
+   let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>
