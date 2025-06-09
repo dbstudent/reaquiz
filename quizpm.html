@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = 
+[
+  {
+    "id": "PMQ001",
+    "category": "PM² Methodology Introduction",
+    "sub_category": "Core Concepts",
+    "question": "Which of the following is NOT one of the four pillars that the PM² Methodology is built upon?",
+    "options": [
+      {
+        "text": "Project Governance Model",
+        "isCorrect": false
+      },
+      {
+        "text": "A set of Effective Mindsets",
+        "isCorrect": true
+      },
+      {
+        "text": "A set of Processes",
+        "isCorrect": false
+      },
+      {
+        "text": "A Project Lifecycle",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The four pillars of the PM² Methodology are a project governance model (Roles & Responsibilities), a project lifecycle (Project Phases), a set of processes (project management activities), and a set of project Artefacts (documentation templates and guidelines). The PM² Mindsets define the spirit of the methodology, but are not listed as one of the four foundational pillars.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 76"
+  },
+  {
+    "id": "PMQ002",
+    "category": "Project Definition",
+    "sub_category": "Projects vs. Operations",
+    "question": "According to PM², which statement best distinguishes a 'project' from 'operations'?",
+    "options": [
+      {
+        "text": "Projects are typically low-risk, while operations are inherently high-risk.",
+        "isCorrect": false
+      },
+      {
+        "text": "Projects create unique products or services and have a definite start and end, whereas operations are ongoing day-to-day activities of a permanent organisation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Operations always result in benefits, while projects only sometimes achieve benefits.",
+        "isCorrect": false
+      },
+      {
+        "text": "Projects focus on maintaining current business, while operations focus on transforming it.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A project is defined as a temporary organisational structure set up to create a unique product or service (output) within certain constraints, with a well-defined start and end. Operations, conversely, comprise the ongoing day-to-day activities undertaken by a permanent organisation to deliver services or products.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 48, 64"
+  },
+  {
+    "id": "PMQ003",
+    "category": "Project Lifecycle",
+    "sub_category": "Phases and Drivers",
+    "question": "Which role is identified as the main driver during the 'Planning Phase' of a PM² project?",
+    "options": [
+      {
+        "text": "Project Owner (PO)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Core Team (PCT)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Manager (PM)",
+        "isCorrect": true
+      },
+      {
+        "text": "Business Manager (BM)",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In the Planning Phase, the main driver is the Project Manager (PM), who is responsible for coordinating the delivery of all project plans. The Project Owner (PO) drives the Initiating Phase, and the Project Core Team (PCT) drives the Executing Phase.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 91"
+  },
+  {
+    "id": "PMQ004",
+    "category": "Project Organisation and Roles",
+    "sub_category": "Business Manager (BM) Responsibilities",
+    "question": "As a Business Manager (BM), which of the following is a key responsibility in a PM² project?",
+    "options": [
+      {
+        "text": "Mobilising the required resources from the provider side and appointing the Project Manager (PM).",
+        "isCorrect": false
+      },
+      {
+        "text": "Overseeing the creation of all management artefacts, except the Project Initiation Request.",
+        "isCorrect": false
+      },
+      {
+        "text": "Coordinating the Business Implementation Group (BIG) and acting as a liaison between User Representatives (URs) and the provider organisation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Charing the Project Steering Committee (PSC) and approving the Project Work Plan.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Business Manager (BM) coordinates the Business Implementation Group (BIG) and acts as a liaison between the User Representatives (URs) and the provider organisation. Mobilising provider resources and appointing the PM is the Solution Provider's (SP) responsibility. Overseeing most management artefact creation is the PM's role. Charing the PSC and approving key documents like the Project Work Plan is primarily the Project Owner's (PO) or PSC's responsibility.",
+    "difficulty": "Hard",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 126"
+  },
+  {
+    "id": "PMQ005",
+    "category": "Project Artefacts",
+    "sub_category": "Initiating Phase Artefacts",
+    "question": "Which two key project artefacts define the project’s scope and direction and are referenced throughout the project, being reviewed at the end of the Initiating Phase?",
+    "options": [
+      {
+        "text": "Project Handbook and Project Work Plan",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Initiation Request and Project Stakeholder Matrix",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Case and Project Charter",
+        "isCorrect": true
+      },
+      {
+        "text": "Project-End Report and Lessons Learned",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Business Case and Project Charter define the project’s scope and direction. They are key artefacts created during the Initiating Phase and are reviewed by the Project Steering Committee (PSC) or Appropriate Governance Body (AGB) at the end of this phase to decide if the project moves forward.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 81, 82, 145"
+  },
+  {
+    "id": "PMQ006",
+    "category": "Project Management Competences",
+    "sub_category": "Behavioural Skills",
+    "question": "Beyond technical competences, which of the following is NOT listed as a behavioural skill required for Project Managers (PMs) in PM²?",
+    "options": [
+      {
+        "text": "Leadership and Teamwork",
+        "isCorrect": false
+      },
+      {
+        "text": "Problem Solving and Negotiation",
+        "isCorrect": false
+      },
+      {
+        "text": "Understanding organisational policies and standards",
+        "isCorrect": true
+      },
+      {
+        "text": "Conflict and Crisis Management",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Understanding organisational policies and standards is categorised under 'Perspective Competences' rather than 'People Competences' (behavioural skills) for Project Managers (PMs) and Business Managers (BMs).",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 70, 71, 72"
+  },
+  {
+    "id": "PMQ007",
+    "category": "PM² Initiatives",
+    "sub_category": "Open PM²",
+    "question": "What is a primary goal of the Open PM² Initiative?",
+    "options": [
+      {
+        "text": "To monetise PM² resources for the European Commission.",
+        "isCorrect": false
+      },
+      {
+        "text": "To restrict access to PM² methodology to internal EU institutions only.",
+        "isCorrect": false
+      },
+      {
+        "text": "To enhance project management competency within Europe, leading to increased project efficiency and success.",
+        "isCorrect": true
+      },
+      {
+        "text": "To centralise all project management decisions at the European Commission.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Open PM² Initiative aims to enhance project management competency within Europe, leading to increased project efficiency and success, by providing open access to the PM² Methodology and associated resources to a broader stakeholder community.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 43, 44"
+  },
+  {
+    "id": "PMQ008",
+    "category": "Project Monitoring & Control",
+    "sub_category": "Overall Process",
+    "question": "Monitor & Control activities run throughout the project's lifecycle. Which of the following is the primary focus of 'Controlling' activities?",
+    "options": [
+      {
+        "text": "Measuring ongoing activities and assessing project performance against project plans.",
+        "isCorrect": false
+      },
+      {
+        "text": "Defining desired outcomes and creating a Business Case for the project.",
+        "isCorrect": false
+      },
+      {
+        "text": "Identifying and taking corrective action to address deviations from plans and to address issues and risks.",
+        "isCorrect": true
+      },
+      {
+        "text": "Coordinating formal acceptance of the project and capturing Lessons Learned.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Monitor & Control activities involve both monitoring and controlling. Monitoring is about measuring ongoing activities and assessing project performance against project plans. Controlling is about identifying and taking corrective action to address deviations from plans and to address issues and risks.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 88"
+  },
+  {
+    "id": "PMQ009",
+    "category": "Project Organisation and Roles",
+    "sub_category": "RASCI Matrix",
+    "question": "In a RASCI table, what does the 'A' represent, and what is a key characteristic of this role for any given task?",
+    "options": [
+      {
+        "text": "Assists: Works with the responsible person, helping to complete the task.",
+        "isCorrect": false
+      },
+      {
+        "text": "Authorises: Provides formal acceptance of a deliverable or decision.",
+        "isCorrect": false
+      },
+      {
+        "text": "Accountable: Is ultimately answerable for the correct and thorough completion of the work, and there is just one accountable person for any given task.",
+        "isCorrect": true
+      },
+      {
+        "text": "Advises: Offers expert opinion and two-way communication but does not help complete the task.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In the RASCI table, 'A' stands for Accountable. The Accountable person is ultimately answerable for the correct and thorough completion of the work, and crucially, there is just one accountable person for any given task.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 141"
+  },
+  {
+    "id": "PMQ010",
+    "category": "Project Artefacts",
+    "sub_category": "Project Handbook",
+    "question": "What is the primary purpose of the 'Project Handbook' in the PM² Methodology?",
+    "options": [
+      {
+        "text": "To capture the reasoning behind the project and establish its budgetary needs.",
+        "isCorrect": false
+      },
+      {
+        "text": "To summarise the project objectives, document the selected management approach, and define key controlling processes and roles.",
+        "isCorrect": true
+      },
+      {
+        "text": "To formally initiate the project and capture basic information about its estimated effort and cost.",
+        "isCorrect": false
+      },
+      {
+        "text": "To identify and organise the project work into deliverables, work packages, activities, and tasks.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Project Handbook summarises the project objectives and documents the selected approach for achieving the project goals. It defines Critical Success Factors (CSFs), key controlling processes, conflict resolution procedures, and project mindsets, as well as project governance roles and responsibilities. The Business Case captures reasoning and budgetary needs, the Project Initiation Request formally initiates, and the Project Work Plan identifies and organises work.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 170"
+  },
+  {
+    "id": "PMQ011",
+    "category": "Project Phases",
+    "sub_category": "Phase Gates",
+    "question": "Which PM² phase gate signifies that the project is 'Ready for Executing'?",
+    "options": [
+      {
+        "text": "RfP",
+        "isCorrect": false
+      },
+      {
+        "text": "RfC",
+        "isCorrect": false
+      },
+      {
+        "text": "RfE",
+        "isCorrect": true
+      },
+      {
+        "text": "RfA",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The three PM² phase gates are RfP (Ready for Planning) at the end of the Initiating Phase, RfE (Ready for Executing) at the end of the Planning Phase, and RfC (Ready for Closing) at the end of the Executing Phase.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 90, 209"
+  },
+  {
+    "id": "PMQ012",
+    "category": "Project Success",
+    "sub_category": "Outputs, Outcomes, Benefits",
+    "question": "In PM², what is the distinction between 'project outputs' and 'project outcomes'?",
+    "options": [
+      {
+        "text": "Outputs are measurable improvements, while outcomes are products/services that introduce change.",
+        "isCorrect": false
+      },
+      {
+        "text": "Outputs are the benefits achieved after the project closes, while outcomes are the tangible deliverables.",
+        "isCorrect": false
+      },
+      {
+        "text": "Outputs (deliverables) are products/services that introduce something new, and the change results in an outcome.",
+        "isCorrect": true
+      },
+      {
+        "text": "Outcomes are achieved during the project, while outputs are realised only after the project has closed.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Project outputs (deliverables) are products/services which introduce something new (a change). This change then results in an outcome. Benefits are the measurable improvements resulting from this outcome, and both outcomes and benefits are often realised only after the project has closed.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 55"
+  },
+  {
+    "id": "PMQ013",
+    "category": "Project Environment",
+    "sub_category": "Organisational Structures",
+    "question": "In which organisational structure does the Project Manager (PM) typically have limited authority and often needs to involve senior management in important project issues?",
+    "options": [
+      {
+        "text": "Matrix Structure",
+        "isCorrect": false
+      },
+      {
+        "text": "Projectised Structure",
+        "isCorrect": false
+      },
+      {
+        "text": "Functional Structure",
+        "isCorrect": true
+      },
+      {
+        "text": "Hybrid Structure",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In a functional organisational structure, project work is integrated into the work performed by the permanent organisation. The Project Manager (PM) tends to have limited authority and needs to involve senior management in the management of important project issues. In projectised structures, the PM has significant authority, and in matrix structures, the PM's role is recognised as central with delegated authority.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 66"
+  },
+  {
+    "id": "PMQ014",
+    "category": "Project Organisation and Roles",
+    "sub_category": "Project Steering Committee (PSC)",
+    "question": "Which role typically chairs the Project Steering Committee (PSC) in a PM² project?",
+    "options": [
+      {
+        "text": "Project Manager (PM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Manager (BM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Solution Provider (SP)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Owner (PO)",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "The Project Steering Committee (PSC) is chaired by the Project Owner (PO) and is the key decision-making and issue-resolution body for the project.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 117"
+  },
+  {
+    "id": "PMQ015",
+    "category": "Project Artefacts",
+    "sub_category": "Project Work Plan",
+    "question": "What is the primary objective of the 'Project Work Plan'?",
+    "options": [
+      {
+        "text": "To define the project's management approach and document roles & responsibilities.",
+        "isCorrect": false
+      },
+      {
+        "text": "To summarise the project experience and capture Lessons Learned at the end of the project.",
+        "isCorrect": false
+      },
+      {
+        "text": "To further elaborate the project scope, identify and organise project work, and establish a basis for estimating duration, resources, and scheduling.",
+        "isCorrect": true
+      },
+      {
+        "text": "To formally capture business needs and desired project outcomes at the project's starting point.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Project Work Plan further elaborates the project scope and identifies and organises the project work and deliverables needed to achieve the project goals. It establishes a basis on which to estimate the project’s duration, calculate the required resources, and schedule the work.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 183"
+  },
+  {
+    "id": "PMQ016",
+    "category": "Project Management Processes",
+    "sub_category": "Change Management",
+    "question": "Who is primarily responsible for monitoring and controlling project changes in PM²?",
+    "options": [
+      {
+        "text": "Project Owner (PO)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Steering Committee (PSC)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Core Team (PCT)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Manager (PM)",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "The Project Manager (PM) is primarily responsible for monitoring and controlling the project changes. The Project Owner (PO) and/or Project Steering Committee (PSC) approve or reject changes, while the Project Core Team (PCT) is involved in analysing them.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 277"
+  },
+  {
+    "id": "PMQ017",
+    "category": "Project Management Plans",
+    "sub_category": "Business Implementation Plan",
+    "question": "The 'Business Implementation Plan' primarily aims to increase the likelihood of achieving the project’s desired outcomes and benefits by documenting an assessment of the project's impact on what aspects of the organisation?",
+    "options": [
+      {
+        "text": "Only financial budgets and resource allocation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Processes, culture, and people.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only IT infrastructure and technical specifications.",
+        "isCorrect": false
+      },
+      {
+        "text": "Legal compliance and regulatory adherence.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Business Implementation Plan documents an assessment of the project’s impact on the organisation's processes, culture and people, and outlines the change-management and communications activities that need to take place to ensure that the project outputs are effectively integrated into the organisation’s environment.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 204"
+  },
+  {
+    "id": "PMQ018",
+    "category": "Project Documentation",
+    "sub_category": "Importance of Documentation",
+    "question": "Which of the following is NOT listed as a key benefit of project documentation in PM²?",
+    "options": [
+      {
+        "text": "Sharpens thinking by forcing vague thoughts into words.",
+        "isCorrect": false
+      },
+      {
+        "text": "Ensures continuous project funding regardless of performance.",
+        "isCorrect": true
+      },
+      {
+        "text": "Provides a baseline for monitoring and controlling progress.",
+        "isCorrect": false
+      },
+      {
+        "text": "Supports organisational memory and acts as a historical reference.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Project documentation offers many benefits, including sharpening thinking, crystallising planning, defining scope, facilitating communication, providing a baseline for monitoring, recording decisions, supporting audits, and aiding organisational memory. It does not, however, ensure continuous funding regardless of performance.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 57, 58, 59"
+  },
+  {
+    "id": "PMQ019",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Stakeholder Interest/Influence Matrix (SIIM)",
+    "question": "In the Stakeholder Interest/Influence Matrix (SIIM), what does 'Interest' primarily indicate?",
+    "options": [
+      {
+        "text": "The stakeholder's formal authority level within the organisation.",
+        "isCorrect": false
+      },
+      {
+        "text": "The stakeholder's financial contribution to the project budget.",
+        "isCorrect": false
+      },
+      {
+        "text": "The degree of enthusiasm displayed by the stakeholder in support of the project, including being positive, neutral, or negative.",
+        "isCorrect": true
+      },
+      {
+        "text": "The power the stakeholder has over the planning and implementation of activities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Interest indicates the level of interest a stakeholder has for the project, measured as the degree of enthusiasm displayed by the stakeholder in support of the project. Stakeholders can be positive, neutral, or negative. Influence, on the other hand, indicates the power they have over planning and implementation.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 369"
+  },
+  {
+    "id": "PMQ020",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Work Breakdown Structure (WBS)",
+    "question": "Which of the following is a key characteristic of a well-made Work Breakdown Structure (WBS)?",
+    "options": [
+      {
+        "text": "It should provide information on time, sequence, and dependency of the work.",
+        "isCorrect": false
+      },
+      {
+        "text": "It defines where you want to go, serving as the final product definition.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is a hierarchical division of the project into smaller work components that should be easy to understand, complete, and facilitate progress monitoring.",
+        "isCorrect": true
+      },
+      {
+        "text": "It identifies the desired outputs (deliverables) which then feed into the definition of tasks.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A Work Breakdown Structure (WBS) is a hierarchical division of the project into smaller work components that can be used to assign work or to estimate effort and cost. A well-made WBS should be easy to understand, be complete, and should facilitate progress monitoring during execution. It does NOT provide information on time, sequence, or dependency of the work. The Deliverables Breakdown Structure (DBS)/Product Breakdown Structure (PBS) identifies desired outputs.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 372, 373"
+  },
+  {
+    "id": "PMQ021",
+    "category": "Project Management Mindsets",
+    "sub_category": "PM² Principles",
+    "question": "One of the PM² Mindsets encourages Project Managers and project teams to 'Remain mindful that project management methodologies are there to serve projects and not the other way around'. This emphasizes:",
+    "options": [
+      {
+        "text": "Strict adherence to all methodology steps without exception.",
+        "isCorrect": false
+      },
+      {
+        "text": "The importance of adapting the methodology to project needs rather than forcing the project to fit the methodology.",
+        "isCorrect": true
+      },
+      {
+        "text": "Prioritizing methodology compliance over actual project results.",
+        "isCorrect": false
+      },
+      {
+        "text": "Avoiding any form of customisation or tailoring of the methodology.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The mindset 'Remain mindful that project management methodologies are there to serve projects and not the other way around' directly supports the idea of tailoring and customisation, ensuring the methodology provides value and adapts to specific project needs, rather than being a rigid set of rules that must be followed irrespective of context.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 97, 104"
+  },
+  {
+    "id": "PMQ022",
+    "category": "Project Lifecycle",
+    "sub_category": "Initiating Phase Activities",
+    "question": "Which of these is NOT an activity typically performed during the 'Initiating Phase' of a PM² project?",
+    "options": [
+      {
+        "text": "Creation of the Project Initiation Request.",
+        "isCorrect": false
+      },
+      {
+        "text": "Creation of the Business Case.",
+        "isCorrect": false
+      },
+      {
+        "text": "Running the Planning Kick-off Meeting.",
+        "isCorrect": true
+      },
+      {
+        "text": "Creation of the Project Charter.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Initiating Phase involves the creation of the Project Initiation Request, Business Case, and Project Charter. The Planning Kick-off Meeting officially starts the Planning Phase, not the Initiating Phase.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 81, 84"
+  },
+  {
+    "id": "PMQ023",
+    "category": "Project Organisation and Roles",
+    "sub_category": "Project Owner (PO) Responsibilities",
+    "question": "Who is accountable for the overall project's success and later becomes the owner of the project's outputs (product or service)?",
+    "options": [
+      {
+        "text": "Project Manager (PM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Manager (BM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Owner (PO)",
+        "isCorrect": true
+      },
+      {
+        "text": "Solution Provider (SP)",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Project Owner (PO) is the client of the project, sets business objectives, and is accountable for the overall project’s success, later becoming the owner of the project’s outputs.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 121"
+  },
+  {
+    "id": "PMQ024",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Effort and Cost Estimates",
+    "question": "When performing 'Effort and Cost Estimates' in PM², with whom should the Project Manager (PM) collaborate closely to ensure more precise estimates and buy-in?",
+    "options": [
+      {
+        "text": "Only the Project Owner (PO) for final approval.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only the Project Support Office (PSO) for technical advice.",
+        "isCorrect": false
+      },
+      {
+        "text": "The task owners or other experts within the Project Core Team (PCT).",
+        "isCorrect": true
+      },
+      {
+        "text": "The Appropriate Governance Body (AGB) for strategic alignment.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Project Manager (PM) coordinates the estimation of effort and cost for each task in close cooperation with the task owners or other experts within the Project Core Team (PCT), to ensure more precise estimates and buy-in from the team members in charge of executing the work.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 375"
+  },
+  {
+    "id": "PMQ025",
+    "category": "Project Management Processes",
+    "sub_category": "Quality Management",
+    "question": "Which of the following is NOT a primary activity involved in 'Quality Management' in PM²?",
+    "options": [
+      {
+        "text": "Performing quality planning and quality assurance.",
+        "isCorrect": false
+      },
+      {
+        "text": "Directly managing conflicts and issues escalated by the Project Core Team.",
+        "isCorrect": true
+      },
+      {
+        "text": "Performing quality control and quality improvement throughout the project.",
+        "isCorrect": false
+      },
+      {
+        "text": "Ensuring deliverables are accepted by relevant stakeholders.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Quality management consists of carrying out quality planning, quality assurance, quality control and quality improvement up until final project acceptance. While resolving conflicts and issues is part of general project coordination and issue management, it's not a primary activity *within* the scope of quality management itself.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 289"
+  },
+  {
+    "id": "PMQ026",
+    "category": "Project Management Plans",
+    "sub_category": "Outsourcing Plan",
+    "question": "What is the primary purpose of the 'Outsourcing Plan'?",
+    "options": [
+      {
+        "text": "To define the project's internal communication strategy.",
+        "isCorrect": false
+      },
+      {
+        "text": "To detail the project's business implementation activities.",
+        "isCorrect": false
+      },
+      {
+        "text": "To define the scope of products/services to be purchased or contracted, outsourcing strategies, and relevant responsibilities for the full outsourcing lifecycle.",
+        "isCorrect": true
+      },
+      {
+        "text": "To establish criteria for deliverables acceptance by the client side.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Outsourcing Plan defines the what and how for any outsourced products or services. It outlines the scope of products and/or services to be purchased or contracted, identifies the outsourcing strategies that will be used, and defines the relevant responsibilities for the full outsourcing lifecycle.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 189"
+  },
+  {
+    "id": "PMQ027",
+    "category": "Project Organisation and Roles",
+    "sub_category": "Project Core Team (PCT)",
+    "question": "Which of the following is a primary responsibility of the Project Core Team (PCT)?",
+    "options": [
+      {
+        "text": "Approving the project's overall budget and scope.",
+        "isCorrect": false
+      },
+      {
+        "text": "Creating the Project Initiation Request and Business Case.",
+        "isCorrect": false
+      },
+      {
+        "text": "Producing project deliverables and carrying out project activities based on the Project Work Plan.",
+        "isCorrect": true
+      },
+      {
+        "text": "Managing stakeholder expectations and escalating unresolvable project issues.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Project Core Team (PCT) is coordinated by the Project Manager (PM) and is responsible for carrying out project activities based on the Project Work Plan and schedule, and producing project deliverables. Approving budget/scope is for PSC/AGB. Creating PIR/Business Case is for Initiator/BM. Managing stakeholders and escalating issues is for PM.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 134"
+  },
+  {
+    "id": "PMQ028",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Critical Path Method (CPM)",
+    "question": "What is the primary output of the Critical Path Method (CPM)?",
+    "options": [
+      {
+        "text": "A comprehensive list of all project risks and their mitigation strategies.",
+        "isCorrect": false
+      },
+      {
+        "text": "A detailed budget breakdown with earned value metrics.",
+        "isCorrect": false
+      },
+      {
+        "text": "The longest necessary path of planned activities from beginning to end of the project, representing the shortest possible duration.",
+        "isCorrect": true
+      },
+      {
+        "text": "A hierarchical division of the project into smaller work components.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Critical Path Method (CPM) is a modelling technique that calculates the longest necessary path (i.e. the longest unavoidable duration) of planned activities from beginning to the end of the project, otherwise known as the critical path of the project. This path also represents the shortest possible duration of the project to completion.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 382"
+  },
+  {
+    "id": "PMQ029",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Earned Value Management (EVM)",
+    "question": "Which of the following metrics is NOT typically measured in terms of 'cost units' within Earned Value Management (EVM)?",
+    "options": [
+      {
+        "text": "Planned Value (PV)",
+        "isCorrect": false
+      },
+      {
+        "text": "Actual Cost (AC)",
+        "isCorrect": false
+      },
+      {
+        "text": "Earned Value (EV)",
+        "isCorrect": false
+      },
+      {
+        "text": "Schedule Performance Index (SPI)",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "In Earned Value Management (EVM), the concepts of cost and time are measured in terms of cost units (e.g., Man-Days or Euros), including Planned Value (PV), Actual Cost (AC), and Earned Value (EV). However, metrics like Schedule Performance Index (SPI) are ratios (EV/PV) and are not expressed in cost units themselves, although they are derived from values expressed in cost units.",
+    "difficulty": "Hard",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 384, 385, 686, 691"
+  },
+  {
+    "id": "PMQ030",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "PESTEL Analysis",
+    "question": "When conducting a PESTEL Analysis, which factor would primarily involve considering changes in weather, climate, or landscape that might impact a project?",
+    "options": [
+      {
+        "text": "Political",
+        "isCorrect": false
+      },
+      {
+        "text": "Economic",
+        "isCorrect": false
+      },
+      {
+        "text": "Social",
+        "isCorrect": false
+      },
+      {
+        "text": "Environmental",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "The 'Environmental' factors in a PESTEL analysis include ecological and environmental aspects, such as changes in weather, climate, and landscape, which might have an impact on the project.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 572"
+  },
+  {
+    "id": "PMQ031",
+    "category": "PM² Core Concepts",
+    "sub_category": "Tailoring and Customisation",
+    "question": "What is the main difference between 'tailoring' and 'customisation' of the PM² Methodology?",
+    "options": [
+      {
+        "text": "Tailoring occurs at the project level, while customisation occurs at the organisational level.",
+        "isCorrect": false
+      },
+      {
+        "text": "Tailoring involves changing specific parts of the methodology (e.g., process steps), while customisation involves defining project-specific management parameters (e.g., decision thresholds).",
+        "isCorrect": true
+      },
+      {
+        "text": "Customisation is about removing entire phases, while tailoring is about adding new roles.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are synonymous terms and can be used interchangeably.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Tailoring refers to changing specific parts of the methodology, such as process steps or content of artefacts, usually at the organisation/departmental level, but also at the project level. Customisation, on the other hand, defines project-specific management parameters like decision thresholds or risk tolerances, typically at the project level.",
+    "difficulty": "Hard",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 104, 105, 456"
+  },
+  {
+    "id": "PMQ032",
+    "category": "Project Management Plans",
+    "sub_category": "Communications Management Plan",
+    "question": "The 'Communications Management Plan' primarily serves what purpose in a PM² project?",
+    "options": [
+      {
+        "text": "To define the project's technical specifications and system architecture.",
+        "isCorrect": false
+      },
+      {
+        "text": "To outline the project's financial budget and cost control procedures.",
+        "isCorrect": false
+      },
+      {
+        "text": "To ensure all project stakeholders have the information they need by defining communication activities, goals, content, format, frequency, and audience.",
+        "isCorrect": true
+      },
+      {
+        "text": "To manage the outsourcing process and select external contractors.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Communications Management Plan helps to ensure that all project stakeholders have the information they need to perform their roles throughout the project. It defines and documents communication activities, their goals, content, format, frequency, and audience.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 346, 347"
+  },
+  {
+    "id": "PMQ033",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Gantt Charts",
+    "question": "What is a key strength of using a Gantt Chart in project management?",
+    "options": [
+      {
+        "text": "It provides a detailed financial analysis of earned value and variances.",
+        "isCorrect": false
+      },
+      {
+        "text": "It clearly displays the status of each activity at a glance and represents the schedule, phases, and activities visually.",
+        "isCorrect": true
+      },
+      {
+        "text": "It focuses solely on identifying the longest sequence of tasks without considering dependencies.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is primarily used for brainstorming and generating new project ideas.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A Gantt Chart is a common project management tool used to represent the schedule, phases and activities of a project in a single visual. Its main strength is the ability to clearly display the status of each activity at a glance, focusing on project sequence, duration, dependencies and status.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 381, 665"
+  },
+  {
+    "id": "PMQ034",
+    "category": "Project Management Competences",
+    "sub_category": "Ethical Profile",
+    "question": "According to PM², what guides Project Managers (PMs) on how they should apply their competencies and determines what they consider good or bad, right or wrong?",
+    "options": [
+      {
+        "text": "Their technical skills and knowledge of the methodology.",
+        "isCorrect": false
+      },
+      {
+        "text": "Organisational policies and standards, primarily.",
+        "isCorrect": false
+      },
+      {
+        "text": "Their values and ethics, especially an ethical disposition that balances goals and skills, personal integrity, and moral virtue.",
+        "isCorrect": true
+      },
+      {
+        "text": "The opinions and preferences of the Project Core Team.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The filter that determines what is more important (e.g. self or common interest, time or quality, results or balance, etc.) lies in our values and ethics. Therefore, competences related to the appreciation of values and ethics have a prominent position compared to the rest because it is our ethical profile that guides us on how we should apply our competencies, and determines what we consider good or bad, right or wrong.",
+    "difficulty": "Hard",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 73, 74, 75"
+  },
+  {
+    "id": "PMQ035",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Lessons Learned",
+    "question": "When should 'Lessons Learned' primarily be captured to ensure their effectiveness for future projects?",
+    "options": [
+      {
+        "text": "Only at the very end of the Closing Phase, once all administrative tasks are completed.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only during formal Project-End Review Meetings.",
+        "isCorrect": false
+      },
+      {
+        "text": "Continuously throughout the project lifecycle, or at least at the end of project phases or major milestones, to avoid losing ideas.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only when a project has experienced significant failures, to document what went wrong.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Improvement opportunities and Post-Project Recommendations should be captured in some form as they come up during the project. Otherwise, particularly in longer projects, the ideas might get lost by the time the project reaches the Closing Phase. Lessons Learned are discussed at least in the Project-End Review Meeting (and optionally at the end of project phases or major milestones).",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 242, 387, 757, 760"
+  },
+  {
+    "id": "PMQ036",
+    "category": "Project Governance",
+    "sub_category": "Layers and Roles",
+    "question": "The 'Managing Layer' of project organisation in PM² comprises which two key roles?",
+    "options": [
+      {
+        "text": "Project Owner (PO) and Solution Provider (SP)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Manager (BM) and Project Manager (PM)",
+        "isCorrect": true
+      },
+      {
+        "text": "Appropriate Governance Body (AGB) and Project Steering Committee (PSC)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Implementation Group (BIG) and Project Core Team (PCT)",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Managing Layer focuses on day-to-day project management and comprises the roles of Business Manager (BM) and Project Manager (PM). The PO and SP are part of the Directing Layer, AGB and PSC are higher governance bodies, and BIG and PCT are part of the Performing Layer.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 113, 114"
+  },
+  {
+    "id": "PMQ037",
+    "category": "Project Monitoring & Control",
+    "sub_category": "Managing Risk",
+    "question": "Which of the following risk-response strategies involves changing project conditions or scope to render a negative risk irrelevant to the project (Impact=0 and/or Likelihood=0%)?",
+    "options": [
+      {
+        "text": "Reduce",
+        "isCorrect": false
+      },
+      {
+        "text": "Accept",
+        "isCorrect": false
+      },
+      {
+        "text": "Transfer",
+        "isCorrect": false
+      },
+      {
+        "text": "Avoid",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "Avoid is a risk-response strategy that consists of changing project conditions, plans, activities or even scope to render the risk irrelevant to the project (i.e. Impact=0 and/or Likelihood=0 %).",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 439"
+  },
+  {
+    "id": "PMQ038",
+    "category": "Project Artefacts",
+    "sub_category": "Project Logs",
+    "question": "Which log is specifically used to document and trace all relevant decisions taken during a project?",
+    "options": [
+      {
+        "text": "Risk Log",
+        "isCorrect": false
+      },
+      {
+        "text": "Change Log",
+        "isCorrect": false
+      },
+      {
+        "text": "Issue Log",
+        "isCorrect": false
+      },
+      {
+        "text": "Decision Log",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "The Decision Log is used to document all relevant decisions, bringing visibility to decisions and accountability as to how and by whom they are taken, and to whom they should be communicated.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 286, 364"
+  },
+  {
+    "id": "PMQ039",
+    "category": "Project Management Processes",
+    "sub_category": "Deliverables Acceptance",
+    "question": "Who provides the 'final acceptance' of project deliverables during the Closing Phase in a PM² project?",
+    "options": [
+      {
+        "text": "Project Manager (PM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Manager (BM)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Steering Committee (PSC)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Owner (PO)",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "The final acceptance of project deliverables is performed during the Closing Phase by the Project Owner (PO), after consulting the Project Steering Committee (PSC), through a formal project final acceptance sign-off.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 465"
+  },
+  {
+    "id": "PMQ040",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Make or Buy Analysis",
+    "question": "Which of the following is a potential reason for an organisation to make (develop internally) a product or service, rather than buy (outsource) it?",
+    "options": [
+      {
+        "text": "Lack of technical expertise within the organisation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Cost considerations, where outsourcing is cheaper.",
+        "isCorrect": false
+      },
+      {
+        "text": "Intellectual property concerns.",
+        "isCorrect": true
+      },
+      {
+        "text": "Supplier technical experience is superior.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Potential reasons for a 'make' decision include cost effectiveness, intellectual property concerns, quality control issues or supplier unreliability issues.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 368, 715"
+  },
+  {
+    "id": "PMQ041",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "FSNPA Model of Team Performance (Tuckman's Model)",
+    "question": "In Tuckman's FSNPA model of team performance, which stage is characterised by team members settling differences, starting to contribute towards deliverables, and beginning to develop trust?",
+    "options": [
+      {
+        "text": "Forming",
+        "isCorrect": false
+      },
+      {
+        "text": "Storming",
+        "isCorrect": false
+      },
+      {
+        "text": "Norming",
+        "isCorrect": true
+      },
+      {
+        "text": "Performing",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 'Norming' stage is when team members start respecting other views or opinions and come to an agreement. Trust begins to develop, and individual team members play a greater role in handling project responsibilities, supporting each other in establishing deliverables.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 587"
+  },
+  {
+    "id": "PMQ042",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Running Effective Meetings",
+    "question": "According to PM², when running an effective meeting, what should be done 'After the Meeting' to ensure follow-up and communication?",
+    "options": [
+      {
+        "text": "Immediately schedule the next meeting without sending minutes.",
+        "isCorrect": false
+      },
+      {
+        "text": "Send out the Minutes of Meeting (MoM) to relevant stakeholders, including a summary of issues, risks, decisions, and proposed changes.",
+        "isCorrect": true
+      },
+      {
+        "text": "Focus solely on discussing new project objectives.",
+        "isCorrect": false
+      },
+      {
+        "text": "Delegate all follow-up actions to a single, unrelated team member.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "After the meeting, the Minutes of Meeting (MoM) should be distributed to appropriate stakeholders as soon as possible, including a summary of project issues, risks, decisions taken, and changes proposed. These should also be recorded in the relevant logs.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 169, 618"
+  },
+  {
+    "id": "PMQ043",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Three-Point Estimates (PERT)",
+    "question": "In the Three-Point Estimate using PERT, what does 'a' represent in the formula E = (a + 4m + b)/6?",
+    "options": [
+      {
+        "text": "Actual Cost",
+        "isCorrect": false
+      },
+      {
+        "text": "Average estimate",
+        "isCorrect": false
+      },
+      {
+        "text": "Optimistic estimate of cost or duration",
+        "isCorrect": true
+      },
+      {
+        "text": "Aggressive estimate",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In the Three-Point Estimate formula E = (a + 4m + b)/6, 'a' represents the optimistic estimate of cost or duration. 'm' is the most likely, and 'b' is the pessimistic estimate.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 643"
+  },
+  {
+    "id": "PMQ044",
+    "category": "PM² Methodology Application",
+    "sub_category": "Project Characteristics",
+    "question": "Which of the following characteristics is required for a project to be able to apply the *whole* PM² Methodology?",
+    "options": [
+      {
+        "text": "It must be a simple, one-person task lasting less than a week.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must only involve internal stakeholders with no external collaboration.",
+        "isCorrect": false
+      },
+      {
+        "text": "It has a duration of more than 4-5 weeks and involves more than 2-3 people, requiring a clearly defined governance structure and certain level of documentation.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must be solely focused on construction/delivery activities, excluding transition or business implementation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "To apply the *whole* PM² Methodology, a project must have certain characteristics, including having a duration of more than 4–5 weeks, involving more than 2–3 people, requiring a clearly defined governance structure, approval of budget and scope, and including transition and business implementation activities, as well as a certain level of documentation and reporting.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 93, 94"
+  },
+  {
+    "id": "PMQ045",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Pareto Analysis",
+    "question": "The Pareto principle states that generally 80% of the effects come from 20% of the causes. How does Pareto Analysis primarily help in project management?",
+    "options": [
+      {
+        "text": "By ensuring equal distribution of effort across all identified problems.",
+        "isCorrect": false
+      },
+      {
+        "text": "By focusing on a large number of minor issues to achieve comprehensive improvement.",
+        "isCorrect": false
+      },
+      {
+        "text": "By helping to focus on those risks or quality issues with the highest impact on a project, facilitating prioritisation of actions.",
+        "isCorrect": true
+      },
+      {
+        "text": "By identifying all potential causes of a problem regardless of their impact.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "By focusing on these top issues (the 20%), the Pareto Analysis can be useful for risk or quality management as it helps to focus on those risks or quality issues with the highest impact on a project, therefore facilitating the prioritisation of necessary mitigation or contingency actions.",
+    "difficulty": "Medium",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 386, 738"
+  },
+  {
+    "id": "PMQ046",
+    "category": "Project Organisation and Roles",
+    "sub_category": "User Representatives (URs)",
+    "question": "User Representatives (URs) are part of which group within the PM² project organisation?",
+    "options": [
+      {
+        "text": "Project Core Team (PCT)",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Steering Committee (PSC)",
+        "isCorrect": false
+      },
+      {
+        "text": "Business Implementation Group (BIG)",
+        "isCorrect": true
+      },
+      {
+        "text": "Project Support Team (PST)",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "User Representatives (URs) represent the interests of the project’s end-users and are part of the Business Implementation Group (BIG).",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 131"
+  },
+  {
+    "id": "PMQ047",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "SECI Model - Knowledge Spiral",
+    "question": "In the SECI (Socialisation, Externalisation, Combination, Internalisation) model, which stage involves the transfer of 'tacit' knowledge to 'explicit' knowledge, often through documenting concepts or models?",
+    "options": [
+      {
+        "text": "Socialisation",
+        "isCorrect": false
+      },
+      {
+        "text": "Externalisation",
+        "isCorrect": true
+      },
+      {
+        "text": "Combination",
+        "isCorrect": false
+      },
+      {
+        "text": "Internalisation",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Externalisation is the stage where tacit knowledge is transferred to explicit knowledge, typically through writing or publishing documents, images, concepts, etc. Socialisation is tacit to tacit, Combination is explicit to explicit, and Internalisation is explicit to tacit.",
+    "difficulty": "Hard",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 752, 754"
+  },
+  {
+    "id": "PMQ048",
+    "category": "Project Lifecycle",
+    "sub_category": "Closing Phase Activities",
+    "question": "Which of the following activities is a key part of the 'Closing Phase' in a PM² project?",
+    "options": [
+      {
+        "text": "Developing the Project Work Plan and Project Handbook.",
+        "isCorrect": false
+      },
+      {
+        "text": "Producing project deliverables and coordinating execution.",
+        "isCorrect": false
+      },
+      {
+        "text": "Documenting Lessons Learned, preparing the Project-End Report, and administrative closure.",
+        "isCorrect": true
+      },
+      {
+        "text": "Creating the Business Case and Project Charter.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "During the Closing Phase, finished deliverables are officially transferred, information on overall project performance and Lessons Learned is captured in the Project-End Report, and the project is administratively closed.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 87, 88"
+  },
+  {
+    "id": "PMQ049",
+    "category": "Project Management Tools & Techniques",
+    "sub_category": "Eisenhower Matrix (To-Do List)",
+    "question": "In the Eisenhower Matrix for organising a To-Do list, activities categorised as 'Urgent, Not Important' should primarily be:",
+    "options": [
+      {
+        "text": "Done Now",
+        "isCorrect": false
+      },
+      {
+        "text": "Scheduled for Later",
+        "isCorrect": false
+      },
+      {
+        "text": "Delegated",
+        "isCorrect": true
+      },
+      {
+        "text": "Avoided/Do Not Do",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "According to the Eisenhower Matrix, activities that are 'Urgent, Not Important' are considered 'Interruptions' and should be delegated so that they are urgently taken care-of.",
+    "difficulty": "Medium",
+    "source": "PM² Tools-and-Techniques.v2.5.0 (1).pdf, Page 576, 579"
+  },
+  {
+    "id": "PMQ050",
+    "category": "Project Management Processes",
+    "sub_category": "Information Distribution",
+    "question": "What is the main objective of 'Information Distribution' in a PM² project?",
+    "options": [
+      {
+        "text": "To gather new project requirements from stakeholders.",
+        "isCorrect": false
+      },
+      {
+        "text": "To formally close out project contracts with external vendors.",
+        "isCorrect": false
+      },
+      {
+        "text": "To keep project stakeholders informed about relevant project details through the regular distribution of project reports and other communications.",
+        "isCorrect": true
+      },
+      {
+        "text": "To solely focus on resolving escalated project issues and conflicts.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Information distribution refers to the methods used to keep project stakeholders informed about relevant project details through the regular distribution of project reports, as per the Communications Management Plan and project stakeholder needs.",
+    "difficulty": "Easy",
+    "source": "PM² Methodology Guide v.3.0.pdf, Page 231"
+  }
+]
+
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>
