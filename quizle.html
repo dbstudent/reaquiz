@@ -1,0 +1,3212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = 
+[
+  {
+    "id": "LEV_001",
+    "category": "Legal Entity Validation",
+    "sub_category": "General Principles",
+    "question": "Which of the following statements accurately describes the fundamental purpose of legal entity validation within the EU Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "To identify the most innovative and promising applicants for EU funding.",
+        "isCorrect": false
+      },
+      {
+        "text": "To ensure that only legally recognized and verified entities can enter into financial relations with the EU.",
+        "isCorrect": true
+      },
+      {
+        "text": "To determine the financial capacity of all participants before grant evaluation.",
+        "isCorrect": false
+      },
+      {
+        "text": "To collect comprehensive statistical data on all organizations applying for EU tenders.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Legal entity validation serves to ensure that only verified entities can enter into financial relations with the EU and to avoid legally invalid contracts.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 6"
+  },
+  {
+    "id": "LEV_002",
+    "category": "Legal Entity Validation",
+    "sub_category": "General Principles",
+    "question": "Once an entity's Participant Identification Code (PIC) is validated in the EU Funding & Tenders Portal, for how long is it generally considered valid for future EU actions?",
+    "options": [
+      {
+        "text": "It must be re-validated for each new grant application.",
+        "isCorrect": false
+      },
+      {
+        "text": "For a period of 5 years, after which a re-validation is required.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is valid indefinitely for all ongoing and future EU actions managed through the Portal.",
+        "isCorrect": true
+      },
+      {
+        "text": "For 18 months, mirroring the financial capacity assessment validity period.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Once validated, the PIC will be valid for all ongoing application procedures and signature in the system, but also for any type of EU funding in the future — without having to re-register or be re-validated.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 7"
+  },
+  {
+    "id": "LEV_003",
+    "category": "Legal Entity Validation",
+    "sub_category": "Definition of Legal Entity",
+    "question": "According to the EU validation rules, which of the following is NOT generally regarded as an independent legal entity capable of being validated for EU funding purposes?",
+    "options": [
+      {
+        "text": "A self-employed natural person.",
+        "isCorrect": false
+      },
+      {
+        "text": "A university department with its own administrative and budgetary autonomy but no distinct legal personality.",
+        "isCorrect": true
+      },
+      {
+        "text": "A non-profit association with permanent structures and the capacity to undertake legal obligations on its behalf (for grants).",
+        "isCorrect": false
+      },
+      {
+        "text": "An international organization established under international public law.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Departments/directorates/units/offices and other entities set up within a Ministry (or within an executive or other service) without legal personality are considered as part of the same Ministry (or service) and cannot be considered as independent legal entities. The same logic applies to a university department without distinct legal personality. Natural persons are by default considered legal entities, and entities without legal personality can be validated for grants under specific conditions.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 7, 8"
+  },
+  {
+    "id": "LEV_004",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "For a private entity to be validated as 'non-profit' by the Central Validation Service, what is the primary criterion?",
+    "options": [
+      {
+        "text": "It must demonstrate that it has not generated any profits in the last two financial years.",
+        "isCorrect": false
+      },
+      {
+        "text": "Its owners or founders must also be non-profit organizations.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must have a legal or statutory obligation not to distribute profits to shareholders or individual members.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must possess a certificate of tax exemption as the sole sufficient proof.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The obligation not to distribute profits and/or the impossibility to distribute profits must be based on law and/or the act of establishment/articles of association/statutes, etc. Decisions on not distributing profits or the absence of profits are not sufficient proof. A tax exemption certificate is only an indication.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 10, 11"
+  },
+  {
+    "id": "LEV_005",
+    "category": "Legal Entity Validation",
+    "sub_category": "Exceptions for Eligibility",
+    "question": "Which of the following conditions is crucial for an entity without legal personality to be exceptionally eligible for EU grants?",
+    "options": [
+      {
+        "text": "It must be explicitly recognized as a 'public body' by national law.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must solely participate in EU tenders, not grants.",
+        "isCorrect": false
+      },
+      {
+        "text": "Its representatives must have the capacity to undertake legal obligations on behalf of the entity AND it must offer equivalent guarantees for the protection of EU financial interests as a legal person.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must have been established as a non-governmental organization (NGO).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "By way of exception, the Financial Regulation allows for certain 'entities without legal personality' to be eligible for EU grants, provided they meet the conditions set out in Article 197(2)(c) of this Regulation: their representatives have the capacity to undertake legal obligations on behalf of the entity and the entity offers equivalent guarantees for the protection of the EU financial interests as a legal person. Such entities cannot participate in EU tenders.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 8"
+  },
+  {
+    "id": "LEV_006",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "What is the primary factor that defines an entity as a 'public body' under EU validation rules?",
+    "options": [
+      {
+        "text": "The fact that its shares are 100% owned by a public entity.",
+        "isCorrect": false
+      },
+      {
+        "text": "Its mission or activity serving a general public interest.",
+        "isCorrect": false
+      },
+      {
+        "text": "Its establishment as a public body by national law AND being governed by public law.",
+        "isCorrect": true
+      },
+      {
+        "text": "Its primary source of financing being public funds.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'Public body' means an entity established as a public body by national law, or an international organisation. 'Established as a public body by national law' means incorporated as a public body in the act of creation or recognized as a public body by national law AND governed by public law. Other criteria like ownership, mission, or financing are NOT sufficient evidence.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 9, 10"
+  },
+  {
+    "id": "LEV_007",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (SME)",
+    "question": "An enterprise exceeded the EU SME Recommendation ceilings for annual turnover for the first time in its last accounting period. When will it lose its SME status according to the 'two-year rule'?",
+    "options": [
+      {
+        "text": "Immediately upon exceeding the ceiling in the current accounting period.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if it remains above the ceilings for two consecutive accounting periods.",
+        "isCorrect": true
+      },
+      {
+        "text": "After a formal re-assessment by the Central Validation Service, regardless of subsequent performance.",
+        "isCorrect": false
+      },
+      {
+        "text": "The two-year rule applies only to obtaining SME status, not losing it.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In accordance with Article 4.2 of the SME Recommendation, the SME status depends on the ceilings for two consecutive accounting periods. Headcount and turnover must stay below the ceilings for two accounting periods to obtain the SME status; conversely, the status will be lost if they rise above the ceilings for two consecutive periods.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 11"
+  },
+  {
+    "id": "LEV_008",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (Self-Declaration)",
+    "question": "Which of the following specific legal statuses is typically 'self-declared' by participants in the Funding & Tenders Portal, rather than systematically checked and validated by the Central Validation Service?",
+    "options": [
+      {
+        "text": "Private entity.",
+        "isCorrect": false
+      },
+      {
+        "text": "Non-profit organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "Small or medium sized enterprise (SME).",
+        "isCorrect": true
+      },
+      {
+        "text": "International organization (IO).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The document states that 'private entity', 'public body', 'non-profit', and 'International organisation (IO)' statuses are systematically checked and validated. SME, mid-cap, NGO, CSO, research organisation, and secondary/higher education establishment statuses are self-declared or self-assessed.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 9, 10, 11, 12, 13"
+  },
+  {
+    "id": "LEV_009",
+    "category": "Legal Entity Validation",
+    "sub_category": "Required Documents",
+    "question": "When submitting documents for legal entity validation, what is the general rule regarding the language of official documents?",
+    "options": [
+      {
+        "text": "All documents must be submitted in English.",
+        "isCorrect": false
+      },
+      {
+        "text": "Documents are accepted in any EU official language, with an unofficial English translation requested if needed, and non-EU languages require an English translation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only certified translations into English are accepted for documents in non-EU languages.",
+        "isCorrect": false
+      },
+      {
+        "text": "Self-declarations can replace official documents if a translation is difficult to obtain.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "As a general rule, documents are accepted in any of the EU official languages. Participants may however be requested to submit an English free (unofficial) translation. Documents in non-EU languages will be accepted only if accompanied by a free translation in English (and in case of doubt, a certified/legal translation in English may be requested). Official documents cannot be replaced by self-declarations.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 14"
+  },
+  {
+    "id": "LEV_010",
+    "category": "Legal Entity Validation",
+    "sub_category": "Required Documents",
+    "question": "Which of the following documents is always required for legal entity validation and must NOT be older than one year?",
+    "options": [
+      {
+        "text": "Signed legal entity identification form.",
+        "isCorrect": false
+      },
+      {
+        "text": "Official VAT document or proof of VAT exemption.",
+        "isCorrect": true
+      },
+      {
+        "text": "Statutory audit report.",
+        "isCorrect": false
+      },
+      {
+        "text": "Detailed business plan for newly established enterprises.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The participant must submit 'Official VAT document or — if the entity is not registered for VAT — the proof of VAT exemption, not older than one (1) year'. The legal entity identification form is also required, but no age limit is specified for it; it just needs to be signed.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 14"
+  },
+  {
+    "id": "LEV_011",
+    "category": "Legal Entity Validation",
+    "sub_category": "Modifications and Corrections",
+    "question": "If a legal entity validation is found to be incorrect due to an error attributable to the Central Validation Service, what is the default effect of the correction?",
+    "options": [
+      {
+        "text": "The correction will apply only from the date of the new validation.",
+        "isCorrect": false
+      },
+      {
+        "text": "The validation will be retroactively invalidated completely.",
+        "isCorrect": false
+      },
+      {
+        "text": "The correction will be registered with effect back to the effective date of the initial validation, unless waived for justified reasons.",
+        "isCorrect": true
+      },
+      {
+        "text": "A new legal entity validation process must be initiated from scratch.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If a validation turns out to be incorrect... it will be corrected by the Central Validation Service. The correction will be registered with effect back to the effective date of the initial validation. If the error is attributable to the Central Validation Service and its correction implies disadvantages for the participant, the retroactive effect may exceptionally be waived, if duly justified.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 19"
+  },
+  {
+    "id": "LEV_012",
+    "category": "Legal Entity Validation",
+    "sub_category": "Consequences of False Declarations",
+    "question": "What are the potential consequences if a participant provides false declarations regarding its legal status during the validation process?",
+    "options": [
+      {
+        "text": "Only a warning will be issued, requiring immediate correction.",
+        "isCorrect": false
+      },
+      {
+        "text": "The participant will be automatically excluded from the specific call but can re-apply for future calls without penalty.",
+        "isCorrect": false
+      },
+      {
+        "text": "The EU services may withdraw/correct the validated status, terminate ongoing grants, recover undue amounts, impose financial penalties or administrative sanctions (including exclusion from future funding), and inform OLAF.",
+        "isCorrect": true
+      },
+      {
+        "text": "The Central Validation Service will conduct an immediate on-site audit to verify all financial records.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In case of false declarations, the EU services may: withdraw and correct the validated status(es); terminate/withdraw on-going grants... (and recover any undue amounts); impose financial penalties or administrative sanctions, including exclusion from future EU funding; inform the European Anti-Fraud Office (OLAF).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 9, 14"
+  },
+  {
+    "id": "LEV_013",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (SME)",
+    "question": "A newly established enterprise without closed accounts applies for EU funding. How can it typically qualify as an SME for validation purposes?",
+    "options": [
+      {
+        "text": "It cannot qualify as an SME until it has at least one closed accounting period.",
+        "isCorrect": false
+      },
+      {
+        "text": "By providing a 'bona fide estimate' in the form of a business plan covering the period necessary to generate turnover.",
+        "isCorrect": true
+      },
+      {
+        "text": "By demonstrating significant initial capital investment, regardless of turnover projections.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if it can prove that its staff headcount is below the SME threshold for the past two years.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Newly established enterprises (e.g. start-up companies) that do not yet have closed accounts or companies without economic activity but expecting to enter soon into the market — May also qualify as SMEs, as long as they are able to provide a 'bona fide estimate' (in the form of a business plan) covering the period necessary for the entity to generate turnover.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 12"
+  },
+  {
+    "id": "LEV_014",
+    "category": "Legal Entity Validation",
+    "sub_category": "Central Validation Service",
+    "question": "Which of the following bodies is responsible for hosting the EU Central Validation Service (CVS)?",
+    "options": [
+      {
+        "text": "The European Anti-Fraud Office (OLAF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Supervisor (EDPS).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Research Executive Agency (REA).",
+        "isCorrect": true
+      },
+      {
+        "text": "The European Parliament.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "This guidance document sets out the rules for the central validation of entities participating in EU funding/tenders managed through the EU Funding & Tenders Portal. It sets out the procedures which the EU Central Validation Service (hosted within the European Research Executive Agency, REA) will use for the tasks conferred in this context.",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 1"
+  },
+  {
+    "id": "LEV_015",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "For an entity to be validated as a 'research organisation' by the Central Validation Service, it must meet which two primary criteria?",
+    "options": [
+      {
+        "text": "It must be a public body and actively engage in international cooperation.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be established as a non-profit organisation AND carry out research and/or technological development as its main objective.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must demonstrate significant financial investment in research activities, regardless of its legal form.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be affiliated with a university or higher education establishment.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'Research organisation' means an entity that: is established as non-profit organisation as described above and carries out research and/or technological development as its main objective.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 13"
+  },
+  {
+    "id": "LEV_016",
+    "category": "Legal Entity Validation",
+    "sub_category": "Required Documents",
+    "question": "What is the general requirement for official documents submitted for legal entity validation?",
+    "options": [
+      {
+        "text": "They must be self-declarations attested by a notary.",
+        "isCorrect": false
+      },
+      {
+        "text": "They must be original physical documents sent by post.",
+        "isCorrect": false
+      },
+      {
+        "text": "They must be delivered by official national authorities and cannot be replaced by self-declarations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Scanned copies are only accepted if certified by a lawyer.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In principle only official documents are accepted. Documents are considered as official when they are delivered by official national authorities. Official documents can NOT be replaced by self-declarations or by sworn or solemn statements.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 14"
+  },
+  {
+    "id": "LEV_017",
+    "category": "Legal Entity Validation",
+    "sub_category": "Definition of Legal Entity",
+    "question": "A branch of a foreign company registered in a Member State applies for EU funding. For the purpose of legal entity validation, which entity will be considered the legal entity?",
+    "options": [
+      {
+        "text": "The branch itself, as it is registered in a Member State.",
+        "isCorrect": false
+      },
+      {
+        "text": "The foreign company (mother-company) in its country of incorporation.",
+        "isCorrect": true
+      },
+      {
+        "text": "Neither the branch nor the mother company, as branches are ineligible.",
+        "isCorrect": false
+      },
+      {
+        "text": "The branch, but only if it can demonstrate financial autonomy.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Branches are not regarded as legal entities... It will be their mother-company that will be considered as legal entity for the purposes of the legal entity validation in the Participant Register. The same applies to branches established in a different country or branches of entities such as non-profit organisations, NGOs, etc.. Foreign companies (company establishments which are registered with a special status in the official register, e.g. 'société de droit étranger') — Will not be regarded as legal entities... It will be their mother-company that will be considered as legal entity.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 7"
+  },
+  {
+    "id": "LEV_018",
+    "category": "Legal Entity Validation",
+    "sub_category": "Effective Date",
+    "question": "What is the general rule for determining the effective date of a legal entity's validation?",
+    "options": [
+      {
+        "text": "The date when the entity first submits an application for EU funding.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date of the Central Validation Service's assessment.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date of entry into force of the legal act establishing its constitution or incorporation, following a specific order of precedence.",
+        "isCorrect": true
+      },
+      {
+        "text": "The date the entity appoints its Legal Entity Appointed Representative (LEAR).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "On the basis of the submitted information and documents, the participant will be validated with the effective date of entry into force of the legal act establishing its constitution or incorporation (unless the terms of the act stipulate another date). That date will be, in order of precedence: 1. the date of registration... 2. the date of publication... 3. the date of the legal deposit... 4. the date of signature of the parties.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 18"
+  },
+  {
+    "id": "LEV_019",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "Which of the following is considered 'engaging in an economic activity' for the purpose of SME definition?",
+    "options": [
+      {
+        "text": "Only activities resulting in significant financial profits.",
+        "isCorrect": false
+      },
+      {
+        "text": "Any form of trade or activity done for remuneration or pecuniary interest.",
+        "isCorrect": true
+      },
+      {
+        "text": "Activities solely focused on scientific research and development.",
+        "isCorrect": false
+      },
+      {
+        "text": "Providing pro-bono services for public interest.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "An entity is considered to be engaged in an 'economic activity', if it proves to be involved in any form of trade or activity done for remuneration or pecuniary interest.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 11"
+  },
+  {
+    "id": "LEV_020",
+    "category": "Legal Entity Validation",
+    "sub_category": "Ex-post Verifications",
+    "question": "If, during an ex-post verification, it is found that a participant did not meet the criteria for a specific legal status due to false declarations, what is the effective date of the status modification?",
+    "options": [
+      {
+        "text": "The date of the ex-post verification.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date of the first audit where the issue was identified.",
+        "isCorrect": false
+      },
+      {
+        "text": "Retroactive effect back to the effective date of the initial validation.",
+        "isCorrect": true
+      },
+      {
+        "text": "The date the participant is notified of the false declaration.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If they find out that a participant did not meet the criteria for being validated or for being validated with a specific legal status (e.g. due to false declarations), the modification of the validation will be registered with retroactive effect back to the effective date of the validation.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 19"
+  },
+  {
+    "id": "LEAR_001",
+    "category": "LEAR Appointment",
+    "sub_category": "Role and Responsibilities",
+    "question": "What is the primary role of the Legal Entity Appointed Representative (LEAR) in the EU Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "To act as the primary contact person for all financial payments to the organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "To independently evaluate project proposals submitted by their organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "To handle the organization's access rights and key data in the Participant Register, ensuring its legal information is up to date.",
+        "isCorrect": true
+      },
+      {
+        "text": "To directly negotiate contractual terms with the European Commission on behalf of the organization.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR is the person officially appointed by the participant to handle their access rights and key data in the Participant Register (legal and other data, certain access rights in the electronic exchange system, etc.). Once validated, it is the LEAR who is responsible for giving access rights to the Portal electronic exchange system and who must ensure that the participant’s legal information is always up to date.",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20"
+  },
+  {
+    "id": "LEAR_002",
+    "category": "LEAR Appointment",
+    "sub_category": "Appointment Process",
+    "question": "Who is responsible for appointing the LEAR within an organization?",
+    "options": [
+      {
+        "text": "The head of the project team.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization's legal representative.",
+        "isCorrect": true
+      },
+      {
+        "text": "The self-registrant of the organization in the Participant Register.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Commission's Central Validation Service.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR must be appointed by the participant’s legal representative.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 21"
+  },
+  {
+    "id": "LEAR_003",
+    "category": "LEAR Appointment",
+    "sub_category": "Eligibility and Position",
+    "question": "Can a natural person who is a beneficiary of EU funding appoint a separate LEAR?",
+    "options": [
+      {
+        "text": "Yes, but only if the natural person is underage.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, natural persons automatically assume the role of LEAR.",
+        "isCorrect": true
+      },
+      {
+        "text": "Yes, but the LEAR must be a close family member.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if they operate a complex project involving multiple subcontractors.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Participants that are natural persons will automatically have the role of LEAR; in this case the role cannot be attributed to a different person (but the LEAR can appoint an account administrator).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20, 21"
+  },
+  {
+    "id": "LEAR_004",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "Which of the following types of identity proof is generally NOT accepted for LEAR appointment?",
+    "options": [
+      {
+        "text": "A valid national identity card.",
+        "isCorrect": false
+      },
+      {
+        "text": "A valid passport.",
+        "isCorrect": false
+      },
+      {
+        "text": "A driving license considered valid proof of identity under national law.",
+        "isCorrect": false
+      },
+      {
+        "text": "A service card or badge issued by the participant's own organization.",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "Service cards and badges issued by the participant — Cannot replace identity documents (even if the participant is a public body) and therefore cannot be accepted as proof of identity.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22"
+  },
+  {
+    "id": "LEAR_005",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "For a LEAR appointment letter, what type of signature is accepted?",
+    "options": [
+      {
+        "text": "Only handwritten signatures.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only qualified electronic signatures (QES) within the meaning of Regulation 910/2014.",
+        "isCorrect": false
+      },
+      {
+        "text": "Both handwritten and qualified electronic signatures (QES).",
+        "isCorrect": true
+      },
+      {
+        "text": "Any electronic signature, including scanned images of handwritten signatures.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Signatures can be either handwritten signatures or qualified electronic signatures within the meaning of Article 3(12) of Regulation 910/2014.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22"
+  },
+  {
+    "id": "LEAR_006",
+    "category": "LEAR Appointment",
+    "sub_category": "Delegation of Tasks",
+    "question": "Who can a LEAR delegate their tasks to within the organization?",
+    "options": [
+      {
+        "text": "Any staff member, provided they receive formal training.",
+        "isCorrect": false
+      },
+      {
+        "text": "Account Administrators (AccAds), who have the same rights as the LEAR except they cannot attribute other AccAds.",
+        "isCorrect": true
+      },
+      {
+        "text": "Legal Signatories (LSIGNs), who can then manage all access rights.",
+        "isCorrect": false
+      },
+      {
+        "text": "Project Coordinators (CoCos), but only for specific grants.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If needed, the LEARs can delegate their tasks to one or more colleagues, who will act as account administrators (so-called ‘AccAds’); delegation also through the ‘LEAR/Authorised User’ tab screen). Has the same rights as the LEAR, except that they cannot attribute other account administrators.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20, 21 and tc_en.pdf, Page 6"
+  },
+  {
+    "id": "LEAR_007",
+    "category": "LEAR Appointment",
+    "sub_category": "Timing of Appointment",
+    "question": "When must the LEAR appointment validation be completed in relation to an EU grant or procurement agreement?",
+    "options": [
+      {
+        "text": "Before the submission of the proposal/tender.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only after the first payment request has been submitted.",
+        "isCorrect": false
+      },
+      {
+        "text": "Before the grant, procurement, or contribution agreement can be signed.",
+        "isCorrect": true
+      },
+      {
+        "text": "Anytime before the final project report is due.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "LEAR appointment is not a condition for the submission of a proposal/tender in the Funding & Tenders Portal, but its validation must be completed before the the grant, procurement or contribution agreement can be signed.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 21"
+  },
+  {
+    "id": "LEAR_008",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "For Ministries, which roles are considered legal representatives by default, allowing them to appoint a LEAR without further verification of their powers?",
+    "options": [
+      {
+        "text": "Only the Minister.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Minister, Deputy Minister, State/General Secretary and their deputies, and Directors of specific horizontal sectors (legal, financial, European/international relationships).",
+        "isCorrect": true
+      },
+      {
+        "text": "Any Head of Department or Head of Unit within the Ministry.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only the administrative heads responsible for daily management.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For ministries, Ministers are considered legal representatives by default... In addition to the Minister's role, the following roles/functions are considered as legal representatives by default...: Deputy Minister, State/General Secretary and their deputies, Directors of certain specific horizontal sectors/departments/directions, namely 'legal', 'financial','European or international relationships'. Other roles such as ‘Director’/‘Had of Department’/‘Head of Unit’, etc will be considered as having limited tasks and powers.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 23, 24"
+  },
+  {
+    "id": "LEAR_009",
+    "category": "LEAR Appointment",
+    "sub_category": "Ex-post Verifications",
+    "question": "If a participant fails to keep the original documents related to LEAR appointment on file for controls, what is a potential consequence?",
+    "options": [
+      {
+        "text": "Only a minor administrative fee will be imposed.",
+        "isCorrect": false
+      },
+      {
+        "text": "Their LEAR appointment will be temporarily suspended.",
+        "isCorrect": false
+      },
+      {
+        "text": "The EU Login account may be closed, access suspended/refused, and ongoing grants potentially terminated.",
+        "isCorrect": true
+      },
+      {
+        "text": "They will be required to re-register as a new entity in the Participant Register.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Signed originals must be kept on file for controls... Failure to comply with this requirement may lead to the closure of the EU Login account and suspension and refusal of access (and possibly termination of ongoing grants, procurements, prizes, contribution agreements and expert contracts).",
+    "difficulty": "Medium",
+    "source": "tc_en.pdf, Page 9, 10"
+  },
+  {
+    "id": "LEAR_010",
+    "category": "LEAR Appointment",
+    "sub_category": "Delegation of Tasks",
+    "question": "Which of the following statements about Account Administrators (AccAds) is correct?",
+    "options": [
+      {
+        "text": "AccAds are directly appointed by the organization's legal representative.",
+        "isCorrect": false
+      },
+      {
+        "text": "AccAds have all the same rights as the LEAR, including appointing other AccAds.",
+        "isCorrect": false
+      },
+      {
+        "text": "AccAds can manage the organization's data but cannot sign contracts electronically.",
+        "isCorrect": false
+      },
+      {
+        "text": "AccAds have the same rights as the LEAR, except they cannot attribute other AccAds.",
+        "isCorrect": true
+      }
+    ],
+    "rationale": "If needed, the LEARs can delegate their tasks to one or more colleagues, who will act as account administrators (so-called ‘AccAds’)... Has the same rights as the LEAR, except that they cannot attribute other account administrators.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20 and tc_en.pdf, Page 6"
+  },
+  {
+    "id": "LEAR_011",
+    "category": "LEAR Appointment",
+    "sub_category": "Compliance and Responsibility",
+    "question": "Who is ultimately responsible for ensuring that the LEAR remains duly authorized to represent the organization in relation to all LEAR responsibilities?",
+    "options": [
+      {
+        "text": "The European Commission's Central Validation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "The LEAR themselves.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization that appointed the LEAR.",
+        "isCorrect": true
+      },
+      {
+        "text": "The Coordinator Contact (CoCo) of the project.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Organisations warrant that the person appointed as LEAR is duly authorised to represent them in relation to all LEAR responsibilities. Organisations are responsible for verifying regularly the scope of the LEAR responsibilities and to ensure that the LEAR remains at all times duly authorised to represent them in relation to these responsibilities.",
+    "difficulty": "Medium",
+    "source": "tc_en.pdf, Page 9"
+  },
+  {
+    "id": "LEAR_012",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "When must the identity documents of the legal representative and the appointed LEAR be valid for the purpose of LEAR appointment?",
+    "options": [
+      {
+        "text": "At the time of proposal submission.",
+        "isCorrect": false
+      },
+      {
+        "text": "At the time the LEAR appointment letter is signed.",
+        "isCorrect": true
+      },
+      {
+        "text": "Throughout the entire duration of the grant agreement.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only at the time of the initial PIC registration.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Identity documents must be valid (not expired) at the time of the LEAR appointment.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22"
+  },
+  {
+    "id": "LEAR_013",
+    "category": "LEAR Appointment",
+    "sub_category": "LEAR Replacement",
+    "question": "What is the procedure for replacing an already validated LEAR?",
+    "options": [
+      {
+        "text": "A simple online form submission by the organization's self-registrant.",
+        "isCorrect": false
+      },
+      {
+        "text": "A new LEAR appointment process must be followed, identical to the initial appointment.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only a formal notification to the European Data Protection Supervisor is required.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization must register a new PIC and transfer all previous project data.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A LEAR replacement is equivalent to a new LEAR appointment. For the replacement of an already validated LEAR, participants must submit the same type of documents and the Central Validation Service will follow the procedure for the validation of LEAR appointment.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25"
+  },
+  {
+    "id": "LEAR_014",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "For public bodies and governmental entities, who is generally recognized as the legal representative by default?",
+    "options": [
+      {
+        "text": "The appointed project manager for EU funded projects.",
+        "isCorrect": false
+      },
+      {
+        "text": "Any official or temporary agent with more than 5 years of experience.",
+        "isCorrect": false
+      },
+      {
+        "text": "The highest-ranked person (e.g., Director-General, President, Mayor).",
+        "isCorrect": true
+      },
+      {
+        "text": "The head of the legal department.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For public bodies and other state/governmental entities, including executive services at central/regional/local level, the highest-ranked person (e.g. Director-General, President, Mayor, etc) will be recognized as legal representative by default.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 24"
+  },
+  {
+    "id": "LEAR_015",
+    "category": "LEAR Appointment",
+    "sub_category": "Compliance and Responsibility",
+    "question": "What happens if a LEAR fails to deactivate old e-mail addresses/user accounts from the organization- and project roles?",
+    "options": [
+      {
+        "text": "The European Commission will automatically deactivate them after 6 months.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization's legal status will be automatically revoked.",
+        "isCorrect": false
+      },
+      {
+        "text": "The LEAR has the ultimate responsibility for overseeing this, and failure to comply may lead to account closure and access suspension/refusal.",
+        "isCorrect": true
+      },
+      {
+        "text": "It will only affect access to future projects, not ongoing ones.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR has the ultimate responsibility for overseeing that old e-mail addresses/user accounts are deactivated and removed from the organisation- and project roles. Failure to comply with this requirement may lead to the closure of the EU Login account and suspension and refusal of access.",
+    "difficulty": "Medium",
+    "source": "tc_en.pdf, Page 10"
+  },
+  {
+    "id": "FCA_001",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "General Requirements",
+    "question": "For which types of EU funding is a financial capacity assessment (FCA) typically required?",
+    "options": [
+      {
+        "text": "Only for prizes and contribution agreements.",
+        "isCorrect": false
+      },
+      {
+        "text": "Primarily for grants and procurements.",
+        "isCorrect": true
+      },
+      {
+        "text": "It is not required for any EU funding, only for national co-financing.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only for grants exceeding EUR 1 million.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Central Validation Service also assists the EU services with the financial capacity assessment (required by the Financial Regulation for grants and procurements; not needed for prizes or contribution agreements).",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25"
+  },
+  {
+    "id": "FCA_002",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Validity and Renewal",
+    "question": "How long is a financial capacity assessment (FCA) performed by the Central Validation Service generally valid?",
+    "options": [
+      {
+        "text": "For the duration of the specific grant or procurement it was assessed for.",
+        "isCorrect": false
+      },
+      {
+        "text": "12 months after the date of assessment.",
+        "isCorrect": false
+      },
+      {
+        "text": "18 months after the closure date of the most recent assessed accounting period.",
+        "isCorrect": true
+      },
+      {
+        "text": "It requires renewal annually, regardless of recent accounting periods.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The financial assessment is valid for 18 months after the closure date of the most recent assessed accounting period.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 31"
+  },
+  {
+    "id": "FCA_003",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Exemptions",
+    "question": "Which of the following is typically exempt from a financial capacity assessment in grant procedures?",
+    "options": [
+      {
+        "text": "Private commercial organizations receiving low-value grants.",
+        "isCorrect": false
+      },
+      {
+        "text": "All small and medium-sized enterprises (SMEs).",
+        "isCorrect": false
+      },
+      {
+        "text": "Public bodies.",
+        "isCorrect": true
+      },
+      {
+        "text": "Entities involved in Horizon Europe projects only.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Additional conditions depend on the type of procedure (grant or procurement), participant and grant amount (e.g. no financial capacity assessment is needed for public bodies in grant procedures, for Member State organisations, international organisations, persons in receipt of education support, persons most in need and in receipt of direct support; for low-value grants and low-value procurements).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25, 26"
+  },
+  {
+    "id": "FCA_004",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "For an action grant exceeding EUR 750,000, what additional document must the participant generally provide for the financial capacity assessment?",
+    "options": [
+      {
+        "text": "A detailed business continuity plan.",
+        "isCorrect": false
+      },
+      {
+        "text": "A signed letter from their national government.",
+        "isCorrect": false
+      },
+      {
+        "text": "A statutory audit report or a self-declaration on the validity of the accounts.",
+        "isCorrect": true
+      },
+      {
+        "text": "Proof of at least 5 years of continuous operation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Participants requesting a grant amount of above 750 000 EUR (for action grants) or above 100 000 EUR (for operating grants) must provide: an statutory audit report issued by an approved/certified external auditor or a declaration on the validity of the accounts (self-declaration), signed by the legal representative of the entity, which certifies the validity of the accounts.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "FCA_005",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "What period should the financial documents (e.g., profit and loss account, balance sheet) submitted for FCA cover?",
+    "options": [
+      {
+        "text": "The current financial year and the preceding one.",
+        "isCorrect": false
+      },
+      {
+        "text": "The last two closed financial years, with the most recent year closed within the last 18 months.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only the most recent closed financial year, regardless of its closure date.",
+        "isCorrect": false
+      },
+      {
+        "text": "The entire lifespan of the entity, if available.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The documents provided must cover the last two closed financial years. The most recent year must have been closed within the last 18 months.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "FCA_006",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Specific Cases",
+    "question": "When can a subsidiary without its own financial statements provide the consolidated accounts of its parent company for FCA?",
+    "options": [
+      {
+        "text": "Always, as long as the parent company is financially stable.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if the subsidiary is exempt under national law from statutory audits, only consolidated statements are available, AND the parent company assumes full joint liability for all the subsidiary's debts.",
+        "isCorrect": true
+      },
+      {
+        "text": "Never, individual financial statements are always required.",
+        "isCorrect": false
+      },
+      {
+        "text": "If the subsidiary is newly established and has no financial history.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Subsidiaries which do not prepare their own financial statements may provide the consolidated accounts... if: the entity is exempt under national law from statutory audits; only consolidated statements... are available; and the parent company assumes joint liability for all the debts of the entity (— all conditions must be fulfilled).",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 28"
+  },
+  {
+    "id": "FCA_007",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Process and Outcome",
+    "question": "Who takes the final decision on a participant's financial capacity after the Central Validation Service prepares the assessment?",
+    "options": [
+      {
+        "text": "The Central Validation Service itself.",
+        "isCorrect": false
+      },
+      {
+        "text": "The participant's own financial department.",
+        "isCorrect": false
+      },
+      {
+        "text": "The EU service in charge of the specific proposal/tender separately.",
+        "isCorrect": true
+      },
+      {
+        "text": "The European Anti-Fraud Office (OLAF).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The role of the Central Validation Service is to prepare the financial capacity assessment... The final decision on the financial capacity will be taken later, and for each proposal/tender separately by the EU service in charge.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "FCA_008",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "For natural persons engaged in an economic activity who do not prepare financial statements, what documents are requested for FCA?",
+    "options": [
+      {
+        "text": "Only a declaration of their annual income.",
+        "isCorrect": false
+      },
+      {
+        "text": "Annual income tax declaration, a signed declaration of patrimony, and a signed declaration of debts.",
+        "isCorrect": true
+      },
+      {
+        "text": "A business plan approved by a certified accountant.",
+        "isCorrect": false
+      },
+      {
+        "text": "Bank statements for the last five years.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Natural persons engaged in an economic activity who do not prepare financial statements in relation to their business activities — Are requested to provide: the annual income tax declaration... a signed declaration of patrimony... and a signed declaration of debts.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 29"
+  },
+  {
+    "id": "FCA_009",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "General Requirements",
+    "question": "In case of incomplete or contradictory information for the financial capacity assessment, what action may the Central Validation Service take?",
+    "options": [
+      {
+        "text": "Automatically reject the application without further communication.",
+        "isCorrect": false
+      },
+      {
+        "text": "Finalise the assessment by taking the most prudent approach if information is not provided in time.",
+        "isCorrect": true
+      },
+      {
+        "text": "Request a full external audit at the participant's expense.",
+        "isCorrect": false
+      },
+      {
+        "text": "Postpone the assessment until the next financial year.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If participants do not respond in time, the Central Validation Service has the right to refuse the assessment (or finalise it on the basis of the information and documents submitted or publicly available). If the financial documents do not contain sufficient information... and such information is not provided, the financial assessment will be completed by taking the most prudent approach.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 30"
+  },
+  {
+    "id": "FCA_010",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Process and Outcome",
+    "question": "What is the primary objective of the Central Validation Service's role in the financial capacity assessment?",
+    "options": [
+      {
+        "text": "To determine the final grant amount for a project.",
+        "isCorrect": false
+      },
+      {
+        "text": "To negotiate the budget with the participant.",
+        "isCorrect": false
+      },
+      {
+        "text": "To prepare the financial capacity assessment by collecting and analyzing financial documents.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide financial advice to participants.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The role of the Central Validation Service is to prepare the financial capacity assessment (e.g. to collect and to analyse the financial documents). The final decision on the financial capacity will be taken later, and for each proposal/tender separately by the EU service in charge.",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "FCA_011",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Consequences of False Declarations",
+    "question": "If a participant makes false declarations during the financial capacity assessment, what is a possible consequence?",
+    "options": [
+      {
+        "text": "Only a temporary suspension from future applications.",
+        "isCorrect": false
+      },
+      {
+        "text": "The financial assessment status may be changed, ongoing grants terminated, undue amounts recovered, and fines/exclusion from future funding imposed, with OLAF informed.",
+        "isCorrect": true
+      },
+      {
+        "text": "They will be required to resubmit their financial documents within 7 days.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only the current financial year's funding will be affected.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If it is found out that a participant made false declarations, their status may be changed. If in the meantime the participant already received EU grants or procurements, their participation may be terminated and undue amounts paid will be recovered. In case of irregularities or false declarations, participants may moreover be fined and excluded from future EU funding... In addition, the European Anti-Fraud Office (OLAF) may be informed.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 31"
+  },
+  {
+    "id": "FCA_012",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents (Exemptions)",
+    "question": "Are participants in tender procedures required to provide an audit report or self-declaration for their financial capacity assessment?",
+    "options": [
+      {
+        "text": "Yes, always, regardless of the tender value.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, an audit report or self-declaration is not needed for entities participating in tender procedures.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the tender value exceeds EUR 1 million.",
+        "isCorrect": false
+      },
+      {
+        "text": "Yes, if they are private entities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "No audit report/self-declaration is needed for entities participating in tender procedures, for natural persons and entities without closed accounts.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "FCA_013",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Specific Cases",
+    "question": "An entity using cash-based accounting applies for EU funding. What type of documentation may be accepted for their financial capacity assessment if traditional profit and loss accounts are not available?",
+    "options": [
+      {
+        "text": "Only a certified balance sheet from a national authority.",
+        "isCorrect": false
+      },
+      {
+        "text": "Signed declarations on fixed/current assets, liabilities, revenues, and expenses, potentially with supporting evidence like bank statements.",
+        "isCorrect": true
+      },
+      {
+        "text": "A simple statement of available cash on hand.",
+        "isCorrect": false
+      },
+      {
+        "text": "A letter of guarantee from a national bank.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If the available financial documents do not contain a profit and loss account and a balance sheet... declarations signed by the authorised legal representative of the entity may be accepted, if they provide: information on fixed and current assets... information on revenues and expenses... In addition, it is recommended to provide any available evidence supporting the declared amounts (e.g. bank statements).",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 29, 30"
+  },
+  {
+    "id": "FCA_014",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Ad Hoc Assessment",
+    "question": "Which of the following situations could trigger an ad hoc financial capacity assessment, even if a previous assessment is still valid?",
+    "options": [
+      {
+        "text": "The participant changes its project coordinator.",
+        "isCorrect": false
+      },
+      {
+        "text": "The participant's name changes due to re-branding.",
+        "isCorrect": false
+      },
+      {
+        "text": "Involvement in cases of serious administrative errors or fraud, or an overdue payment from an EU body.",
+        "isCorrect": true
+      },
+      {
+        "text": "A request for a higher funding rate for an ongoing grant.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Moreover, the financial capacity may be assessed ad hoc if there are justified grounds to doubt it, like for example: indication of weak/insufficient financial capacity from other sources; involvement in cases of serious administrative errors or fraud; pending legal procedures or judicial proceedings for serious administrative errors or fraud; attachment order or recovery order for an outstanding amount issued by an EU body on which the payment is significantly overdue; substantial findings in EU audits within the last 2 years that put in doubt the financial capacity.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "FCA_015",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Supporting Documents",
+    "question": "What is the policy regarding the language of financial documents submitted for FCA?",
+    "options": [
+      {
+        "text": "Only English versions are accepted.",
+        "isCorrect": false
+      },
+      {
+        "text": "They must be in their original language, with mandatory unofficial English translations for non-EU languages, and optional for EU languages.",
+        "isCorrect": true
+      },
+      {
+        "text": "Any language is accepted as long as it's accompanied by a certified translation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only documents in the official language of the participant's country are accepted.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "As a general rule, financial documents must be provided in their original language(s)... For documents in EU languages, participants may be requested to submit an English free (unofficial) translation... For documents in non-EU languages, a free translation in English is always mandatory.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26, 27"
+  },
+  {
+    "id": "FCA_016",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Modifications and Corrections",
+    "question": "If a participant disagrees with their financial capacity assessment, what is the correct procedure for them to request a re-assessment?",
+    "options": [
+      {
+        "text": "Submit a new complete set of financial documents to the Central Validation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "Contact the EU service in charge of their proposal to appeal the decision.",
+        "isCorrect": false
+      },
+      {
+        "text": "Contact the Central Validation Service via Participant Register message, providing additional justifications.",
+        "isCorrect": true
+      },
+      {
+        "text": "Request a binding arbitration from the European Data Protection Supervisor.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In case of disagreement with the assessment, the participant may contact the Central Validation Service by sending additional justifications via Participant Register message. The subject of the message should be clearly labelled as related to the financial assessment... The Central Validation Service will carry out a re-assessment on the basis of the additional documents.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 31"
+  },
+  {
+    "id": "Cross_001",
+    "category": "Cross-cutting Topics",
+    "sub_category": "Data Protection",
+    "question": "How are personal data submitted or collected through the EU Funding & Tenders Portal handled?",
+    "options": [
+      {
+        "text": "They are publicly accessible for transparency purposes.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are subject to the privacy statements available on the Portal Legal Notice page, in accordance with Regulation (EU) 2018/1725.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are automatically shared with national tax authorities without explicit consent.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are retained indefinitely for historical research purposes.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Personal data submitted or otherwise collected through the Portal is subject to the privacy statements available on the Portal Legal Notice page. The Joint Controllers are committed to protect your personal data and to respect your privacy pursuant to Regulation (EU) 2018/1725.",
+    "difficulty": "Easy",
+    "source": "tc_en.pdf, Page 14 and privacy-statement_en.pdf, Page 2"
+  },
+  {
+    "id": "Cross_002",
+    "category": "Cross-cutting Topics",
+    "sub_category": "OLAF Involvement",
+    "question": "In which circumstances may the European Anti-Fraud Office (OLAF) be informed regarding a participant in EU funding procedures?",
+    "options": [
+      {
+        "text": "Only if the participant fails to submit their final report on time.",
+        "isCorrect": false
+      },
+      {
+        "text": "If there are indications of financial irregularities or false declarations.",
+        "isCorrect": true
+      },
+      {
+        "text": "As a standard procedure for all high-value grants.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if requested directly by a national police authority.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In case of irregularities or false declarations, participants may moreover be fined and excluded from future EU funding... In addition, the European Anti-Fraud Office (OLAF) may be informed. OLAF also carries out on-the-spot checks and investigations to protect the Union's financial interests against fraud and other irregularities.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 14, 19, 25, 31 and C(2021)952_0.pdf, Page 20"
+  },
+  {
+    "id": "Cross_003",
+    "category": "Cross-cutting Topics",
+    "sub_category": "Roles and Responsibilities",
+    "question": "In the context of EU funding, what does 'Joint Controllership' imply for the processing of personal data via the EU Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "Only one main controller is responsible for all data processing.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Supervisor is the sole controller.",
+        "isCorrect": false
+      },
+      {
+        "text": "Multiple EU institutions, bodies, offices, and agencies jointly determine the purposes and means of processing personal data.",
+        "isCorrect": true
+      },
+      {
+        "text": "Data processing is managed exclusively by external processors.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Joint Controllers that process personal data via the Portal... are all European Union institutions, bodies, offices and agencies... who are parties to the Joint Controllership Arrangement of the Portal... and who process the personal data collected by the Portal business processes. They ensure and are responsible for the definition of the purposes and design of the related means.",
+    "difficulty": "Medium",
+    "source": "privacy-statement_en.pdf, Page 2, 3"
+  },
+  {
+    "id": "Cross_004",
+    "category": "Cross-cutting Topics",
+    "sub_category": "Data Protection Officer",
+    "question": "What is a key responsibility of the Data Protection Officer (DPO) in the European Commission?",
+    "options": [
+      {
+        "text": "To execute all financial transactions related to personal data processing.",
+        "isCorrect": false
+      },
+      {
+        "text": "To independently ensure the internal application of Regulation (EU) 2018/1725 within the Commission.",
+        "isCorrect": true
+      },
+      {
+        "text": "To personally approve all data transfer requests to third countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "To conduct external audits of data processing activities in Member States.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Data Protection Officer (DPO) ensures, in an independent way, that the Commission correctly applies the law protecting individuals’ personal data and keeps a public register of all operations carried out by the Commission involving personal data. Responsibilities: ensure in an independent manner the internal application of Regulation (EU) 2018/1725 in the Commission; inform and advise the Commission departments and their staff on their data protection obligations.",
+    "difficulty": "Easy",
+    "source": "Data Protection Officer - European Commission.pdf"
+  },
+  {
+    "id": "Cross_005",
+    "category": "Cross-cutting Topics",
+    "sub_category": "Legal Framework",
+    "question": "Which EU Regulation primarily governs the protection of natural persons with regard to the processing of personal data by Union institutions and bodies?",
+    "options": [
+      {
+        "text": "Regulation (EU) 2016/679 (General Data Protection Regulation - GDPR).",
+        "isCorrect": false
+      },
+      {
+        "text": "Regulation (EC) No 1049/2001 (Public Access to Documents).",
+        "isCorrect": false
+      },
+      {
+        "text": "Regulation (EU) 2018/1725.",
+        "isCorrect": true
+      },
+      {
+        "text": "Directive (EU) 2019/1937 (Whistleblower Protection).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Regulation (EU) 2018/1725 lays down rules relating to the protection of natural persons with regard to the processing of personal data by the Union institutions and bodies. This is also stated in multiple other sources.",
+    "difficulty": "Easy",
+    "source": "CELEX_32018R1725_EN_TXT.pdf, Page 55 and rules-lev-lear-fca_en.pdf, Page 6"
+  },
+  {
+    "id": "Cross_006",
+    "category": "Cross-cutting Topics",
+    "sub_category": "Supervision of Data Processing",
+    "question": "Which independent supervisory authority monitors the application of Regulation (EU) 2018/1725 to all processing operations carried out by a Union institution or body?",
+    "options": [
+      {
+        "text": "The European Court of Auditors.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Board (EDPB).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Data Protection Supervisor (EDPS).",
+        "isCorrect": true
+      },
+      {
+        "text": "The national data protection authorities of Member States.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The European Data Protection Supervisor shall monitor the application of the provisions of this Regulation to all processing operations carried out by a Union institution or body. The EDPS is the European Union’s independent data protection authority responsible for supervising the processing of personal data by the European institutions, bodies, offices and agencies (EUIs).",
+    "difficulty": "Easy",
+    "source": "CELEX_32018R1725_EN_TXT.pdf, Page 55 and edps_annual_report-2024_en.pdf, Page 3"
+  },
+  {
+    "id": "LEV_021",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (Mid-cap)",
+    "question": "What is the upper limit for the number of persons employed by a 'mid-capitalisation enterprise (mid-cap)'?",
+    "options": [
+      {
+        "text": "Fewer than 250 persons.",
+        "isCorrect": false
+      },
+      {
+        "text": "Up to 500 persons.",
+        "isCorrect": false
+      },
+      {
+        "text": "Up to 3,000 persons.",
+        "isCorrect": true
+      },
+      {
+        "text": "More than 3,000 persons, but less than 10,000.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'Middle-capitalisation enterprise’ means an enterprise that is: not a micro-, small- or medium-sized enterprise (SME)... and employing up to 3 000 persons.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 12"
+  },
+  {
+    "id": "LEV_022",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (NGO)",
+    "question": "For a 'Non-governmental organisation (NGO)' status, what is a necessary prerequisite for self-declaration in the Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "It must be formally registered as an NGO in its national legal system.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be a political party or trade union.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be validated as a 'non-profit' private entity.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must have exclusively international activities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The classification as ‘non-governmental organisation (NGO)’ is not relevant for the non-profit status, since in most countries NGO is not a recognized legal form. By contrast, non-profit status is a prerequisite for the self-declaration as NGO. Self-declarations will be accepted only by private entities, which have been validated as ‘non-profit’.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 11, 12"
+  },
+  {
+    "id": "LEAR_016",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "If parts of an identity document, such as the photo, have been deleted or covered, can it be accepted for LEAR appointment?",
+    "options": [
+      {
+        "text": "Yes, as long as other identifying information is clear.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, identity documents in which some parts/elements have been deleted/erased/covered cannot be accepted.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if accompanied by a sworn statement.",
+        "isCorrect": false
+      },
+      {
+        "text": "It depends on the national law of the entity concerned.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Identity documents in which some parts/elements, including the photo, have been deleted/erased/covered (e.g. with black marker) cannot be accepted.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22"
+  },
+  {
+    "id": "FCA_017",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents (Newly Established)",
+    "question": "For newly established enterprises without closed accounts, what specific financial data are required for FCA?",
+    "options": [
+      {
+        "text": "Historical financial statements from previous ventures.",
+        "isCorrect": false
+      },
+      {
+        "text": "A full audit report signed by a certified auditor.",
+        "isCorrect": false
+      },
+      {
+        "text": "Estimated financial data (business plan) including projections on assets, liabilities, and income.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only a declaration of no financial activity.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Newly established enterprises that have not yet closed accounts — Must provide estimated financial data (i.e. a business plan or a similar document including financial projections on current and non-current assets, own capital, current and non-current liabilities, turnover, operating and financial income and charges).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 29"
+  },
+  {
+    "id": "LEV_023",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (CSO)",
+    "question": "What distinguishes a 'Civil Society Organisation (CSO)' from other entities in terms of its societal sector?",
+    "options": [
+      {
+        "text": "It belongs to the commercial sector of society.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is distinct from both government and business ('third sector').",
+        "isCorrect": true
+      },
+      {
+        "text": "It is a government-funded entity with social objectives.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is a non-profit organization with a specific focus on environmental issues.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'Civil society organisations’ are organisations from the ‘third sector’ of society, distinct from government and business (i.e. private for profit entities).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 12"
+  },
+  {
+    "id": "LEAR_017",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "For a university or higher education establishment, which role is recognized as a legal representative by default, without further verification of powers?",
+    "options": [
+      {
+        "text": "The Head of the International Relations Office.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Director of the university's research department.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Rector or Vice-Rector.",
+        "isCorrect": true
+      },
+      {
+        "text": "Any professor with more than 10 years of service.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For universities and other higher education establishments... the following roles/functions are recognised as legal representative by default, without any further verification of their powers: Rector and Vice-Rector; President and Vice-President; Chancellor and Vice Chancellor.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 24"
+  },
+  {
+    "id": "FCA_018",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "General Requirements",
+    "question": "What is the policy regarding keeping original financial documents for FCA purposes?",
+    "options": [
+      {
+        "text": "They must be submitted to the Central Validation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "They should be destroyed after the assessment is finalized.",
+        "isCorrect": false
+      },
+      {
+        "text": "They should be kept on file by the participant for checks, reviews, audits, or investigations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only electronic copies are sufficient.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The financial assessment is in principle based on documents submitted by the participant as scanned versions via the Participant Register. Originals should be kept on file for checks, reviews, audits or investigations (which can be required by the EU services at any time).",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "LEV_024",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (SME)",
+    "question": "According to the EU SME Recommendation, if an enterprise that has been an SME for years undergoes a merger and its aggregated data now exceeds the SME ceilings, when does it lose its SME status?",
+    "options": [
+      {
+        "text": "After two consecutive accounting periods where the ceilings are exceeded.",
+        "isCorrect": false
+      },
+      {
+        "text": "Immediately from the date of the transaction.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the new entity fails a subsequent formal validation by the Central Validation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "After a transition period of 12 months.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The two-year rule does not apply for changes due to a merger or acquisition. Enterprises that are subject to a change in ownership need to be assessed on the basis of their shareholder structure at the time of the transaction. If the aggregated headcount and financial data of the new structure exceed the SME ceilings, the SME status is lost immediately from the date of the transaction.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 11"
+  },
+  {
+    "id": "LEV_025",
+    "category": "Legal Entity Validation",
+    "sub_category": "Exceptions for Eligibility",
+    "question": "Which of the following EU entities is explicitly declared eligible for validation by the Financial Regulation, even if it might not have an independent legal personality in the traditional sense?",
+    "options": [
+      {
+        "text": "The European Parliament's Translation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "The EU Joint Research Centre (JRC).",
+        "isCorrect": true
+      },
+      {
+        "text": "A temporary project consortium formed for a single grant.",
+        "isCorrect": false
+      },
+      {
+        "text": "Any external consultancy firm contracted by the Commission.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "By way of exception, the Central Validation Service will also accept the following public entities without legal personality to be validated in the Participant Register: the EU Joint Research Centre (JRC) (explicitly declared eligible by Articles 176(2) and 197(4) of the Financial Regulation).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 8"
+  },
+  {
+    "id": "LEAR_018",
+    "category": "LEAR Appointment",
+    "sub_category": "Role and Responsibilities",
+    "question": "What specific task can a LEAR perform regarding signatories for their organization in the EES?",
+    "options": [
+      {
+        "text": "Directly sign all legal commitments and financial statements.",
+        "isCorrect": false
+      },
+      {
+        "text": "Attribute and revoke LSIGNs (Legal Signatories) and FSIGNs (Financial Statement Signatories) for the organization.",
+        "isCorrect": true
+      },
+      {
+        "text": "Attribute LSIGNs and FSIGNs for specific grants and procurements.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only verify the validity of LSIGNs and FSIGNs, but not appoint them.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR must enter and update on the ‘LEAR/Authorised User’ tab screen the names of the: legal representatives and signatories for the organisation (so-called ‘LSIGNs’); these are people who are able to commit the organisation legally by signing contracts and authorising amendments to them and persons that may sign cost statements on behalf of the organisation (so-called ‘FSIGNs’). The LEAR attributes and revokes LSIGNs and FSIGNs for the organisation.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20, 21 and tc_en.pdf, Page 6"
+  },
+  {
+    "id": "FCA_019",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Validity and Renewal",
+    "question": "If a participant has a valid FCA less than 18 months old, will they need a new assessment for a new grant application?",
+    "options": [
+      {
+        "text": "Yes, a new FCA is always required for each new application.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, unless there are justified grounds to doubt the financial capacity.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the new grant's value is significantly higher than previous ones.",
+        "isCorrect": false
+      },
+      {
+        "text": "Yes, but the process is simplified.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The financial capacity assessment must in principle be done for each new application/tender (— unless the participant already has a valid financial capacity assessment performed by the Central Validation Service that is not older than 18 months). However, if there are justified grounds to doubt it, a new assessment may be triggered even before the end of the 18 months.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25, 31"
+  },
+  {
+    "id": "LEV_026",
+    "category": "Legal Entity Validation",
+    "sub_category": "Effective Date (SME)",
+    "question": "For an SME status, what is the effective date of the status if it changes due to a merger or acquisition?",
+    "options": [
+      {
+        "text": "The closure date of the accounting period on which the change of status is based.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date when the ownership structure changed due to the transaction.",
+        "isCorrect": true
+      },
+      {
+        "text": "The date of the Central Validation Service's re-assessment.",
+        "isCorrect": false
+      },
+      {
+        "text": "Six months after the merger/acquisition is legally finalized.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For SMEs and mid-caps, the effective date is the closure date of the accounting period on which the change of status is based. For cases of mergers and acquisitions that lead to the loss of the SME or mid-cap status, the effective date of change will be the date when the ownership structure changed.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 19"
+  },
+  {
+    "id": "LEV_027",
+    "category": "Legal Entity Validation",
+    "sub_category": "Modifications and Corrections",
+    "question": "Who is responsible for requesting an update of a participant's validation in the Participant Register in case of a change in legal situation (e.g., name, address, status)?",
+    "options": [
+      {
+        "text": "The participant's Legal Representative.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Central Validation Service, automatically.",
+        "isCorrect": false
+      },
+      {
+        "text": "The participant's LEAR.",
+        "isCorrect": true
+      },
+      {
+        "text": "The project coordinator of the latest grant agreement.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In case of a change in the participant’s legal situation... the participant must request an update of the validation. Requests to update a validation will be accepted, if submitted by the participant’s LEAR.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 18"
+  },
+  {
+    "id": "LEAR_019",
+    "category": "LEAR Appointment",
+    "sub_category": "Ex-post Verifications",
+    "question": "What is the consequence if a participant commits irregularities during the LEAR appointment process, as identified through ex-post checks?",
+    "options": [
+      {
+        "text": "Only a temporary suspension of the LEAR's access rights.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization must re-apply for PIC validation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Participation in ongoing grants may be terminated, undue amounts recovered, and fines/exclusion from future funding imposed, with OLAF informed.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only the LEAR will face administrative sanctions.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If it is found out that a participant did not respect the obligation to keep the original documents or committed other irregularities, appropriate measures will be taken. If in the meantime the participant already received EU grants... their participation may be terminated and undue amounts paid will be recovered. In case of irregularities or false declarations, participants may moreover be fined and excluded from future EU funding... In addition, the European Anti-Fraud Office (OLAF) may be informed.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25"
+  },
+  {
+    "id": "FCA_020",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Specific Cases",
+    "question": "For entities covered by a guarantor, what is required for the guarantor's financial data to be accepted for FCA?",
+    "options": [
+      {
+        "text": "The guarantor must be a public financial institution.",
+        "isCorrect": false
+      },
+      {
+        "text": "The guarantor must provide a full financial guarantee (joint liability) AND the service in charge of the application must approve the guarantee.",
+        "isCorrect": true
+      },
+      {
+        "text": "An ad-hoc guarantee covering only the EU project is sufficient.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only a declaration of intent from the guarantor is needed.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Entities that are covered by a full financial guarantee of another legal entity (i.e. guarantor) may submit the financial data of the guarantor, provided that it is a full guarantee (i.e. the guarantor has assumed full joint liability for all debts). Ad-hoc guarantees... cannot be accepted. Participants that would like to have the financial capacity of their guarantor assessed, must first contact the service in charge of their application for approval of the guarantee.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 30"
+  },
+  {
+    "id": "LEV_028",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "What criteria apply to an entity to be validated as a 'Secondary or higher education establishment'?",
+    "options": [
+      {
+        "text": "It must be a public body and conduct scientific research as its main activity.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be recognized by its national education system and be able to deliver diplomas recognized by the State.",
+        "isCorrect": true
+      },
+      {
+        "text": "It must be non-profit and receive at least 50% of its funding from public sources.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be an International European Research Organisation (IERO).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'Secondary or higher education establishment' means an entity that is recognised as such by its national education system and is able to deliver diplomas recognised by the State.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 13"
+  },
+  {
+    "id": "LEV_029",
+    "category": "Legal Entity Validation",
+    "sub_category": "Required Documents",
+    "question": "If a participant submits documents for legal entity validation in a non-EU language, what is mandatorily required?",
+    "options": [
+      {
+        "text": "A certified translation into the official language of the participant's country.",
+        "isCorrect": false
+      },
+      {
+        "text": "A free (unofficial) translation in English.",
+        "isCorrect": true
+      },
+      {
+        "text": "An apostilled copy of the original document.",
+        "isCorrect": false
+      },
+      {
+        "text": "A sworn statement confirming the content of the document.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Documents in non-EU languages will be accepted only if accompanied by a free translation in English (and in case of doubt, a certified/legal translation in English may be requested).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 14"
+  },
+  {
+    "id": "LEAR_020",
+    "category": "LEAR Appointment",
+    "sub_category": "Role and Responsibilities",
+    "question": "What is the purpose of the LEAR entering the names of LSIGNs and FSIGNs in the 'LEAR/Authorised User' tab screen?",
+    "options": [
+      {
+        "text": "To notify the Commission of potential conflicts of interest.",
+        "isCorrect": false
+      },
+      {
+        "text": "To enable these individuals to commit the organization legally (LSIGNs) or sign cost statements (FSIGNs) within the EES.",
+        "isCorrect": true
+      },
+      {
+        "text": "To request additional financial support for the project.",
+        "isCorrect": false
+      },
+      {
+        "text": "To facilitate external audits of the organization's financial records.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR must enter and update on the ‘LEAR/Authorised User’ tab screen the names of the: legal representatives and signatories for the organisation (so-called ‘LSIGNs’); these are people who are able to commit the organisation legally by signing contracts and authorising amendments to them and persons that may sign cost statements on behalf of the organisation (so-called ‘FSIGNs’).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20, 21"
+  },
+  {
+    "id": "FCA_021",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "General Requirements",
+    "question": "If a participant's financial documents are illegible or incomplete, what action may the Central Validation Service take?",
+    "options": [
+      {
+        "text": "Immediately reject the application without further query.",
+        "isCorrect": false
+      },
+      {
+        "text": "Assume the information is correct and proceed with the assessment.",
+        "isCorrect": false
+      },
+      {
+        "text": "Require the participant to confirm or explain the information or provide missing information within a reasonable time.",
+        "isCorrect": true
+      },
+      {
+        "text": "Forward the application to OLAF for investigation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Participants may be required to confirm or explain the information submitted or publicly available, or provide missing information within a reasonable time, if: the provided information is illegible, incomplete, incorrect, contradictory or unclear.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 30"
+  },
+  {
+    "id": "LEV_030",
+    "category": "Legal Entity Validation",
+    "sub_category": "Effective Date (SME/Mid-cap)",
+    "question": "For newly established enterprises without closed accounts, what is the effective date for their SME or mid-cap status?",
+    "options": [
+      {
+        "text": "The date they submit their first business plan.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date of their creation.",
+        "isCorrect": true
+      },
+      {
+        "text": "The date they first generate turnover.",
+        "isCorrect": false
+      },
+      {
+        "text": "The date the Central Validation Service validates their status.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For newly established enterprises that do not yet have closed accounts, the effective date is the date of their creation.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 18"
+  },
+  {
+    "id": "LEV_031",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (Research Org)",
+    "question": "Which of the following is NOT considered a 'research activity' for the purpose of defining a 'research organisation'?",
+    "options": [
+      {
+        "text": "Carrying out technological development.",
+        "isCorrect": false
+      },
+      {
+        "text": "Promoting, managing, or coordinating research activities.",
+        "isCorrect": true
+      },
+      {
+        "text": "Performing experimental development.",
+        "isCorrect": false
+      },
+      {
+        "text": "Conducting basic research.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The following are NOT considered research activities: supporting or financing research activities carried out by other entities; promoting, managing or coordinating research activities.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 13"
+  },
+  {
+    "id": "LEAR_021",
+    "category": "LEAR Appointment",
+    "sub_category": "Eligibility and Position",
+    "question": "What is a mandatory requirement regarding the LEAR's employment status?",
+    "options": [
+      {
+        "text": "The LEAR must be an external consultant.",
+        "isCorrect": false
+      },
+      {
+        "text": "The LEAR must be a member of the organization's board of directors.",
+        "isCorrect": false
+      },
+      {
+        "text": "The LEAR must be employed in the entity.",
+        "isCorrect": true
+      },
+      {
+        "text": "The LEAR can be any person with legal expertise, regardless of employment.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The LEAR must be someone employed in the entity (most commonly in the central administrative services of the entity).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 20"
+  },
+  {
+    "id": "FCA_022",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents (Exemptions)",
+    "question": "Is an external audit report or self-declaration always required for natural persons during a financial capacity assessment?",
+    "options": [
+      {
+        "text": "Yes, for all natural persons receiving EU funding.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, it is not needed for natural persons.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the natural person's grant amount exceeds EUR 100,000.",
+        "isCorrect": false
+      },
+      {
+        "text": "Yes, if they are self-employed.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "No audit report/self-declaration is needed for entities participating in tender procedures, for natural persons and entities without closed accounts.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "LEV_032",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "What are the two mutually exclusive statuses that an entity can be validated as in the Funding & Tenders Portal?",
+    "options": [
+      {
+        "text": "SME and Mid-cap.",
+        "isCorrect": false
+      },
+      {
+        "text": "Non-profit and Research organisation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Private entity and Public body.",
+        "isCorrect": true
+      },
+      {
+        "text": "NGO and Civil Society Organisation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The two statuses (private entity and public body) are mutually exclusive, meaning that you can only be validated as one or the other.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 10"
+  },
+  {
+    "id": "LEAR_022",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "For International Organisations, who is generally recognized as the legal representative by default?",
+    "options": [
+      {
+        "text": "The Head of the HR department.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Legal Advisor.",
+        "isCorrect": false
+      },
+      {
+        "text": "The highest-ranked person (e.g., Secretary, Secretary-General).",
+        "isCorrect": true
+      },
+      {
+        "text": "Any person authorized to sign individual project contracts.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For international organisations, the highest-ranked person (e.g. Secretary, Secretary-General) will be recognised as legal representative by default.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 24, 25"
+  },
+  {
+    "id": "FCA_023",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "General Requirements",
+    "question": "Who is primarily responsible for keeping original financial documents on file for potential EU checks, reviews, audits, or investigations?",
+    "options": [
+      {
+        "text": "The Central Validation Service.",
+        "isCorrect": false
+      },
+      {
+        "text": "The participant themselves.",
+        "isCorrect": true
+      },
+      {
+        "text": "The external auditor.",
+        "isCorrect": false
+      },
+      {
+        "text": "The national tax authority.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Originals should be kept on file for checks, reviews, audits or investigations (which can be required by the EU services at any time).",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "LEV_033",
+    "category": "Legal Entity Validation",
+    "sub_category": "General Principles",
+    "question": "What is the main consequence if a participant does not respond in time to a request from the Central Validation Service for clarification or missing information during legal entity validation?",
+    "options": [
+      {
+        "text": "The validation process will be automatically extended.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Central Validation Service has the right to refuse the validation or finalise it based on available information.",
+        "isCorrect": true
+      },
+      {
+        "text": "The participant will be permanently banned from applying for EU funding.",
+        "isCorrect": false
+      },
+      {
+        "text": "A new legal entity identification form will be automatically generated.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "If participants do not respond in time, the Central Validation Service has the right to refuse the validation (or finalise it on the basis of the information and documents submitted or publicly available).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 18"
+  },
+  {
+    "id": "LEAR_023",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "Which of the following elements must a document proving the empowerment of the legal representative (who appoints the LEAR) clearly indicate?",
+    "options": [
+      {
+        "text": "The legal representative's personal bank account details.",
+        "isCorrect": false
+      },
+      {
+        "text": "The legal representative's role/function within the organization and their appointment for that role.",
+        "isCorrect": true
+      },
+      {
+        "text": "The legal representative's educational background.",
+        "isCorrect": false
+      },
+      {
+        "text": "A list of all projects the legal representative has previously managed.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The document(s) proving the empowerment must identify: the role/function of legal representative within the entity; the name and appointment of the person (by indicating their personal data) for that role.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 23"
+  },
+  {
+    "id": "FCA_024",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Exemptions",
+    "question": "For which of the following is a financial capacity assessment NOT needed?",
+    "options": [
+      {
+        "text": "Operating grants exceeding EUR 100,000.",
+        "isCorrect": false
+      },
+      {
+        "text": "Procurement procedures for goods and services.",
+        "isCorrect": false
+      },
+      {
+        "text": "Prizes and contribution agreements.",
+        "isCorrect": true
+      },
+      {
+        "text": "Any entity without a previous FCA.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The financial capacity assessment... is not needed for prizes or contribution agreements.",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 25"
+  },
+  {
+    "id": "LEV_034",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses (IO)",
+    "question": "Which of the following is a key characteristic of an 'International Organisation (IO)' for validation purposes?",
+    "options": [
+      {
+        "text": "It must be a private entity with a global reach.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must be an intergovernmental organisation established under international public law.",
+        "isCorrect": true
+      },
+      {
+        "text": "Its headquarters must be located in an EU Member State.",
+        "isCorrect": false
+      },
+      {
+        "text": "It must receive at least 75% of its funding from the United Nations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "'International organisation' means an intergovernmental organisation (other than the EU) established under international public law, including specialised entities — with or without legal personality — set up by international organisations.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 12"
+  },
+  {
+    "id": "LEAR_024",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "For a Ministry, when can a Minister's ID document be exceptionally replaced by a badge or service card for LEAR appointment purposes?",
+    "options": [
+      {
+        "text": "Only if the Minister is a dual national.",
+        "isCorrect": false
+      },
+      {
+        "text": "Always, for any representative of the Ministry.",
+        "isCorrect": false
+      },
+      {
+        "text": "This exception applies only to the person of the 'Minister' and cannot be extended to other representatives.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the Ministry is located in a non-EU country.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For Ministers, the ID document can be exceptionally replaced by a badge or service card (issued by the ministry). This exception applies only to the person of the ‘Minister’ and cannot be extended to other representatives.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 24"
+  },
+  {
+    "id": "FCA_025",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Process and Outcome",
+    "question": "What is the primary role of the Central Validation Service in the financial capacity assessment process?",
+    "options": [
+      {
+        "text": "To grant financial guarantees to participants.",
+        "isCorrect": false
+      },
+      {
+        "text": "To take the final decision on the participant's financial capacity.",
+        "isCorrect": false
+      },
+      {
+        "text": "To collect and analyse the financial documents.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide financial counseling to participants.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The role of the Central Validation Service is to prepare the financial capacity assessment (e.g. to collect and to analyse the financial documents).",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26"
+  },
+  {
+    "id": "LEV_035",
+    "category": "Legal Entity Validation",
+    "sub_category": "General Principles",
+    "question": "How does the Central Validation Service obtain the necessary information and supporting documents for validation from participants?",
+    "options": [
+      {
+        "text": "Through direct postal mail communication only.",
+        "isCorrect": false
+      },
+      {
+        "text": "By requesting participants to submit them via the Participant Register.",
+        "isCorrect": true
+      },
+      {
+        "text": "By conducting on-site visits to all applicants.",
+        "isCorrect": false
+      },
+      {
+        "text": "By relying solely on publicly available information.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "For these checks, the participants will be contacted directly by the Central Validation Service and asked to submit the necessary information and supporting documents via the Participant Register.",
+    "difficulty": "Easy",
+    "source": "rules-lev-lear-fca_en.pdf, Page 6"
+  },
+  {
+    "id": "LEAR_025",
+    "category": "LEAR Appointment",
+    "sub_category": "Legal Representative",
+    "question": "Persons tasked with the daily management of an entity can be recognized as its legal representative for LEAR appointment purposes if:",
+    "options": [
+      {
+        "text": "They are the highest-ranked person in the organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are entitled to engage and represent the entity beyond ordinary day-to-day business matters.",
+        "isCorrect": true
+      },
+      {
+        "text": "Their responsibilities are limited to ordinary day-to-day operational tasks.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are nominated by the project coordinator.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Persons tasked with the daily management — Can not be recognized as legal representatives if they are not entitled to engage and represent the entity outside ordinary day-to-day business matters. The ‘daily management’... consists of ordinary business and execution of day-to-day decisions and in line with the general instructions of the management board. Therefore, to be recognized as a legal representative, they must be entitled to engage and represent the entity beyond daily management.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 21"
+  },
+  {
+    "id": "FCA_026",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "What is the requirement for financial statements when submitted for FCA, regarding approval?",
+    "options": [
+      {
+        "text": "They must be approved by an external auditor.",
+        "isCorrect": false
+      },
+      {
+        "text": "They must be approved by the management of the entity.",
+        "isCorrect": true
+      },
+      {
+        "text": "They must be verified by a national tax authority.",
+        "isCorrect": false
+      },
+      {
+        "text": "They must be certified by the Central Validation Service.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Profit and loss account — approved by the management of the entity... Balance sheet statement — approved by the management.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "LEV_036",
+    "category": "Legal Entity Validation",
+    "sub_category": "General Principles",
+    "question": "The Central Validation Service ensures personal data is handled in accordance with which principles?",
+    "options": [
+      {
+        "text": "Exclusivity, autonomy, speed, and efficiency.",
+        "isCorrect": false
+      },
+      {
+        "text": "Profitability, self-sufficiency, discretion, and marketability.",
+        "isCorrect": false
+      },
+      {
+        "text": "Transparency, proportionality, impartiality, and legality.",
+        "isCorrect": true
+      },
+      {
+        "text": "Centralization, standardization, confidentiality, and accessibility.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Personal data will be handled in accordance with Regulation 2018/1725 to ensure compliance with the principles of transparency, proportionality, impartiality and legality.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 6, 7"
+  },
+  {
+    "id": "LEAR_026",
+    "category": "LEAR Appointment",
+    "sub_category": "Specific Cases for Legal Representative",
+    "question": "If an organization's legal representative is temporarily absent and another person deputises for them, what is the Central Validation Service's stance on this arrangement for LEAR appointment?",
+    "options": [
+      {
+        "text": "The deputising person is not accepted as a legal representative under any circumstances.",
+        "isCorrect": false
+      },
+      {
+        "text": "Deputising persons are accepted, and the reason for temporary absence is not checked by CVS.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the deputising person has a formal power of attorney from the legal representative.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization must re-appoint a permanent legal representative before proceeding.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In case of temporary absence of the legal representative(s) or their impossibility to sign, other persons empowered to act as legal representatives (i.e. deputising persons) are accepted as legal representatives by default. The reason for the temporary absence/impossibility and the legitimation of the deputy will not be checked by the Central Validation Service and therefore remains under the full responsibility of the participant.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 23"
+  },
+  {
+    "id": "FCA_027",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "For natural persons, besides financial declarations, what additional document is requested for FCA?",
+    "options": [
+      {
+        "text": "A personal credit score report.",
+        "isCorrect": false
+      },
+      {
+        "text": "An annual income tax declaration containing details on revenues and expenses from business activity.",
+        "isCorrect": true
+      },
+      {
+        "text": "A list of all personal assets and liabilities, regardless of business activity.",
+        "isCorrect": false
+      },
+      {
+        "text": "Proof of personal savings account balance.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Natural persons engaged in an economic activity who do not prepare financial statements in relation to their business activities — Are requested to provide: the annual income tax declaration containing details on the revenues and expenses from business activity.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 29"
+  },
+  {
+    "id": "LEV_037",
+    "category": "Legal Entity Validation",
+    "sub_category": "Specific Legal Statuses",
+    "question": "If an entity has research and development as ancillary activities (e.g., a hospital conducting some research), does it qualify as a 'research organisation'?",
+    "options": [
+      {
+        "text": "Yes, as long as the research activities are substantial.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, only entities with research and/or development as their main objective qualify.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if it is also a non-profit organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "Yes, if the research activities are internationally recognized.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Only entities that have research and/or development as their main objective can qualify as research organisations. By contrast, entities that have research and/or development as ancillary activities (even if regular and substantial, e.g. in museums or hospitals) do not qualify as ‘research organisations’.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 13"
+  },
+  {
+    "id": "LEAR_027",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "What is the policy regarding signatures on LEAR documents that do not correspond to the names in official identity documents (e.g., use of acronyms/nicknames)?",
+    "options": [
+      {
+        "text": "They are accepted as long as the legal representative confirms the signature.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are generally not accepted.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are accepted if the organization provides a letter of explanation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only for self-employed natural persons.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "LEAR documents signed with acronyms/nick names/etc that do not correspond to the names indicated in the identity documents will not be accepted.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22, 23"
+  },
+  {
+    "id": "FCA_028",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "Which of the following information is NOT explicitly required in the profit and loss account or explanatory notes submitted for FCA?",
+    "options": [
+      {
+        "text": "Amount of annual turnover from sales of goods and services.",
+        "isCorrect": false
+      },
+      {
+        "text": "Net operating result.",
+        "isCorrect": false
+      },
+      {
+        "text": "Details on the organization's corporate social responsibility activities.",
+        "isCorrect": true
+      },
+      {
+        "text": "Staff, depreciation, and amortization costs.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The profit and loss account must clearly indicate the amounts of turnover from sales of goods and services, operating income, staff, depreciation, amortization costs, net operating result and interest expenses. Corporate social responsibility activities are not mentioned as a required part of the financial statements for FCA.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "LEV_038",
+    "category": "Legal Entity Validation",
+    "sub_category": "Definition of Legal Entity",
+    "question": "If an entity is established under private law but performs a mission in the general interest (public service mission) and receives public financing, can it be validated as a 'public body'?",
+    "options": [
+      {
+        "text": "Yes, these factors are sufficient proof of its public body status.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if it can also prove that its shares are 100% owned by a public body.",
+        "isCorrect": false
+      },
+      {
+        "text": "No, unless it is also incorporated as a public body by national law and governed by public law.",
+        "isCorrect": true
+      },
+      {
+        "text": "Yes, if it has a specific agreement with a national government to act as a public body.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Criteria such as: mission or activity in the general interest (public service mission); the fact that the shares are owned by a public body...; public financing; state supervision and control do NOT constitute sufficient evidence to qualify an entity as a public body, if the above two conditions (incorporated as a public body by national law and governed by public law) are not met.",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 10"
+  },
+  {
+    "id": "LEAR_028",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "What is the main purpose of the LEAR appointment letter?",
+    "options": [
+      {
+        "text": "To certify the financial solvency of the organization.",
+        "isCorrect": false
+      },
+      {
+        "text": "To confirm the organization's legal personality.",
+        "isCorrect": false
+      },
+      {
+        "text": "To specify the LEAR roles and duties and include the declaration of consent to the Funding & Tenders Portal Terms and Conditions.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide a record of all past projects managed by the LEAR.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "LEAR appointment letter* (specifying the LEAR roles & duties and including the declaration of consent to the Funding & Tenders Portal Terms and Conditions*), completed, dated and signed by the legal representative and the LEAR.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 21"
+  },
+  {
+    "id": "FCA_029",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Required Documents",
+    "question": "If a single financial document contains comparative data for the annual accounts of both required financial years, is it accepted for FCA?",
+    "options": [
+      {
+        "text": "No, separate documents for each year are always required.",
+        "isCorrect": false
+      },
+      {
+        "text": "Yes, a single financial document containing comparative data will be accepted.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if it is externally audited.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only for low-value grants.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A single financial document containing comparative data of the annual accounts of both years under assessment will be accepted. The same applies to an external audit report covering the two financial years.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 27"
+  },
+  {
+    "id": "LEV_039",
+    "category": "Legal Entity Validation",
+    "sub_category": "Central Validation Service",
+    "question": "What is the primary role of the Central Validation Service within the European Research Executive Agency (REA)?",
+    "options": [
+      {
+        "text": "To approve research project proposals.",
+        "isCorrect": false
+      },
+      {
+        "text": "To manage the legal and financial checks for entities participating in EU funding/tenders through the Funding & Tenders Portal.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide direct funding to small and medium-sized enterprises.",
+        "isCorrect": false
+      },
+      {
+        "text": "To supervise all EU-funded research projects.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Central Validation Service (hosted within the European Research Executive Agency, REA) will use for the tasks conferred in this context, notably, the legal entity validation and LEAR appointment. In addition, the Central Validation Service has also been mandated to help the EU services with and some ancillary tasks to assist the EU granting authority/contracting authority services, such as preparation of the financial capacity assessment, ownership control assessment, etc. Unit D.4 ‘Central Validation Service’ is to effectively implement part of the Single Electronic Data Interchange Area (SEDIA).",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 1 and VN - REA-AD-2025-3 - BPM (2).pdf, Page 2"
+  },
+  {
+    "id": "LEAR_029",
+    "category": "LEAR Appointment",
+    "sub_category": "Legal Representative",
+    "question": "If an organization has internal requirements for a joint signature of more than one person to legally engage the entity, what is the organization's responsibility for the LEAR appointment documents?",
+    "options": [
+      {
+        "text": "The Central Validation Service will verify that all internal requirements are met.",
+        "isCorrect": false
+      },
+      {
+        "text": "The organization is fully responsible for ensuring compliance, e.g., that the single signature on LEAR documents is made only after all internal requirements are fulfilled.",
+        "isCorrect": true
+      },
+      {
+        "text": "They must provide a separate letter of endorsement from all required signatories.",
+        "isCorrect": false
+      },
+      {
+        "text": "Such internal requirements are not recognized for LEAR appointment purposes.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Internal requirements (e.g. joint signature of more than one person required to legally engage the entity, foreseen by law, act of establishment, statutes, internal rules, etc) — In case of internal requirements, the participant is fully responsible for ensuring compliance (e.g. through an internal process ensuring that the single signature on the LEAR documents is made only after all the internal requirements on joint signature are fulfilled).",
+    "difficulty": "Hard",
+    "source": "rules-lev-lear-fca_en.pdf, Page 23"
+  },
+  {
+    "id": "FCA_030",
+    "category": "Financial Capacity Assessment",
+    "sub_category": "Validity and Renewal",
+    "question": "Under what condition might a new financial capacity assessment be triggered, even if the previous one is less than 18 months old?",
+    "options": [
+      {
+        "text": "If the participant applies for a smaller grant amount.",
+        "isCorrect": false
+      },
+      {
+        "text": "If there are justified grounds to doubt the financial capacity, such as involvement in fraud cases.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if requested by the participant's national government.",
+        "isCorrect": false
+      },
+      {
+        "text": "If the participant changes its primary bank account.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "However, if there are justified grounds to doubt the financial capacity, like for example: involvement in cases of serious administrative errors or fraud... a new assessment may be triggered even before the end of the 18 months.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 26, 31"
+  },
+  {
+    "id": "LEV_040",
+    "category": "Legal Entity Validation",
+    "sub_category": "Definition of Legal Entity",
+    "question": "A newly formed start-up company without any closed accounts yet seeks to apply for EU funding. For legal entity validation, how will its 'engagement in an economic activity' be assessed?",
+    "options": [
+      {
+        "text": "It cannot be assessed as it has no financial history.",
+        "isCorrect": false
+      },
+      {
+        "text": "Based on a 'bona fide estimate' provided in a business plan.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only by an external audit certifying its potential profitability.",
+        "isCorrect": false
+      },
+      {
+        "text": "It will be automatically considered as not engaged in economic activity until it generates turnover.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Newly established enterprises (e.g. start-up companies) that do not yet have closed accounts... May also qualify as SMEs, as long as they are able to provide a ‘bona fide estimate’ (in the form of a business plan) covering the period necessary for the entity to generate turnover.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 12"
+  },
+  {
+    "id": "LEAR_030",
+    "category": "LEAR Appointment",
+    "sub_category": "Required Documents",
+    "question": "What is the policy regarding print-outs from an ID electronic chip as proof of identity for LEAR appointment?",
+    "options": [
+      {
+        "text": "They are always accepted as primary proof.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are accepted if accompanied by a physical ID card.",
+        "isCorrect": false
+      },
+      {
+        "text": "They cannot be accepted.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are accepted only for EU citizens.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Print-outs from the ID electronic chip — Cannot be accepted either.",
+    "difficulty": "Medium",
+    "source": "rules-lev-lear-fca_en.pdf, Page 22"
+    }];
+    let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>
