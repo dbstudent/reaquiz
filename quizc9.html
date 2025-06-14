@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = 
+[
+  {
+    "id": "Q001",
+    "category": "Financial Guarantees",
+    "sub_category": "Types of Guarantees",
+    "question": "What are the four main types of financial guarantees specified for the financial execution of contracts?",
+    "options": [
+      { "text": "Tender, pre-financing, performance, retention money", "isCorrect": true },
+      { "text": "Bid, payment, quality, completion", "isCorrect": false },
+      { "text": "Initial, interim, final, maintenance", "isCorrect": false },
+      { "text": "Deposit, bond, escrow, collateral", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'For the financial execution of contracts, there are four types of financial guarantees: a tender guarantee, for works and supply award procedures; a guarantee on pre-financing; a performance guarantee, for works and supply contracts only; a retention money guarantee, for works contracts only.' [1].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [1]"
+  },
+  {
+    "id": "Q002",
+    "category": "Financial Guarantees",
+    "sub_category": "Tender Guarantee",
+    "question": "What is the primary purpose of a tender guarantee?",
+    "options": [
+      { "text": "To ensure the contractor's performance throughout the contract duration", "isCorrect": false },
+      { "text": "To cover unforeseen expenses during project implementation", "isCorrect": false },
+      { "text": "To ensure that tenders are maintained until contract signature", "isCorrect": true },
+      { "text": "To provide an advance payment to the selected contractor", "isCorrect": false }
+    ],
+    "rationale": "'The tender guarantee ensures that tenders are maintained until contract signature.' [1].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [1]"
+  },
+  {
+    "id": "Q003",
+    "category": "Financial Guarantees",
+    "sub_category": "Pre-financing Guarantee",
+    "question": "What is the main objective of requesting a guarantee on pre-financing?",
+    "options": [
+      { "text": "To secure additional funding for the project", "isCorrect": false },
+      { "text": "To limit the financial risks connected with a payment of pre-financing", "isCorrect": true },
+      { "text": "To ensure the timely submission of project reports", "isCorrect": false },
+      { "text": "To cover the full contract value in case of non-performance", "isCorrect": false }
+    ],
+    "rationale": "'A pre-financing guarantee may be requested from procurement contractors or grant beneficiaries in case of pre-financing. It aims to limits the financial risks connected with a payment of pre-financing.' [2].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [2]"
+  },
+  {
+    "id": "Q004",
+    "category": "Financial Guarantees",
+    "sub_category": "Pre-financing Guarantee Conditions",
+    "question": "For procurement contracts, at what pre-financing amount does a pre-financing guarantee become mandatory in all cases, unless an exception is made for a public body based on a risk assessment?",
+    "options": [
+      { "text": "Below EUR 60,000", "isCorrect": false },
+      { "text": "Between EUR 60,000 and EUR 299,999", "isCorrect": false },
+      { "text": "Equal to or above EUR 300,000", "isCorrect": true },
+      { "text": "Only for amounts exceeding EUR 500,000", "isCorrect": false }
+    ],
+    "rationale": "The document states under 'Procurement contracts with a value exceeding EUR 60 000': '2. Pre-financing equal to or above EUR 300 000. A pre financing guarantee is mandatory in all cases. However, if the contractor is a public body and based on a risk assessment, an exception to this rule may be made.' [3].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [3]"
+  },
+  {
+    "id": "Q005",
+    "category": "Financial Guarantees",
+    "sub_category": "Pre-financing Guarantee Conditions",
+    "question": "For contracts and grants with a value not exceeding EUR 60,000, what is the rule regarding a pre-financing guarantee?",
+    "options": [
+      { "text": "It is always mandatory.", "isCorrect": false },
+      { "text": "It can be requested based on a risk assessment.", "isCorrect": false },
+      { "text": "It cannot be required.", "isCorrect": true },
+      { "text": "It is optional but highly recommended.", "isCorrect": false }
+    ],
+    "rationale": "'Procurement contracts and grants with a value not exceeding EUR 60 000. A guarantee on pre-financing cannot be required.' [4].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [4]"
+  },
+  {
+    "id": "Q006",
+    "category": "Financial Guarantees",
+    "sub_category": "Pre-financing Guarantee Conditions (Grants)",
+    "question": "Under what specific conditions is a pre-financing guarantee typically *not* requested for grants with a value exceeding EUR 60,000?",
+    "options": [
+      { "text": "If the coordinator/sole beneficiary has prior experience with EU funding.", "isCorrect": false },
+      { "text": "If the sole beneficiary/coordinator is a non-for-profit organisation, an organisation with a financial framework partnership agreement with the EC, or a government department/public body.", "isCorrect": true },
+      { "text": "If the grant duration is less than 12 months.", "isCorrect": false },
+      { "text": "If the grant supports a humanitarian aid project.", "isCorrect": false }
+    ],
+    "rationale": "'Grants with a value exceeding EUR 60 000: No pre-financing guarantee is requested if the sole beneficiary/coordinator is in one of the following situations: a non-for profit organisation; an organisation which has signed a financial framework partnership agreement with the European Commission; a government department or public body.' [4].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [4]"
+  },
+  {
+    "id": "Q007",
+    "category": "Financial Guarantees",
+    "sub_category": "Performance Guarantee",
+    "question": "For which types of contracts is a performance guarantee typically required to ensure compliance with substantial contractual obligations?",
+    "options": [
+      { "text": "Service contracts only", "isCorrect": false },
+      { "text": "Works and supply contracts only", "isCorrect": true },
+      { "text": "All types of contracts, including grants", "isCorrect": false },
+      { "text": "Only contracts exceeding EUR 1,000,000", "isCorrect": false }
+    ],
+    "rationale": "'The performance guarantee is lodged by procurement contractors to ensure compliance with substantial contractual obligations. For works and supply contracts, the contractor must provide the contracting authority with a financial guarantee on return of the countersigned contract for the full and proper performance of the contract.' [3].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [3]"
+  },
+  {
+    "id": "Q008",
+    "category": "Financial Guarantees",
+    "sub_category": "Performance Guarantee Conditions",
+    "question": "For supply contracts, up to what value may the contracting authority decide *not* to demand a performance guarantee, based on objective criteria?",
+    "options": [
+      { "text": "EUR 60,000", "isCorrect": false },
+      { "text": "EUR 150,000", "isCorrect": true },
+      { "text": "EUR 300,000", "isCorrect": false },
+      { "text": "EUR 345,000", "isCorrect": false }
+    ],
+    "rationale": "'For supply contracts...For contracts of EUR 150 000 or below, and based on objective criteria such as the nature and value of the contract, the contracting authority may decide not to demand such a guarantee.' [5].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [5]"
+  },
+  {
+    "id": "Q009",
+    "category": "Financial Guarantees",
+    "sub_category": "Retention Money Guarantee",
+    "question": "What is the retention money guarantee an alternative to, in works contracts?",
+    "options": [
+      { "text": "A performance bond", "isCorrect": false },
+      { "text": "A tender deposit", "isCorrect": false },
+      { "text": "Retention sums", "isCorrect": true },
+      { "text": "A cash advance", "isCorrect": false }
+    ],
+    "rationale": "'Another type of guarantee linked to the performance of the contract is the retention money guarantee. Retention money guarantee is an alternative to retention sums...' [6].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [6]"
+  },
+  {
+    "id": "Q010",
+    "category": "Financial Guarantees",
+    "sub_category": "General Requirements",
+    "question": "What is a mandatory requirement for all financial guarantees concerning contracts?",
+    "options": [
+      { "text": "They must be issued by an EU-based bank.", "isCorrect": false },
+      { "text": "They must be registered in the online accounting system.", "isCorrect": true },
+      { "text": "They must cover at least 50% of the contract value.", "isCorrect": false },
+      { "text": "They must be notarised by a public notary.", "isCorrect": false }
+    ],
+    "rationale": "'All these guarantees must be registered in the online accounting system.' [1].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [1]"
+  },
+  {
+    "id": "Q011",
+    "category": "Financial Guarantees",
+    "sub_category": "Form of Guarantees",
+    "question": "Which of the following is *not* listed as a permissible form of financial guarantee for procurement contracts?",
+    "options": [
+      { "text": "A bank guarantee", "isCorrect": false },
+      { "text": "A bond provided by an insurance company", "isCorrect": false },
+      { "text": "A personal cheque from the contractor's director", "isCorrect": true },
+      { "text": "An irrevocable letter of credit", "isCorrect": false }
+    ],
+    "rationale": "The document lists 'a bank guarantee; a bond provided by an insurance and/or bonding company; a banker’s draft; a certified cheque; an irrevocable letter of credit; a cash deposit with the contracting authority.' A 'personal cheque from the contractor's director' is not on this list, whereas a 'certified cheque' is [7].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [7]"
+  },
+  {
+    "id": "Q012",
+    "category": "Financial Guarantees",
+    "sub_category": "Form of Guarantees (Grants)",
+    "question": "For grants, what is the primary requirement regarding the establishment of the financial institution providing the guarantee?",
+    "options": [
+      { "text": "It must be established in the country where the action is implemented.", "isCorrect": false },
+      { "text": "It must be an approved bank or financial institution established in an EU Member State.", "isCorrect": true },
+      { "text": "It must be a central bank.", "isCorrect": false },
+      { "text": "It must have a minimum credit rating of AAA.", "isCorrect": false }
+    ],
+    "rationale": "'For grants, the financial guarantee must be provided by an approved bank or financial institution established in an EU Member State. The contracting authority may agree to accept a guarantee from a bank or financial institution in the third country where the beneficiary is established, if he/she considers that it has characteristics and offers security equivalent...' [8].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [8]"
+  },
+  {
+    "id": "Q013",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees",
+    "question": "Who is responsible for assessing and approving any financial guarantee submitted, and has the discretion to request changes or even reject a guarantee deemed inadequate?",
+    "options": [
+      { "text": "The Accounting Officer", "isCorrect": false },
+      { "text": "The Financial Initiating Agent", "isCorrect": false },
+      { "text": "The Responsible Authorising Officer (RAO)", "isCorrect": true },
+      { "text": "The Project Manager", "isCorrect": false }
+    ],
+    "rationale": "'Whenever a guarantee is submitted, it must be assessed and approved by the authorising officer responsible. The authorising officer may request changes or amendments before accepting a guarantee, and may even reject a guarantee that is deemed inadequate.' [9].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [9]"
+  },
+  {
+    "id": "Q014",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Legal Authorisation)",
+    "question": "Which jurisdictions are explicitly stated as leading to systematic refusal of guarantees from guarantors domiciled there, due to being on the 'black list' for high-risk jurisdictions?",
+    "options": [
+      { "text": "Bulgaria, Cameroon, Kenya", "isCorrect": false },
+      { "text": "Iran, Myanmar, DPRK", "isCorrect": true },
+      { "text": "Panama, Russia, Samoa", "isCorrect": false },
+      { "text": "American Samoa, Anguilla, Fiji", "isCorrect": false }
+    ],
+    "rationale": "'Moreover, there are three High-Risk Jurisdictions subject to a call for Action (“black list”), Iran, Myanmar and DPRK (information from June 2024). Guarantees from guarantors from Iran Myanmar and DPRK have to be systematically refused.' [10].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [10]"
+  },
+  {
+    "id": "Q015",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Financial Viability)",
+    "question": "According to the document, rated entities with what minimum credit rating from Moody’s, Standard & Poor’s, Fitch Ratings, and DBRS are generally considered financially viable for issuing guarantees?",
+    "options": [
+      { "text": "A+", "isCorrect": false },
+      { "text": "BBB- or equivalent", "isCorrect": true },
+      { "text": "BB+", "isCorrect": false },
+      { "text": "CCC", "isCorrect": false }
+    ],
+    "rationale": "'Rated entities with a rating of at least BBB - or equivalent from the above four rating agencies (which is the lowest investment grade rating) are generally financially viable.' [11].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [11]"
+  },
+  {
+    "id": "Q016",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Authenticity)",
+    "question": "In verifying the authenticity of a guarantee, what is a standard practice among banks and financial institutions to ensure legal certainty?",
+    "options": [
+      { "text": "Requiring a seal from the Chamber of Commerce.", "isCorrect": false },
+      { "text": "Requiring two officers of the guarantor body to check and sign the documents.", "isCorrect": true },
+      { "text": "Accepting only electronically generated guarantees.", "isCorrect": false },
+      { "text": "Verifying through a central EU guarantee registry.", "isCorrect": false }
+    ],
+    "rationale": "'The standard practice amongst banks and financial institutions is to require two officers of the guarantor body to check and sign the documents.' [12].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [12]"
+  },
+  {
+    "id": "Q017",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (EDES)",
+    "question": "What is the immediate consequence if a third-party guarantor is recorded at the exclusion level of the Early Detection and Exclusion System (EDES)?",
+    "options": [
+      { "text": "The guarantee must be subjected to enhanced monitoring.", "isCorrect": false },
+      { "text": "The RAO must contact DG BUDG for assessment.", "isCorrect": false },
+      { "text": "The guarantee has to be systematically refused.", "isCorrect": true },
+      { "text": "The guarantor is allowed to submit an alternative guarantee.", "isCorrect": false }
+    ],
+    "rationale": "'Any financial guarantee submitted by a third party guarantor who is recorded at exclusion level of the EDES has to be systematically refused.' [13].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [13]"
+  },
+  {
+    "id": "Q018",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Text Compliance)",
+    "question": "What happens if a financial guarantee submitted by a contractor or grant beneficiary deviates from the INTPA templates?",
+    "options": [
+      { "text": "It is accepted with a minor amendment.", "isCorrect": false },
+      { "text": "It is subject to an additional risk assessment.", "isCorrect": false },
+      { "text": "It has to be systematically refused.", "isCorrect": true },
+      { "text": "It can be accepted if the deviations are minor.", "isCorrect": false }
+    ],
+    "rationale": "'Any financial guarantee submitted by the contractor or grant beneficiary that deviates from these models has to be systematically refused.' [14].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [14]"
+  },
+  {
+    "id": "Q019",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Expiry Date)",
+    "question": "What is the general rule regarding expiry dates for financial guarantees?",
+    "options": [
+      { "text": "They must always specify an expiry date.", "isCorrect": false },
+      { "text": "They must never specify an expiry date, except where required by law or justified.", "isCorrect": true },
+      { "text": "They are valid for the duration of the contract plus 6 months.", "isCorrect": false },
+      { "text": "The expiry date is determined by the contracting authority.", "isCorrect": false }
+    ],
+    "rationale": "'Financial guarantees must never specify an expiry date except where required (for example, where the law applicable to the guarantee requires it, or where the guarantor can justify that he is unable to provide such a guarantee without expiry date).' [15].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [15]"
+  },
+  {
+    "id": "Q020",
+    "category": "Financial Guarantees",
+    "sub_category": "Verification of Guarantees (Currency)",
+    "question": "In which currency must financial guarantees for procurement contracts be provided?",
+    "options": [
+      { "text": "Euro, regardless of the contract currency.", "isCorrect": false },
+      { "text": "The currency of payment of the contract.", "isCorrect": true },
+      { "text": "The local currency of the partner country.", "isCorrect": false },
+      { "text": "Any convertible currency.", "isCorrect": false }
+    ],
+    "rationale": "'Financial guarantees for public contracts must be in the currency of payment of the contract.' [15].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [15]"
+  },
+  {
+    "id": "Q021",
+    "category": "Payments & Closures",
+    "sub_category": "Responsibility",
+    "question": "Who is specifically responsible for the closure and possible decommitments of individual and global commitments?",
+    "options": [
+      { "text": "The Financial Initiating Agent (FIA)", "isCorrect": false },
+      { "text": "The Accounting Officer", "isCorrect": false },
+      { "text": "The competent sub-delegated authorising officer (AOSD)", "isCorrect": true },
+      { "text": "The Head of Delegation's Finance & Contracts Unit", "isCorrect": false }
+    ],
+    "rationale": "As per previous conversation history, the competent sub-delegated authorising officer is responsible for closure and decommitments.",
+    "difficulty": "Medium",
+    "source": "Previous conversation history"
+  },
+  {
+    "id": "Q022",
+    "category": "Payments & Closures",
+    "sub_category": "Payment Request Essential Elements",
+    "question": "Which of the following is *not* listed as one of the four essential elements required for a payment request to be registered in the EC accounting system?",
+    "options": [
+      { "text": "The creditor’s identification", "isCorrect": false },
+      { "text": "The amount", "isCorrect": false },
+      { "text": "The VAT percentage", "isCorrect": true },
+      { "text": "The date of the invoice/request for payment", "isCorrect": false }
+    ],
+    "rationale": "The document states: 'Payment request which includes the four essential elements shall be registered in EC accounting system: creditor’s identification (the legal entity), the amount, the currency, the date of the invoice / request for payment.' It then explicitly adds: 'All other requirements for commercial invoices (e.g. percentage of VAT, bank account) or for requests for payment (reports or financial statements) are not necessary for the payment requests to be registered in the accounting system.' [16].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [16]"
+  },
+  {
+    "id": "Q023",
+    "category": "Payments & Closures",
+    "sub_category": "Payment Request Processing",
+    "question": "Within how many working days must invoices and requests for payment be registered in the online accounting system after receipt, if they are considered acceptable?",
+    "options": [
+      { "text": "3 working days", "isCorrect": false },
+      { "text": "5 working days", "isCorrect": true },
+      { "text": "10 working days", "isCorrect": false },
+      { "text": "15 calendar days", "isCorrect": false }
+    ],
+    "rationale": "'Invoices and requests for payment must be registered in the online accounting system in their initial version as soon as possible and no later than within five working days after receipt.' [16]. Also confirmed: 'If the payment request is considered acceptable, the registration has to take place within 5 working days (7 calendar days).' [17].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [16, 17]"
+  },
+  {
+    "id": "Q024",
+    "category": "Payments & Closures",
+    "sub_category": "Suspension of Payment Time Limits",
+    "question": "Which of the following is a valid reason for suspending the time limits for payment, requiring notification to the contractor or grant beneficiary?",
+    "options": [
+      { "text": "The contractor fails to respond to a satisfaction survey.", "isCorrect": false },
+      { "text": "The payment request is not admissible (e.g., essential requirement not met).", "isCorrect": true },
+      { "text": "The contractor requests an early payment.", "isCorrect": false },
+      { "text": "There is a minor clerical error in the contract reference number.", "isCorrect": false }
+    ],
+    "rationale": "The document lists several cases for suspension, including 'the payment request is not admissible, i.e. if at least one essential requirement is not met' [18].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [18]"
+  },
+  {
+    "id": "Q025",
+    "category": "Payments & Closures",
+    "sub_category": "Validation of Expenditure",
+    "question": "For interim payments and balance payments, what does the 'certified correct' endorsement signify?",
+    "options": [
+      { "text": "That the payment has been authorised by the Authorising Officer.", "isCorrect": false },
+      { "text": "That the financial transaction has been successfully recorded in the accounting system.", "isCorrect": false },
+      { "text": "That the services, supplies, or work were properly provided/carried out, or the action is compliant, and costs are eligible.", "isCorrect": true },
+      { "text": "That the budget appropriations for the payment are available.", "isCorrect": false }
+    ],
+    "rationale": "'For the other payments (further pre-financing instalments, interim payments and balance payments), the endorsement ‘certified correct’ certifies that the services provided for in the contract have been properly provided, that the supplies provided for in the contract have been properly delivered, that the work provided has been properly carried out or that the action or work programme carried out by the beneficiary is in all aspects compliant with the grant contract, delegation or contribution agreement and that the cost declared are eligible.' [19].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [19]"
+  },
+  {
+    "id": "Q026",
+    "category": "Payments & Closures",
+    "sub_category": "Validation of Expenditure",
+    "question": "What is the act by which the Responsible Authorising Officer (RAO) expresses the validation of expenditure?",
+    "options": [
+      { "text": "Issuing a recovery order.", "isCorrect": false },
+      { "text": "Signing 'passed for payment'.", "isCorrect": true },
+      { "text": "Generating a debit note.", "isCorrect": false },
+      { "text": "Completing the financial report.", "isCorrect": false }
+    ],
+    "rationale": "'The validation is expressed by the signing of a ‘passed for payment’ by the RAO.' [20].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [20]"
+  },
+  {
+    "id": "Q027",
+    "category": "Payments & Closures",
+    "sub_category": "Pre-financing Reimbursement",
+    "question": "For works contracts, how is pre-financing primarily reimbursed?",
+    "options": [
+      { "text": "Through a single lump-sum payment at the end of the contract.", "isCorrect": false },
+      { "text": "By means of deductions from the interim payments.", "isCorrect": true },
+      { "text": "Via a separate recovery order.", "isCorrect": false },
+      { "text": "It is not reimbursed, as it is a non-recoverable advance.", "isCorrect": false }
+    ],
+    "rationale": "'Any pre-financing must be reimbursed in accordance with the calculation formulas set out in the special conditions for the model contract. The pre-financing is repaid by means of deductions from the interim payments, starting with the first interim payment due under the contract...' [21].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [21]"
+  },
+  {
+    "id": "Q028",
+    "category": "Payments & Closures",
+    "sub_category": "Pre-financing Conditions",
+    "question": "For initial pre-financing payments for grants and contribution agreements, what typically serves as the payment request?",
+    "options": [
+      { "text": "A formal payment request form submitted by the beneficiary/organisation.", "isCorrect": false },
+      { "text": "The signed contract/agreement itself.", "isCorrect": true },
+      { "text": "An expenditure verification report.", "isCorrect": false },
+      { "text": "A forecast budget for the following reporting period.", "isCorrect": false }
+    ],
+    "rationale": "'For grants and contribution agreements: the initial pre-financing instalment is paid without need for submission of a separate payment request by the sole beneficiary/coordinator, or the entrusted entity, as soon as the signed contract/agreement is received...' [22].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [22]"
+  },
+  {
+    "id": "Q029",
+    "category": "Payments & Closures",
+    "sub_category": "Pre-financing Interest",
+    "question": "For the general budget and the 11th EDF, what is the general rule regarding interest on pre-financing payments?",
+    "options": [
+      { "text": "Interest is always due.", "isCorrect": false },
+      { "text": "Interest is due only if the amount exceeds EUR 250,000.", "isCorrect": false },
+      { "text": "No interest on pre-financing payment is due except when provided for in the agreement.", "isCorrect": true },
+      { "text": "Interest is assigned to the action and never recovered.", "isCorrect": false }
+    ],
+    "rationale": "'For the budget, 10th EDF as from the entry into force of the amended financial regulations of the 10th EDF and 11th EDF, no interest on pre-financing payment is due except when provided for in the agreement.' [23].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [23]"
+  },
+  {
+    "id": "Q030",
+    "category": "Payments & Closures",
+    "sub_category": "Operational Closure",
+    "question": "What are the two forms taken by the closure of expenditure?",
+    "options": [
+      { "text": "Either a payment of balance or establishment of a debt and recovery order.", "isCorrect": true },
+      { "text": "Either a final report submission or an audit clearance.", "isCorrect": false },
+      { "text": "Either a project completion certificate or a performance evaluation.", "isCorrect": false },
+      { "text": "Either a pre-financing reimbursement or an interim payment.", "isCorrect": false }
+    ],
+    "rationale": "'The form taken by the closure of expenditure is: either a payment of balance which may not be repeated and clears all preceding payments; or establishment of a debt and recovery order.' [24].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [24]"
+  },
+  {
+    "id": "Q031",
+    "category": "Recovery Orders",
+    "sub_category": "Establishment Conditions",
+    "question": "For an entitlement to be established by a recovery order, what are the three essential conditions it must meet?",
+    "options": [
+      { "text": "It must be estimated, verified, and approved.", "isCorrect": false },
+      { "text": "It must be certain, of a fixed amount, and due.", "isCorrect": true },
+      { "text": "It must be potential, probable, and estimable.", "isCorrect": false },
+      { "text": "It must be recoverable, liquid, and transferable.", "isCorrect": false }
+    ],
+    "rationale": "'The entitlement must be: certain, that is unconditional, and not dependent on any past or future event; of a fixed amount, meaning that the exact amount must be known; due in the present and not subject to any payment time.' [25].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [25]"
+  },
+  {
+    "id": "Q032",
+    "category": "Recovery Orders",
+    "sub_category": "Forecast of Revenue (FoR)",
+    "question": "When are Commission authorising officers required to register a Forecast of Revenue (FoR) in the online accounting system without undue delay?",
+    "options": [
+      { "text": "Upon receiving any payment request from a contractor.", "isCorrect": false },
+      { "text": "When preliminary findings of an audit show ineligible expenditure.", "isCorrect": true },
+      { "text": "Only at the end of the financial year.", "isCorrect": false },
+      { "text": "After a recovery order has been fully paid.", "isCorrect": false }
+    ],
+    "rationale": "'When the preliminary findings of an audit show ineligible expenditure, an estimate of amounts receivable must be issued.' [26]. Also 'The Commission's authorising officers receiving OLAF financial recommendations or EPPO notifications or having suspicions quantified through their financial audits and notified to OLAF/EPPO, related to the direct or indirect management of expenditure, are required to register the related Forecast of Revenue (“FoR”) in the on-line accounting system without undue delay (i.e. within 20 working days).' [27].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [26, 27]"
+  },
+  {
+    "id": "Q033",
+    "category": "Recovery Orders",
+    "sub_category": "Pre-information to Debtor",
+    "question": "Is preliminary information to the debtor generally compulsory before a recovery order is drawn up?",
+    "options": [
+      { "text": "No, it is always optional.", "isCorrect": false },
+      { "text": "Yes, it is compulsory except for regularisation of revenue already collected and in certain bankruptcy cases.", "isCorrect": true },
+      { "text": "Only for debts exceeding EUR 100,000.", "isCorrect": false },
+      { "text": "Only if the debtor is a public body.", "isCorrect": false }
+    ],
+    "rationale": "'The preliminary information (or pre-information) is compulsory except for the regularisation of revenue already collected and in certain bankruptcy cases (see BUDGpedia).' [28].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [28]"
+  },
+  {
+    "id": "Q034",
+    "category": "Recovery Orders",
+    "sub_category": "Issuance Timeline",
+    "question": "What is the specified timeframe within which the recovery order must be authorised from the day the claim is identified as certain, of a fixed amount, and due?",
+    "options": [
+      { "text": "Within 60 calendar days", "isCorrect": false },
+      { "text": "Within 30 calendar days", "isCorrect": true },
+      { "text": "Within 15 working days", "isCorrect": false },
+      { "text": "Immediately after the debit note is sent", "isCorrect": false }
+    ],
+    "rationale": "'The recovery order should be authorised within 30 calendar days from the day the claim is identified as fulfilling the three conditions above' [29].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [29]"
+  },
+  {
+    "id": "Q035",
+    "category": "Recovery Orders",
+    "sub_category": "Debit Note Dispatch",
+    "question": "After a recovery order is issued, within how many calendar days should a debit note be sent to the debtor?",
+    "options": [
+      { "text": "Maximum 10 calendar days", "isCorrect": true },
+      { "text": "Maximum 30 calendar days", "isCorrect": false },
+      { "text": "Immediately, with no specific time limit", "isCorrect": false },
+      { "text": "Only after the debtor has been pre-informed for 30 days", "isCorrect": false }
+    ],
+    "rationale": "'A debit note should be sent maximum 10 calendar days after issuing the recovery order' [29].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [29]"
+  },
+  {
+    "id": "Q036",
+    "category": "Recovery Orders",
+    "sub_category": "AO Liability",
+    "question": "Under what circumstances can an Authorising Officer be held financially liable for recoveries?",
+    "options": [
+      { "text": "If the debt is simply difficult to recover.", "isCorrect": false },
+      { "text": "If they intentionally or through gross negligence omit to draw up a document establishing an amount receivable.", "isCorrect": true },
+      { "text": "If a debtor declares bankruptcy, regardless of their actions.", "isCorrect": false },
+      { "text": "If the recovered amount is less than EUR 500.", "isCorrect": false }
+    ],
+    "rationale": "'The obligation to pay compensation applies in particular if: ... the authorising officer, whether intentionally or through gross negligence on his part, omits to draw up a document establishing an amount receivable, neglects to issue a recovery order or is late in issuing it or is late in issuing a payment order, thereby rendering the European Commission liable to civil action by third parties.' [30].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [30]"
+  },
+  {
+    "id": "Q037",
+    "category": "Specific Issues",
+    "sub_category": "Treatment of Taxes",
+    "question": "The provisions relating to tax exemptions in the document primarily concern which type of taxes?",
+    "options": [
+      { "text": "Income or profits taxes", "isCorrect": false },
+      { "text": "Direct taxes", "isCorrect": false },
+      { "text": "Indirect taxes (VAT, customs duties or equivalent taxes)", "isCorrect": true },
+      { "text": "All types of taxes equally", "isCorrect": false }
+    ],
+    "rationale": "'The provisions relating to tax exemptions contained in the various model agreements and contracts and in this section concern only indirect taxes (VAT, customs duties or equivalent taxes). They do not concern taxes on income or profits...' [31].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [31]"
+  },
+  {
+    "id": "Q038",
+    "category": "Specific Issues",
+    "sub_category": "Tax Treatment (NDICI-GE)",
+    "question": "Under NDICI-Global Europe (MFF 2021-2027), what is the rule regarding taxes, duties, and charges imposed by partner countries?",
+    "options": [
+      { "text": "They are never eligible for financing.", "isCorrect": false },
+      { "text": "They are always eligible for financing, including specific taxes solely on EU aid.", "isCorrect": false },
+      { "text": "They may be eligible for financing, but not if they are specific taxes established solely on EU aid.", "isCorrect": true },
+      { "text": "The EU always requires full tax exemption agreements.", "isCorrect": false }
+    ],
+    "rationale": "'According to NDICI-Global Europe, taxes in general (VAT, custom duties, charges or equivalent taxes) imposed by partner countries, other than specific taxes established solely on EU aid (i.e. taxes, duties or charges that are levied specifically and exclusively on EU funding), may be eligible for financing.' [32].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [32]"
+  },
+  {
+    "id": "Q039",
+    "category": "Specific Issues",
+    "sub_category": "Tax Policy",
+    "question": "As a simplification measure for new actions financed under NDICI-GE and EINSC, what has DG INTPA decided regarding tax exemption agreements?",
+    "options": [
+      { "text": "To always require new tax exemption agreements for all actions.", "isCorrect": false },
+      { "text": "To adopt a simple and universal tax system by not entering into tax exemption agreements, except for taxes solely on EU financing.", "isCorrect": true },
+      { "text": "To fully reimburse all taxes, regardless of their nature.", "isCorrect": false },
+      { "text": "To delegate all tax negotiations to partner countries.", "isCorrect": false }
+    ],
+    "rationale": "'DG INTPA decided, as simplification measure, to adopt a simple and universal tax system by not entering into tax exemption agreements as regards new actions financed under NDICI-GE and EINSC. Consequently, for those actions, the EU would not require exemptions from taxes in partner countries, except for taxes established solely on EU financing...' [33].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [33]"
+  },
+  {
+    "id": "Q040",
+    "category": "Specific Issues",
+    "sub_category": "Tax Eligibility (Grants)",
+    "question": "For grant contracts (excluding new MFF 2021-2027 actions financed under NDICI-GE or EINSC), what is the general principle regarding the eligibility of taxes that are constitutive elements of the price?",
+    "options": [
+      { "text": "They are always eligible without exception.", "isCorrect": false },
+      { "text": "They are always eligible if they exceed a certain threshold.", "isCorrect": false },
+      { "text": "In principle, they are not eligible but can be reimbursed on a case-by-case basis.", "isCorrect": true },
+      { "text": "They are eligible only if the partner country has a bilateral tax agreement with the EU.", "isCorrect": false }
+    ],
+    "rationale": "'for grants... for other actions: in principle, not eligible under our legal basis, but they can be reimbursed on a case-by-case basis.' [34].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [34]"
+  },
+  {
+    "id": "Q041",
+    "category": "Payments & Closures",
+    "sub_category": "Certified Correct",
+    "question": "What specific role does the Financial Initiating Agent (FIA) play in the 'certified correct' endorsement process for payments?",
+    "options": [
+      { "text": "They perform the 'operational part' of the checks.", "isCorrect": false },
+      { "text": "They give the final visa on the invoice in the EC accounting system (ABAC/SUMMA).", "isCorrect": true },
+      { "text": "They are responsible for determining the amount to be paid.", "isCorrect": false },
+      { "text": "They manage the overall budget appropriations.", "isCorrect": false }
+    ],
+    "rationale": "'The “certified correct” is based on the checks carried by the operational initiating agent (operational part) and the financial initiating agent (financial part). ...the financial initiating agent will give the final visa on the invoice in the EC accounting system.' [19, 35].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [19, 35]"
+  },
+  {
+    "id": "Q042",
+    "category": "Payments & Closures",
+    "sub_category": "Authorisation of Expenditure",
+    "question": "What is the definition of 'authorisation of expenditure' as performed by the Responsible Authorising Officer (RAO)?",
+    "options": [
+      { "text": "The act of approving a payment request from a contractor.", "isCorrect": false },
+      { "text": "The act of verifying the existence of the creditor's rights.", "isCorrect": false },
+      { "text": "The act of instructing the accounting officer to pay a validated amount, having verified appropriations/funds.", "isCorrect": true },
+      { "text": "The act of signing the final payment certificate for a project.", "isCorrect": false }
+    ],
+    "rationale": "'Authorisation of expenditure is the act whereby the RAO, having verified that the appropriations/funds are available and by issuing a payment order, instructs the accounting officer to pay an amount of expenditure that he has validated.' [36].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [36]"
+  },
+  {
+    "id": "Q043",
+    "category": "Payments & Closures",
+    "sub_category": "Late Payment Interest",
+    "question": "For supply and service contracts, at what rate is default interest calculated if payment time limits are not met?",
+    "options": [
+      { "text": "ECB principal refinancing operations rate + 3.5 percentage points.", "isCorrect": false },
+      { "text": "ECB principal refinancing operations rate + 8 percentage points.", "isCorrect": true },
+      { "text": "The national inflation rate of the partner country.", "isCorrect": false },
+      { "text": "A fixed rate of 5%.", "isCorrect": false }
+    ],
+    "rationale": "...rate applied by the European Central Bank to its principal refinancing operations... increased by eight percentage points for supply and service contracts or three and a half percentage points in all other cases.' [37].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [37]"
+  },
+  {
+    "id": "Q044",
+    "category": "Payments & Closures",
+    "sub_category": "Late Payment Interest",
+    "question": "In which specific scenario is default interest paid automatically without a request from the contractor or grant beneficiary?",
+    "options": [
+      { "text": "When the interest amount is less than EUR 200.", "isCorrect": false },
+      { "text": "Only when the contracting authority is the European Commission.", "isCorrect": true },
+      { "text": "When the contractor is a public body in an EU Member State.", "isCorrect": false },
+      { "text": "For budget support operations.", "isCorrect": false }
+    ],
+    "rationale": "'Only where the contracting authority is the European Commission is default interest paid automatically without a request from the contractor or grant beneficiary.' [38].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [38]"
+  },
+  {
+    "id": "Q045",
+    "category": "Recovery Orders",
+    "sub_category": "Correction Procedures",
+    "question": "If the original amount to be recovered in a recovery order needs to be reduced, what is the *only* way to correct it according to the document?",
+    "options": [
+      { "text": "Issue a technical recovery order (IB type) to adjust the amount.", "isCorrect": false },
+      { "text": "Apply a partial cancellation directly to the existing recovery order.", "isCorrect": false },
+      { "text": "Cancel the original recovery order and introduce a new one.", "isCorrect": true },
+      { "text": "Request the accounting officer to manually adjust the amount.", "isCorrect": false }
+    ],
+    "rationale": "'It is not possible any longer to reduce the amount to recover. In case of modification of the original amount, the only way to correct is cancel original recovery order and introduce a new one.' [39].",
+    "difficulty": "Hard",
+    "source": "NEW SOURCE, [39]"
+  },
+  {
+    "id": "Q046",
+    "category": "Recovery Orders",
+    "sub_category": "Indirect Management (Pre-2014 FAs)",
+    "question": "For financing agreements prior to January 2014, if the European Commission intends to recover funds, what is required from the representative of the partner country(ies)?",
+    "options": [
+      { "text": "A formal mandate authorising the European Commission to act in their name and on their behalf for recovery purposes.", "isCorrect": true },
+      { "text": "A joint declaration of debt acknowledgement.", "isCorrect": false },
+      { "text": "Only a notification of the recovery intention.", "isCorrect": false },
+      { "text": "The partner country must initiate legal action itself.", "isCorrect": false }
+    ],
+    "rationale": "'Financing agreements prior to January 2014: Article 8 of the financing agreement’s general conditions does not contain a formal mandate from the partner country(ies) to the European Commission for recovery purposes, a formal mandate must be provided by the representative of the partner country(ies) authorising the European Commission to act in his name and on his behalf for recovery purposes.' [39].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [39]"
+  },
+  {
+    "id": "Q047",
+    "category": "Recovery Orders",
+    "sub_category": "Debtor Payment Timeline",
+    "question": "Within how many calendar days must a debtor generally pay their debt from the date of registration of the amount receivable in the Commission’s general accounts?",
+    "options": [
+      { "text": "7 calendar days", "isCorrect": false },
+      { "text": "15 calendar days", "isCorrect": false },
+      { "text": "30 calendar days (for service/supply) or 45 calendar days (for other cases)", "isCorrect": true },
+      { "text": "60 calendar days", "isCorrect": false }
+    ],
+    "rationale": "'The debtor must pay his debt within 30 calendar days or 45 calendar days from registration of the amount receivable in the Commission’s general accounts.' The footnotes clarify 30 days for service/supply and 45 days for other cases [40-42].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [40]"
+  },
+  {
+    "id": "Q048",
+    "category": "Recovery Orders",
+    "sub_category": "Waiving Recovery",
+    "question": "Under what condition may the RAO propose to waive all or part of an established amount receivable, related to recovery costs?",
+    "options": [
+      { "text": "If the debtor is a small or medium-sized enterprise.", "isCorrect": false },
+      { "text": "Where the foreseeable cost of recovery would exceed the amount to be recovered and the waiver would not harm the budget/EDF’s image.", "isCorrect": true },
+      { "text": "If the debt is more than 10 years old.", "isCorrect": false },
+      { "text": "Only if the College of Commissioners approves.", "isCorrect": false }
+    ],
+    "rationale": "'The RAO may propose to waive all or part of an established amount receivable only in the following cases: where the foreseeable cost of recovery would exceed the amount to be recovered and the waiver would not harm the budget/EDF’s image' [43].",
+    "difficulty": "Easy",
+    "source": "NEW SOURCE, [43]"
+  },
+  {
+    "id": "Q049",
+    "category": "Recovery Orders",
+    "sub_category": "Cancellation Threshold",
+    "question": "What is the threshold amount for which the Director-General (authorising officer by delegation) is competent to decide on the cancellation of an established amount receivable due to a mistake?",
+    "options": [
+      { "text": "EUR 15,000 or more", "isCorrect": false },
+      { "text": "EUR 40,000 or more", "isCorrect": true },
+      { "text": "EUR 100,000 or more", "isCorrect": false },
+      { "text": "Any amount, regardless of value", "isCorrect": false }
+    ],
+    "rationale": "'The decision to cancel must be duly substantiated and needs to be adopted: either by the Director-General (authorising officer by delegation) where the amount to be cancelled is EUR 40 000 or more; or where the amount to be cancelled is less than EUR 40 000, please refer to chapter 4' [44]. The footnote clarifies that 40,000 is the new threshold [45].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [44, 45]"
+  },
+  {
+    "id": "Q050",
+    "category": "Recovery Orders",
+    "sub_category": "Limitation Period",
+    "question": "What is the limitation period for recovering entitlements of third parties vis-à-vis the budget/EDF, and when does it start?",
+    "options": [
+      { "text": "3 years, starting from the date the contract was signed.", "isCorrect": false },
+      { "text": "5 years, starting from the date the recovery order was issued.", "isCorrect": false },
+      { "text": "5 years, starting from the deadline communicated to the debtor in the debit note.", "isCorrect": true },
+      { "text": "10 years, starting from the date the debt was identified.", "isCorrect": false }
+    ],
+    "rationale": "'The entitlements of third parties vis-à-vis the budget/EDF are subject to a limitation period of five years for recovery. The period starts from the deadline communicated to the debtor in the debit note.' [46].",
+    "difficulty": "Medium",
+    "source": "NEW SOURCE, [46]"
+  }
+]
+
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>

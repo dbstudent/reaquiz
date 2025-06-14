@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = 
+[
+  {
+    "id": "Q001",
+    "category": "Project Implementation",
+    "sub_category": "General Framework",
+    "question": "What two main parts can the project implementation phase be divided into in contractual and financial terms, according to the source?",
+    "options": [
+      { "text": "Project planning and project monitoring", "isCorrect": false },
+      { "text": "Needs assessment and stakeholder engagement", "isCorrect": false },
+      { "text": "The conclusion of contracts (and programme estimates for actions decided before 19 July 2024) and the execution of these contracts.", "isCorrect": true },
+      { "text": "Budgetary allocation and final reporting", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'In contractual and financial terms it can be divided into two parts: the conclusion of contracts (and for actions decided before 19 July 2024, programme estimates) that put into action the implementing measure/financing decision, and the financing agreement, if there is one; the execution of these contracts (and programme estimates) and, in particular, payments and/or actions carried out.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q002",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Responsibilities",
+    "question": "Which Directorate-General unit is explicitly stated as being responsible for the content of Chapter 8 on project implementation and conclusion of contracts?",
+    "options": [
+      { "text": "INTPA.D.4", "isCorrect": false },
+      { "text": "INTPA.R.4", "isCorrect": true },
+      { "text": "INTPA.E.1", "isCorrect": false },
+      { "text": "INTPA.F.4", "isCorrect": false }
+    ],
+    "rationale": "The source notes: 'The content of this chapter is under the responsibility of INTPA.R.4.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q003",
+    "category": "Financial Procedures",
+    "sub_category": "Budgetary Commitments",
+    "question": "According to Article 2(8) of the Financial Regulation, what defines a budgetary commitment?",
+    "options": [
+      { "text": "An operation where the beneficiary directly receives funds from the budget.", "isCorrect": false },
+      { "text": "The act by which the authorising officer acknowledges the completion of a project.", "isCorrect": false },
+      { "text": "The operation by which the authorising officer responsible reserves the budget appropriations necessary to cover subsequent payments to honour legal commitments.", "isCorrect": true },
+      { "text": "A preliminary estimate of project costs before any legal obligation is established.", "isCorrect": false }
+    ],
+    "rationale": "The source defines budgetary commitment as: 'the operation by which the authorising officer responsible reserves the budget appropriations necessary to cover subsequent payments to honour legal commitments'.",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q004",
+    "category": "Financial Procedures",
+    "sub_category": "Budgetary Commitments",
+    "question": "What is the maximum initial percentage for the provision for price revision, exchange-rate fluctuation, and increases in estimated quantities of works in a contract?",
+    "options": [
+      { "text": "5%", "isCorrect": false },
+      { "text": "10%", "isCorrect": false },
+      { "text": "15%", "isCorrect": true },
+      { "text": "20%", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The provision for price revision, exchange-rate fluctuation and increases in estimated quantities of the works may not initially exceed 15% of the total amount (or the equivalent value) of the contract.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q005",
+    "category": "Financial Procedures",
+    "sub_category": "Budgetary Commitments",
+    "question": "Which type of budgetary commitment is specifically used when both the beneficiary and the amount of the expenditure are known?",
+    "options": [
+      { "text": "Provisional budgetary commitments", "isCorrect": false },
+      { "text": "Global budgetary commitments", "isCorrect": false },
+      { "text": "Individual budgetary commitments", "isCorrect": true },
+      { "text": "Standard budgetary commitments", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'Individual budgetary commitments should be used “when both the beneficiary and the amount of the expenditure are known”'.",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q006",
+    "category": "Financial Procedures",
+    "sub_category": "Budgetary Commitments",
+    "question": "Under what condition must appropriations for a contract be decommitted in full if no payment has been made?",
+    "options": [
+      { "text": "If no payment has been made within one year following its signing.", "isCorrect": false },
+      { "text": "If the project is cancelled within six months of signing.", "isCorrect": false },
+      { "text": "If no payment has been made within two years following its signing, except where that amount relates to a case under litigation.", "isCorrect": true },
+      { "text": "If less than 10% of the total amount has been paid within 18 months.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'Where a contract has not given rise to any payment within two years following its signing, the corresponding appropriations must be decommitted in full, except where that amount relates to a case under litigation before judicial courts or arbitral courts.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q007",
+    "category": "Administrative Procedures",
+    "sub_category": "Legal Entity & Bank Account Files",
+    "question": "How is a 'legal entity' defined in the context of European Commission transactions?",
+    "options": [
+      { "text": "Any organization with a registered office within the EU.", "isCorrect": false },
+      { "text": "Any natural or legal person created and recognised as such under national law or international law, able to exercise rights and be subject to obligations in its own name.", "isCorrect": true },
+      { "text": "An individual or group of individuals authorized to receive EU funds.", "isCorrect": false },
+      { "text": "A public administration or semi-public body from an EU Member State.", "isCorrect": false }
+    ],
+    "rationale": "The source defines a 'legal entity' as: 'any natural or legal person created and recognised as such under national law or international law. It must have a legal personality and, acting in its own name, be able to exercise rights and be subject to obligations.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q008",
+    "category": "Administrative Procedures",
+    "sub_category": "Legal Entity & Bank Account Files",
+    "question": "What is the primary purpose of the Legal Entities File (LEF)?",
+    "options": [
+      { "text": "To track the performance of all contractors and grant beneficiaries.", "isCorrect": false },
+      { "text": "To serve as a database containing details of all third parties with whom the European Commission conducts revenue and expenditure transactions, requiring prior validation for any budgetary transaction.", "isCorrect": true },
+      { "text": "To manage the internal HR data of European Commission staff involved in project implementation.", "isCorrect": false },
+      { "text": "To store legal documents for internal audits and compliance checks.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The legal entities file (LEF) is a database containing the details of all third parties with which the European Commission conducts revenue and expenditure transactions. No budgetary transaction may be made unless it involves to a ‘legal entity’, recorded in the LEF validated in advance by the legal entity validation team.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q009",
+    "category": "Administrative Procedures",
+    "sub_category": "Participant Identification Code (PIC)",
+    "question": "What is the Participant Identification Code (PIC)?",
+    "options": [
+      { "text": "A security clearance code required for access to Commission buildings.", "isCorrect": false },
+      { "text": "A 9-digit code that serves as a unique identifier for all partners participating in an award procedure and allows entities to reuse their data without re-entering it.", "isCorrect": true },
+      { "text": "A code used exclusively for financial transactions within the European Agricultural Fund (EAFG).", "isCorrect": false },
+      { "text": "A classification system for the types of projects funded by the European Commission.", "isCorrect": false }
+    ],
+    "rationale": "The source describes the PIC as: 'a 9-digit code that all partners need to have to participate in an award procedure (procurement) managed in MyWorkplace/OPSYS...The PIC is the unique identifier of the entity for award procedures. Once the PIC is created (PIC registration) the entity can reuse its PIC each time without re-entering the organisation’s data again.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q010",
+    "category": "IT Systems",
+    "sub_category": "Accounting Systems",
+    "question": "Which new online accounting system is intended to unify and replace the ABAC Legal Entity and Bank Account files under the 'Business Partner' concept?",
+    "options": [
+      { "text": "CRIS", "isCorrect": false },
+      { "text": "PROSPECT", "isCorrect": false },
+      { "text": "SUMMA", "isCorrect": true },
+      { "text": "PADOR", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'In SUMMA, ABAC Legal Entity and Bank Account files are unified under the “Business Partner” (BP).' and 'The LEF will be replaced with the business partner with the deployment of the new online accounting system (SUMMA)' and 'The BAF will be replaced with the business partner with the deployment of the new online accounting system (SUMMA)'.",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q011",
+    "category": "Administrative Procedures",
+    "sub_category": "Legal Entity & Bank Account Files",
+    "question": "Which of the following documents are required for private-law entities during the legal entity validation procedure?",
+    "options": [
+      { "text": "A copy of their latest annual financial report and a business plan.", "isCorrect": false },
+      { "text": "The 'legal entity identification form' duly completed and signed, a copy of an official document identifying the entity's name, registered office, and registration number, and a copy of the VAT registration document if applicable.", "isCorrect": true },
+      { "text": "A letter of recommendation from their national government and proof of tax compliance.", "isCorrect": false },
+      { "text": "Only a signed 'legal entity identification form' is sufficient.", "isCorrect": false }
+    ],
+    "rationale": "The source lists the required supporting documents for private-law entities: 'the 'legal entity identification form' duly completed and signed...; for private-law entities, a copy of any official document (official gazette, trade register, etc.) identifying the name of the entity, the address of its registered office and its registration number with the national authorities, and a copy of the VAT registration document (if applicable and if the VAT number does not appear on the aforementioned official document)'.",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q012",
+    "category": "IT Systems",
+    "sub_category": "Funding Portals",
+    "question": "What is the role of the Funding & Tender portal (F&T portal)?",
+    "options": [
+      { "text": "It is an internal system for Commission staff to manage contracts.", "isCorrect": false },
+      { "text": "It is the single entry point (Single Electronic Data Interchange Area - SEDIA) for all EU funding opportunities.", "isCorrect": true },
+      { "text": "It is a platform for publishing official EU legal texts and regulations.", "isCorrect": false },
+      { "text": "It is an online service for managing calls for proposals exclusively for DG INTPA partners.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The Funding & Tender portal (F&T portal) is the single entry point (Single Electronic Data Interchange Area - SEDIA) of all EU funding opportunities. Having a valid PIC will allow entities to apply for funding opportunities of the European Commission and not only for funding of DG INTPA.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q013",
+    "category": "Administrative Procedures",
+    "sub_category": "Participant Identification Code (PIC)",
+    "question": "Which services are primarily responsible for performing the legal and financial validation of data during the PIC validation process?",
+    "options": [
+      { "text": "The European Commission's Directorate-General for Budget (DG BUDG)", "isCorrect": false },
+      { "text": "The EU Validation Services of the Research Executive Agency (REA)", "isCorrect": true },
+      { "text": "The European Anti-Fraud Office (OLAF)", "isCorrect": false },
+      { "text": "The Directorate-General for International Partnerships (DG INTPA) Headquarters", "isCorrect": false }
+    ],
+    "rationale": "The source indicates: 'After the entity has created a PIC, upon request of the Contracting Authority, the legal and financial validation of the data shall be performed (PIC validation). Once the Contracting Authority triggers the PIC validation, the EU Validation Services of REA will contact the entity via the Participant Register and ask for supporting documents to verify the legal existence and status of the entity.' Also, 'Please note that the EU Validation Services of the Research Executive Agency (REA), in charge of the PIC validation, will also request from participants similar supporting documents.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q014",
+    "category": "Funding Mechanisms",
+    "sub_category": "Grants",
+    "question": "What are the two general categories into which grants are divided, as mentioned in the source?",
+    "options": [
+      { "text": "Direct grants and indirect grants", "isCorrect": false },
+      { "text": "Project grants and capacity-building grants", "isCorrect": false },
+      { "text": "Action grants and operating grants", "isCorrect": true },
+      { "text": "Thematic grants and geographical grants", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'Grants are divided in two general categories: action grants, financing actions intended to help achieve a European Union policy objective; operating grants, financing the functioning of a body which has an objective forming part of, and supporting, a European Union policy.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q015",
+    "category": "Funding Mechanisms",
+    "sub_category": "Twinning",
+    "question": "What is a characteristic feature of a Twinning project concerning staffing, according to the source?",
+    "options": [
+      { "text": "The mandatory employment of local experts from the partner country.", "isCorrect": false },
+      { "text": "The secondment of a Resident Twinning Adviser (RTA) from a Public Administration of an EU Member State to the partner administration for a minimum of 12 months up to 36 months.", "isCorrect": true },
+      { "text": "The requirement for all project staff to be EU officials.", "isCorrect": false },
+      { "text": "The short-term secondment of Commission staff for up to 6 months.", "isCorrect": false }
+    ],
+    "rationale": "The source describes this as a main feature: 'One of the main features of a twinning project is the secondment from a Public Administration of a EU Member State of a Resident Twinning Adviser (RTA) to the partner administration for a minimum of 12 months up to 36 months throughout the entire duration of the implementation period of the action.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q016",
+    "category": "IT Systems",
+    "sub_category": "Grant Management IT",
+    "question": "What is the purpose of PADOR in the context of DG INTPA's grant management?",
+    "options": [
+      { "text": "It is a financial accounting system for grant disbursements.", "isCorrect": false },
+      { "text": "It is an online service for knowledge management of DG INTPA’s partners and an essential instrument for managing calls for proposals in direct management, requiring all applicants to be registered.", "isCorrect": true },
+      { "text": "It is a platform for evaluating scientific excellence of grant proposals.", "isCorrect": false },
+      { "text": "It is a system for reporting fraud and irregularities in grant projects.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'PADOR is an online service whose purpose is knowledge management of DG INTPA’s partners and an improved service to grant applicants. It is an essential instrument for managing calls for proposals since, in direct management, all applicants need to be registered in PADOR before submitting an application.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q017",
+    "category": "IT Systems",
+    "sub_category": "Grant Management IT",
+    "question": "Which IT suite is intended to eventually replace PROSPECT and PADOR for paperless contract management?",
+    "options": [
+      { "text": "The corporate eProcurement suite", "isCorrect": false },
+      { "text": "The corporate eGrants IT suite", "isCorrect": true },
+      { "text": "The SUMMA accounting system", "isCorrect": false },
+      { "text": "The TED eTendering website", "isCorrect": false }
+    ],
+    "rationale": "The source indicates: 'The European Commission intends to migrate to the corporate eGrants IT suite, which will become the contract management tool enabling paperless contract management. In the long run, they will replace the current legacy external action tools PROSPECT and PADOR.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q018",
+    "category": "Funding Mechanisms",
+    "sub_category": "Implementation Forms",
+    "question": "The FR has introduced a new budget implementation form not applicable to the EDF, which involves the donation of services, supplies or works to third parties. What is this form called?",
+    "options": [
+      { "text": "Technical assistance packages", "isCorrect": false },
+      { "text": "In-kind contributions", "isCorrect": false },
+      { "text": "Non-financial donations", "isCorrect": true },
+      { "text": "Material support grants", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The FR has introduced also a new budget implementation form, non-financial donations (not applicable to EDF). It consists in the donation of services, supplies or works to third parties (recipients).'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q019",
+    "category": "Funding Mechanisms",
+    "sub_category": "Procurement",
+    "question": "How are 'public contracts' defined in the source?",
+    "options": [
+      { "text": "Agreements between public administrations for institutional cooperation.", "isCorrect": false },
+      { "text": "Contracts for pecuniary interest concluded in writing between one or more economic operators and one or more contracting authorities to obtain, against payment, the execution of works, the supply of goods or the provision of services.", "isCorrect": true },
+      { "text": "Financial contributions made by way of donation to beneficiaries for policy objectives.", "isCorrect": false },
+      { "text": "Arrangements for sharing costs between the Commission and partner countries.", "isCorrect": false }
+    ],
+    "rationale": "The source provides the definition: 'Public contracts are contracts for pecuniary interest concluded in writing between one or more economic operators and one or more contracting authorities in order to obtain, against payment of a price paid in whole or in part from the budget, the execution of works, the supply of goods or the provision of services.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q020",
+    "category": "IT Systems",
+    "sub_category": "Procurement IT",
+    "question": "What is one of the corporate-level objectives of the European Commission regarding procurement and contract management?",
+    "options": [
+      { "text": "To centralize all procurement decisions in Headquarters.", "isCorrect": false },
+      { "text": "To increase manual processing for better oversight.", "isCorrect": false },
+      { "text": "To modernize procurement and contract management through the digitalisation of procurement processes.", "isCorrect": true },
+      { "text": "To reduce the number of procurement procedures annually.", "isCorrect": false }
+    ],
+    "rationale": "The source explicitly states: 'One of the objectives of the European Commission at corporate level is to modernise procurement and contract management through the digitalisation of procurement processes.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q021",
+    "category": "Funding Mechanisms",
+    "sub_category": "Global Initiatives",
+    "question": "Which of the following is a condition for the use of 'Contributions to global initiatives' as a new implementation modality under the FR 2024?",
+    "options": [
+      { "text": "The Union contribution must be the sole source of funding for the initiative.", "isCorrect": false },
+      { "text": "The Union contribution must be a minority contribution to the initiative, and it must benefit from a level of protection no less favourable than contributions from Member States.", "isCorrect": true },
+      { "text": "The initiative must have a legal personality and be managed directly by the European Commission.", "isCorrect": false },
+      { "text": "There must be no other budget implementation instruments available whatsoever.", "isCorrect": false }
+    ],
+    "rationale": "The source lists conditions, including: 'the Union contribution is a minority contribution to the initiative...; the Union contribution is treated on equal footing with donors of a similar magnitude and, where one or several Member States also contribute to the initiative, the Union contribution benefits from a level of protection no less favourable than the contribution(s) of that or those Member States;'.",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q022",
+    "category": "Financial Procedures",
+    "sub_category": "Grants",
+    "question": "What simplification measure regarding grants awarded by partner countries in indirect management was decided by INTPA Management on 19 July 2024?",
+    "options": [
+      { "text": "Partner countries are now solely responsible for all grant awards.", "isCorrect": false },
+      { "text": "Programme estimates are introduced for all new grant actions.", "isCorrect": false },
+      { "text": "The management of grants is restricted to direct management, eliminating the possibility for partner countries to award grants (while leaving the possibility for partner countries to award financial support to third parties under grants concluded in direct management with the Commission).", "isCorrect": true },
+      { "text": "All grants must now be managed under indirect management with entrusted entities.", "isCorrect": false }
+    ],
+    "rationale": "The source explicitly states: 'Please note that a simplification related to indirect management with partner countries, which has been decided by INTPA Management on 19 July 2024 (see Ares(2024)5270079), eliminates programme estimates as well the possibility for partner countries to award grants (while leaving the possibility for partner countries to award financial support to third parties under grants concluded in direct management with the Commission).'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q023",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "In which of the following cases are formally appointed evaluation committees generally required for application evaluations?",
+    "options": [
+      { "text": "Only for single tender procedures with a value less than EUR 20,000.", "isCorrect": false },
+      { "text": "For all procurement procedures governed by PRAG (with specific exceptions), procurement award procedures above certain thresholds, and grants awarded through call for proposals.", "isCorrect": true },
+      { "text": "Exclusively for direct awards of grants without a prior call for proposals.", "isCorrect": false },
+      { "text": "Only for contracts managed via Opsys-MyWorkplace/CRIS.", "isCorrect": false }
+    ],
+    "rationale": "The source lists the cases: 'all procurement procedures governed by PRAG except for single tender procedures (less than or equal to EUR 20 000) and the negotiated procedures referred to in PRAG section 2.6.8; procurement award procedures where the Commission acts on its own behalf and interest, with a value equal or above the thresholds laid down in the Directive; grants awarded through call for proposals; consultation procedures under a framework contract with reopening of competition for specific contracts with a value between EUR 1 000 000 and EUR 1 999 999'.",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q024",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "What is the numerical requirement for voting members on an evaluation committee?",
+    "options": [
+      { "text": "A minimum of two voting members.", "isCorrect": false },
+      { "text": "An even number of voting members to ensure balanced opinions.", "isCorrect": false },
+      { "text": "There must always be an odd number of voting members with a minimum of three.", "isCorrect": true },
+      { "text": "The number of voting members is flexible and not specified.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'There must always be an odd number of voting members with a minimum of three.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q025",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "What is the general rule regarding the participation of external experts in an evaluation committee for DG INTPA, as members?",
+    "options": [
+      { "text": "External experts may serve as voting members if they possess unique technical expertise.", "isCorrect": false },
+      { "text": "External experts may assist the committee but cannot be members or vote, unless the basic act allows for it (which is not provided for in DG INTPA basic acts).", "isCorrect": true },
+      { "text": "External experts can be members of the committee if they sign a conflict of interest declaration.", "isCorrect": false },
+      { "text": "External experts are always preferred over internal staff for impartiality.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'External experts may assist the evaluation committee pursuant to a decision of the authorising officer responsible. Members of the evaluation committee may be external experts where that possibility is provided for in the basic act (not provided for in DG INTPA basic acts).'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q026",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Conduct",
+    "question": "How is the work of an evaluation committee conducted, as described in the source?",
+    "options": [
+      { "text": "Openly and publicly, with full transparency to all stakeholders.", "isCorrect": false },
+      { "text": "Through a series of public hearings and consultations.", "isCorrect": false },
+      { "text": "In a confidential manner, meaning 'in camera' (in private), regardless of whether meetings are physical or via videoconference.", "isCorrect": true },
+      { "text": "With only the chairperson's decisions being final and confidential.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The committee’s work is conducted meaning in private, and is confidential both when proceedings are held in in camera, physical meetings in rooms or when videoconference tools are used.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q027",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "For evaluations conducted by the European Commission in Headquarters, what is a specific requirement regarding the representation of voting members?",
+    "options": [
+      { "text": "All voting members must come from the same centralised operations unit.", "isCorrect": false },
+      { "text": "Voting members must represent at least two organisational entities of EU institutions or EU bodies with no hierarchical link between them, at least one of which does not come under the authorising officer responsible.", "isCorrect": true },
+      { "text": "Voting members must all be external experts to ensure impartiality.", "isCorrect": false },
+      { "text": "The chairperson can appoint any number of voting members from any unit.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'The voting members of the evaluation committee shall represent at least two organisational entities of EU institutions or EU bodies (referred to in Articles 68, 70 and 71 FR) with no hierarchical link between them, at least one of which does not come under the authorising officer responsible.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q028",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "In EU Delegations, what specific exception allows Contract Agents to serve as chairperson of an evaluation committee?",
+    "options": [
+      { "text": "Only if they have a legal background and are appointed by the Director-General.", "isCorrect": false },
+      { "text": "In Delegations where the Finance and Contracts section is permanently or for long periods staffed with less than 2 officials, Contract Agents GF III and IV with at least three years' experience may exercise the role.", "isCorrect": true },
+      { "text": "If they are the most senior staff member available in the delegation.", "isCorrect": false },
+      { "text": "Only for very low-value contracts where a full official is not available.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'In Delegations where the Finance and Contracts section is permanently or for long periods of time staffed with less than 2 officials, Contract Agents GF III and IV from this section with at least three years' experience in initiating transactions, whether at HQ or in a Delegation, and holding a contract of indefinite duration ('contrat à durée indéterminée') with the Commission may exercise the role of chairperson.'",
+    "difficulty": "Hard",
+    "source": ""
+  },
+  {
+    "id": "Q029",
+    "category": "Evaluation Process",
+    "sub_category": "Evaluation Committee Composition",
+    "question": "In evaluations conducted by contracting authorities in partner countries under indirect management with ex-ante control, what role can European Commission staff typically play in the evaluation committee?",
+    "options": [
+      { "text": "They may serve as voting members to ensure compliance.", "isCorrect": false },
+      { "text": "They may participate as observers, scrutinizing the procedure, but cannot be members of the committee.", "isCorrect": true },
+      { "text": "They are prohibited from any involvement to ensure local autonomy.", "isCorrect": false },
+      { "text": "They can serve as chairperson if invited by the partner country.", "isCorrect": false }
+    ],
+    "rationale": "The source clarifies: 'All European Commission staff... may participate as observers. However, European Commission staff may not be members of such committees.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q030",
+    "category": "Evaluation Process",
+    "sub_category": "Conflict of Interest",
+    "question": "According to the Financial Regulation, what situations define a 'conflict of interests' for financial actors or other persons?",
+    "options": [
+      { "text": "Any disagreement over technical specifications of a tender.", "isCorrect": false },
+      { "text": "A situation where the impartial and objective exercise of functions is compromised for reasons involving family, emotional life, political or national affinity, economic interest or any other direct or indirect personal interest.", "isCorrect": true },
+      { "text": "Situations where a person has worked for a competitor more than five years ago.", "isCorrect": false },
+      { "text": "When an evaluator holds a minor shareholding in a publicly traded company that is also a tenderer.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'There is a conflict of interests where the impartial and objective exercise of the functions of a financial actor or other person is compromised for reasons involving family, emotional life, political or national affinity, economic interest or any other direct or indirect personal interest.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q031",
+    "category": "Evaluation Process",
+    "sub_category": "Feedback",
+    "question": "When should unsuccessful tenderers be notified that their tender was not successful?",
+    "options": [
+      { "text": "Immediately after the opening session of tenders.", "isCorrect": false },
+      { "text": "After the contract has been signed and all appeals periods have elapsed.", "isCorrect": false },
+      { "text": "Before the validity of the tenders expires but after the award decision is taken.", "isCorrect": true },
+      { "text": "Only if they explicitly request feedback.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'Before the validity of the tenders expires but after the award decision is taken, the contracting authority notifies unsuccessful tenderers that their tender has not been successful in the evaluation.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q032",
+    "category": "Evaluation Process",
+    "sub_category": "Feedback",
+    "question": "What information is provided to unsuccessful tenderers who are not rejected, but exercise their right to obtain information about the successful tender?",
+    "options": [
+      { "text": "Only the name of the successful tenderer.", "isCorrect": false },
+      { "text": "The complete tender dossier of the winning bid, including all commercial secrets.", "isCorrect": false },
+      { "text": "The name of the successful tenderer, its total financial offer, and the breakdown of points and comments of the evaluation per criterion and sub-criterion, as provided in the evaluation report.", "isCorrect": true },
+      { "text": "A general statement that the winning tender was superior.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'The information to be provided to tenderers that exercise their right to obtain information includes: the name of the successful tenderer (and in case of a consortium, the name of its members); its total financial offer (not unit or detailed prices which are part of the commercial secrets of the tenderer); the break-down of points and comments of the evaluation per criterion, and sub-criterion if applicable, on the winning offer, as provided for in the evaluation report.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q033",
+    "category": "Evaluation Process",
+    "sub_category": "Rejection Criteria",
+    "question": "When is a tender considered 'unacceptable' and therefore rejected?",
+    "options": [
+      { "text": "When the tenderer is found to be in an exclusion situation.", "isCorrect": false },
+      { "text": "When the tender is irrelevant to the subject of the contract.", "isCorrect": false },
+      { "text": "When the price of the tender exceeds the maximum amount set in the procurement documents, or the tender fails to meet the minimum quality levels for award criteria.", "isCorrect": true },
+      { "text": "When the tenderer was involved in the preparation of the procurement documents.", "isCorrect": false }
+    ],
+    "rationale": "The source lists conditions for rejection, including: 'the tender is unacceptable: the price of the tender exceeds the maximum amount set in the procurement documents; the tender fails to meet the minimum quality levels for award criteria.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q034",
+    "category": "Financial Procedures",
+    "sub_category": "Deviations and Approvals",
+    "question": "What is the key distinction between a 'derogation' and a 'prior approval' in terms of deviation from established procedures?",
+    "options": [
+      { "text": "A derogation is ex-post, while a prior approval is ex-ante.", "isCorrect": false },
+      { "text": "A derogation involves a choice between equally valid options, while a prior approval is an authorized deviation from a standard procedure.", "isCorrect": false },
+      { "text": "A derogation is an authorized deviation from the standard procedure foreseen in the rules, whereas a prior approval is an option to use in certain cases already detailed within the standard procedures.", "isCorrect": true },
+      { "text": "A derogation requires no justification, while a prior approval requires extensive justification.", "isCorrect": false }
+    ],
+    "rationale": "The source explains: 'Contrary to a prior approval that involves a choice between equally valid options offered by rules and regulations, a derogation is an authorised deviation from the standard procedure foreseen in the rules and regulations. The difference with a prior approval is minor but relevant. A prior approval is an option to use in certain cases already detailed within the standard procedures whereas derogations are not options but deviations from the established procedures.'",
+    "difficulty": "Hard",
+    "source": ""
+  },
+  {
+    "id": "Q035",
+    "category": "Financial Procedures",
+    "sub_category": "Deviations and Approvals",
+    "question": "Which category of deviation from established processes and procedures is defined as a departure or gap in existing controls detected only after the action was taken?",
+    "options": [
+      { "text": "Derogation", "isCorrect": false },
+      { "text": "Exception", "isCorrect": false },
+      { "text": "Prior approval", "isCorrect": false },
+      { "text": "Non-compliance event", "isCorrect": true }
+    ],
+    "rationale": "The source defines it as: 'A non-compliance event is a departure from established processes and procedures or is a gap in existing controls, detected only after action was taken (ex-post).'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q036",
+    "category": "Financial Procedures",
+    "sub_category": "Deviations and Approvals",
+    "question": "Which of the following is given as an example of an 'exception' from established processes and procedures?",
+    "options": [
+      { "text": "Extension of the rules of origin and nationality for a specific action.", "isCorrect": false },
+      { "text": "Award of a grant contract without prior call for proposals for emergency assistance.", "isCorrect": false },
+      { "text": "Modification of the evaluation grids or deviation from the templates annexed to the PRAG.", "isCorrect": true },
+      { "text": "A valid contract signed without a previous budgetary/financial commitment.", "isCorrect": false }
+    ],
+    "rationale": "The source provides examples for exceptions: 'modification of the evaluation grids; deviation from the templates annexed to the PRAG; deviation from the payment schedules provided for in the model of contracts.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q037",
+    "category": "Financial Procedures",
+    "sub_category": "Deviations and Approvals",
+    "question": "Which category of deviation or approval has a simplified one-step visa chain in CRIS because its approval is already given in a supporting document (e.g., evaluation report, financing agreement)?",
+    "options": [
+      { "text": "Derogation", "isCorrect": false },
+      { "text": "Prior approval", "isCorrect": false },
+      { "text": "Event to be reported (EVR)", "isCorrect": true },
+      { "text": "Non-compliance event", "isCorrect": false }
+    ],
+    "rationale": "The source describes EVRs: 'EVRs are meant to keep a statistical record of cases that have been previously approved by a competent authority in a supporting document (such as evaluation report, financing agreement, basic act, declaration of crisis, etc.). Compared to prior approvals, this category has a simplified one-step visa chain.'",
+    "difficulty": "Hard",
+    "source": ""
+  },
+  {
+    "id": "Q038",
+    "category": "EU Institutional & Regulatory Framework",
+    "sub_category": "Responsibilities",
+    "question": "Which DG INTPA unit's prior opinion is required in cases such as the use of general conditions different from those set out in the PRAG or certain instances of financing not linked to costs?",
+    "options": [
+      { "text": "INTPA D4 Quality and Results, Evaluation, Knowledge Management", "isCorrect": false },
+      { "text": "INTPA E1 Sustainable Finance, Investment and Jobs", "isCorrect": false },
+      { "text": "INTPA R4 Legal Affairs Unit", "isCorrect": true },
+      { "text": "INTPA F4 Green Deal, Digital Agenda", "isCorrect": false }
+    ],
+    "rationale": "The source lists 'In ten cases the opinion of the INTPA R4 Legal Affairs Unit is required, namely: ... exceptions 7a: the use of general conditions different from those set out in the PRAG; ... prior approval 29b: use of financing not linked to costs in direct or indirect management.'",
+    "difficulty": "Hard",
+    "source": ""
+  },
+  {
+    "id": "Q039",
+    "category": "Financial Procedures",
+    "sub_category": "Deviations and Approvals",
+    "question": "Can competent authorities sub-delegate their decisional power for prior approvals, derogations, and exceptions?",
+    "options": [
+      { "text": "Yes, they can sub-delegate if the task is routine.", "isCorrect": false },
+      { "text": "No, they cannot sub-delegate their decisional power for these cases, but a duly appointed deputy can perform the task if the competent authority is absent.", "isCorrect": true },
+      { "text": "Only in urgent cases and with written justification.", "isCorrect": false },
+      { "text": "Only if the sub-delegate is a senior official within the same unit.", "isCorrect": false }
+    ],
+    "rationale": "The source clarifies: 'The competent authorities mentioned in Annex H2b, Annex H2c and Annex H2d for each concrete case cannot sub-delegate their decisional power... On the other hand, when the competent authority is absent and a deputy has been appointed, the deputy is empowered to perform this task.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q040",
+    "category": "Financial Procedures",
+    "sub_category": "Databases",
+    "question": "What is the primary purpose of consulting the 'Recovery list of debtors' on BUDGpedia?",
+    "options": [
+      { "text": "To identify potential partners for new projects.", "isCorrect": false },
+      { "text": "To obtain information on overdue debts and intelligence data on financial risks, enabling better assessment of financial risks and risk-based decisions.", "isCorrect": true },
+      { "text": "To track the progress of ongoing recovery procedures.", "isCorrect": false },
+      { "text": "To verify the legal personality of a prospective contractor.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The information of overdue debt can be obtained through the searchable file with the Recovery list of debtors on BUDGpedia (Recovery Order – Statistics), which includes not only the overdue recovery orders but also intelligence data on their financial risks... The purpose is to enable contracting authorities to better assess financial risks... and to make risk-based decisions when authorising financial operations concerning these legal entities.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q041",
+    "category": "Administrative Procedures",
+    "sub_category": "Contract Signature",
+    "question": "What legal effect is a Qualified Electronic Signature (QES) recognised to have in all EU Member States?",
+    "options": [
+      { "text": "It is recognised as a strong recommendation for signature, but not legally binding.", "isCorrect": false },
+      { "text": "It is equivalent to a handwritten (blue-ink) signature.", "isCorrect": true },
+      { "text": "It serves only for internal administrative purposes within the Commission.", "isCorrect": false },
+      { "text": "It is accepted only if explicitly agreed upon by all parties in a separate legal document.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'Qualified Electronic Signature (QES) is a standard that comes from the eIDAS Regulation (Regulation (EU) No 910/2014) and is recognised to have equivalent legal effect to a handwritten (also known as ‘blue-ink’) signature in all EU Member States.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q042",
+    "category": "Administrative Procedures",
+    "sub_category": "Contract Signature",
+    "question": "Under what specific conditions can the European Commission use a Qualified Electronic Signature (QES) for signing contracts?",
+    "options": [
+      { "text": "Only for internal Commission documents, not external contracts.", "isCorrect": false },
+      { "text": "When the contracts are managed outside OPSYS and both the applicable law and the dispute settlement forum are in an EU Member State.", "isCorrect": true },
+      { "text": "Exclusively for direct management contracts, irrespective of the applicable law.", "isCorrect": false },
+      { "text": "Only for contracts with partner countries that do not have their own electronic signature systems.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'QES can therefore be used as an ad hoc solution for signing documents for which a handwritten signature is required. This includes signature of contracts, managed outside OPSYS, and where both the applicable law and the dispute settlement forum are in an EU Member State.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q043",
+    "category": "Administrative Procedures",
+    "sub_category": "Contract Signature",
+    "question": "What is the function of the qualified electronic seal applied by the European Commission on the PDF version of a contract?",
+    "options": [
+      { "text": "It allows for real-time tracking of modifications to the document.", "isCorrect": false },
+      { "text": "It automatically translates the document into all official EU languages.", "isCorrect": false },
+      { "text": "It serves as evidence that an electronic document was issued by the Commission, ensuring certainty of the document’s origin and integrity.", "isCorrect": true },
+      { "text": "It encrypts the document to prevent unauthorized access.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The European Commission as Contracting Authority applies a qualified electronic seal on the pdf version of the contract. The EC electronic seal serves as evidence that an electronic document was issued by the Commission, ensuring certainty of document’s origin and integrity. If someone tries to modify or compromise the integrity of a ‘sealed’ document, the seal will no longer be valid.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q044",
+    "category": "Transparency & Reporting",
+    "sub_category": "Publication of Information",
+    "question": "By what deadline must the European Commission publish information on recipients of funds on a centralised website?",
+    "options": [
+      { "text": "Within 30 days of the contract signature.", "isCorrect": false },
+      { "text": "No later than 30 June of the year following the financial year in which the funds were legally committed.", "isCorrect": true },
+      { "text": "At the end of the project implementation period.", "isCorrect": false },
+      { "text": "Within one month of the final payment to the recipient.", "isCorrect": false }
+    ],
+    "rationale": "The source specifies: 'the European Commission shall make available on a centralised website information on recipients of funds (EU budget or EDF) no later than 30 June of the year following the financial year in which the funds were legally committed.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q045",
+    "category": "Transparency & Reporting",
+    "sub_category": "Publication of Information",
+    "question": "What is the financial threshold for very low value procurement contracts that are exempt from the general publication requirement?",
+    "options": [
+      { "text": "EUR 5,000", "isCorrect": false },
+      { "text": "EUR 10,000", "isCorrect": false },
+      { "text": "EUR 15,000", "isCorrect": true },
+      { "text": "EUR 20,000", "isCorrect": false }
+    ],
+    "rationale": "The source states that information shall not be published for: 'very low value procurement contracts (EUR 15 000)'.",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q046",
+    "category": "IT Systems",
+    "sub_category": "Reporting Systems",
+    "question": "From which IT system do the data for the publication of procurement contracts in direct management stem?",
+    "options": [
+      { "text": "PROSPECT", "isCorrect": false },
+      { "text": "PADOR", "isCorrect": false },
+      { "text": "CRIS", "isCorrect": true },
+      { "text": "SUMMA (before its full deployment)", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The data are stemming directly from CRIS. All departments will, for their contracts: ensure the quality of any non-financial data registered in CRIS...'.",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q047",
+    "category": "Contractual Procedures",
+    "sub_category": "Contract Validity",
+    "question": "When does a contract typically take effect?",
+    "options": [
+      { "text": "From the date of its official registration in the Commission's accounting system.", "isCorrect": false },
+      { "text": "From the start date of the project implementation period.", "isCorrect": false },
+      { "text": "From the date the last party signs it.", "isCorrect": true },
+      { "text": "Upon receipt of the first pre-financing payment.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'Each contract takes effect from the date the last party signs it.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q048",
+    "category": "Contractual Procedures",
+    "sub_category": "Grant Specifics",
+    "question": "Under what condition can a grant be awarded for an action that has already begun?",
+    "options": [
+      { "text": "Never, grants cannot be awarded for actions already started.", "isCorrect": false },
+      { "text": "If the applicant can demonstrate the need to start the action before the contract is signed, provided expenditure does not pre-date the deadline for proposal submission or application submission for direct awards.", "isCorrect": true },
+      { "text": "Only in cases where the action is fully completed before the grant contract is signed.", "isCorrect": false },
+      { "text": "If approved by the Commission, regardless of when the action began.", "isCorrect": false }
+    ],
+    "rationale": "The source clarifies: 'Specifically for grant contracts, registered as an event to be reported, the authorising officer may award a grant for an action that has already begun if the applicant can demonstrate the need to start the action before the contract is signed. In such cases, expenditure eligible for financing may not pre-date the deadline for the submission of proposals or, in the case of direct awards, the date of submission of the grant application.'",
+    "difficulty": "Medium",
+    "source": ""
+  },
+  {
+    "id": "Q049",
+    "category": "Contractual Procedures",
+    "sub_category": "Contract Amendments",
+    "question": "What is a key restriction regarding increasing the financial contribution for grant contracts during an amendment?",
+    "options": [
+      { "text": "The maximum EU contribution of the grant can only be increased by a maximum of 10%.", "isCorrect": false },
+      { "text": "The maximum EU contribution of the grant cannot be increased.", "isCorrect": true },
+      { "text": "Increases are only allowed if the project duration is also extended.", "isCorrect": false },
+      { "text": "Any increase requires a new budgetary commitment but no amendment.", "isCorrect": false }
+    ],
+    "rationale": "The source states: 'The maximum EU contribution of the grant cannot be increased for grant contracts.'",
+    "difficulty": "Easy",
+    "source": ""
+  },
+  {
+    "id": "Q050",
+    "category": "Financial Management",
+    "sub_category": "Anti-Fraud Measures",
+    "question": "Which two complementary bodies are highlighted as reinforcing the protection of EU's financial interests in the fight against irregularities, fraud, and corruption?",
+    "options": [
+      { "text": "The European Court of Justice and the European Central Bank.", "isCorrect": false },
+      { "text": "The European Anti-Fraud Office (OLAF) for administrative investigations and the European Public Prosecutor’s Office (EPPO) for criminal investigations.", "isCorrect": true },
+      { "text": "Eurostat and the European Environment Agency.", "isCorrect": false },
+      { "text": "The European Parliament and the Council of the European Union.", "isCorrect": false }
+    ],
+    "rationale": "The source identifies them: 'While fraud prevention and detection is primarily the responsibility of each head of a Commission service... two complementary bodies reinforce the protection of EU’s financial interests in a comprehensive way: The European Anti-Fraud Office, commonly known as OLAF, in charge of administrative investigations... The European Public Prosecutor’s Office, the EPPO, to conduct criminal investigations'.",
+    "difficulty": "Easy",
+    "source": ""
+  }
+]
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>

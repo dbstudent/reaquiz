@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REA Business Processes Manager Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .question-section {
+            margin-bottom: 20px;
+        }
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options-container {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .option {
+            background-color: #e9e9e9;
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #dcdcdc;
+        }
+        .option.selected {
+            border-color: #007bff;
+            background-color: #cce0ff;
+        }
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .quiz-results {
+            text-align: center;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        .quiz-results .score {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>REA Business Processes Manager MCQ Quiz</h1>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div id="questionSection" class="question-section">
+            <p class="question-text" id="questionText"></p>
+            <ul id="optionsContainer" class="options-container">
+                </ul>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="previousBtn" disabled>Previous</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+        <div id="results" class="quiz-results" style="display:none;">
+            <h2>Quiz Completed!</h2>
+            <p>Your score: <span id="finalScore" class="score"></span></p>
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions. For the full 250 questions, this array would be much larger.
+        // You would typically parse the CSV data into this format.
+        const questions = [
+  {
+    "id": "EFSD001",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Overview",
+    "question": "What is the European Fund for Sustainable Development Plus (EFSD+), as created by the NDICI-GE Regulation?",
+    "options": [
+      {
+        "text": "A worldwide 'integrated financial package' that uses blending operations and budgetary guarantees.",
+        "isCorrect": true
+      },
+      {
+        "text": "A grant-only fund focused solely on technical assistance in partner countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "A mechanism for direct budget support exclusively for EU Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "An emergency aid fund providing short-term humanitarian assistance.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The NDICI-GE Regulation creates the European Fund for Sustainable Development Plus (EFSD+) as a worldwide 'integrated financial package' which makes use of blending operations (investment grants, technical assistance, and financial instruments) and budgetary guarantees supporting investments [1].",
+    "difficulty": "Easy",
+    "source": "[1]"
+  },
+  {
+    "id": "EFSD002",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Characteristics",
+    "question": "What is a key characteristic of projects supported by the EFSD+ Guarantee regarding their risk profile?",
+    "options": [
+      {
+        "text": "They typically have a higher risk profile than investments supported without EU support, acting as a risk mitigation mechanism.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are exclusively low-risk ventures, requiring minimal EU intervention.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are only undertaken if they have a guaranteed profit margin for private investors.",
+        "isCorrect": false
+      },
+      {
+        "text": "Their risk profile is identical to that of standard commercial bank loans.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The projects supported by the EFSD+ Guarantee typically have a higher risk profile than the portfolio of investments supported by the eligible counterparts under their normal investment policies without the EU support. As such, the instrument is intended as a powerful risk mitigation mechanism that should achieve additionality [2].",
+    "difficulty": "Medium",
+    "source": "[2]"
+  },
+  {
+    "id": "EFSD003",
+    "category": "EU External Action Financing",
+    "sub_category": "Budgetary Guarantees",
+    "question": "What is the primary function of budgetary guarantees provided by the European Commission?",
+    "options": [
+      {
+        "text": "To share the risk associated with investing and lending in developing countries, encouraging private investors and development banks.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide direct, non-repayable grants to entrepreneurs in developing countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "To exclusively fund infrastructure projects within EU Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "To ensure that all investments generate immediate and substantial profits for the EU budget.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Through budgetary guarantees, the Commission shares the risk associated with investing and lending in developing countries, encouraging private investors and development banks to finance entrepreneurs or development projects [3].",
+    "difficulty": "Easy",
+    "source": "[3]"
+  },
+  {
+    "id": "EFSD004",
+    "category": "EU External Action Financing",
+    "sub_category": "Budgetary Guarantees vs Blending",
+    "question": "What is the basic difference between a budgetary guarantee and a classical financial instrument (including financial instruments taking the form of guarantee)?",
+    "options": [
+      {
+        "text": "A budgetary guarantee generates a contingent liability for the Union.",
+        "isCorrect": true
+      },
+      {
+        "text": "A classical financial instrument generates a contingent liability for the Union, while a budgetary guarantee does not.",
+        "isCorrect": false
+      },
+      {
+        "text": "Classical financial instruments are always fully funded, whereas budgetary guarantees are never funded.",
+        "isCorrect": false
+      },
+      {
+        "text": "Budgetary guarantees are only used for grant resources, while financial instruments are for loans.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The basic difference between a budgetary guarantee and a classical financial instrument (including financial instruments taking the form of guarantee) is that the budgetary guarantee generates a contingent liability for the Union [4].",
+    "difficulty": "Medium",
+    "source": "[4]"
+  },
+  {
+    "id": "EFSD005",
+    "category": "EU External Action Financing",
+    "sub_category": "External Action Guarantee (EAG)",
+    "question": "What is the maximum exposure (contingent financial liability) for the External Action Guarantee (EAG) for 2021-2027?",
+    "options": [
+      {
+        "text": "EUR 53.449 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 79.46 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 10 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 39.1 billion.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The NDICI-GE Regulation creates the External Action Guarantee (“EAG”) as a single budgetary guarantee covering a maximum exposure (contingent financial liability) up to EUR 53.449 billion for 2021-2027 [5].",
+    "difficulty": "Easy",
+    "source": "[5]"
+  },
+  {
+    "id": "EFSD006",
+    "category": "EU External Action Financing",
+    "sub_category": "External Action Guarantee (EAG)",
+    "question": "Beyond EFSD+ budgetary guarantees, what other operations does the External Action Guarantee (EAG) support?",
+    "options": [
+      {
+        "text": "Macro-Financial Assistance (MFA) and EURATOM loans.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only direct grants for humanitarian aid.",
+        "isCorrect": false
+      },
+      {
+        "text": "Investment in EU Member States' national infrastructure projects.",
+        "isCorrect": false
+      },
+      {
+        "text": "Blending operations exclusively.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The scope of EAG and EFSD+ differ. On the one hand, the EAG does not support all EFSD+ operations - only budgetary guarantees. On the other hand, the EAG supports other operations: Macro-Financial Assistance (“MFA”) and EURATOM loans [6].",
+    "difficulty": "Medium",
+    "source": "[6]"
+  },
+  {
+    "id": "EFSD007",
+    "category": "EU External Action Financing",
+    "sub_category": "Provisioning",
+    "question": "What is the provisioning rate for the Union’s Macro-Financial Assistance (MFA) and for sovereign, commercial and non-commercial sub-sovereign operations under budgetary guarantees covering risks associated with lending operations?",
+    "options": [
+      {
+        "text": "9%.",
+        "isCorrect": true
+      },
+      {
+        "text": "50%.",
+        "isCorrect": false
+      },
+      {
+        "text": "25%.",
+        "isCorrect": false
+      },
+      {
+        "text": "75%.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The provisioning rate shall range between 9% and 50% depending on the type of operation. It shall be 9% for the Union’s MFA and for sovereign, commercial and non-commercial sub-sovereign operations under budgetary guarantees covering risks associated with lending operations [7].",
+    "difficulty": "Medium",
+    "source": "[7]"
+  },
+  {
+    "id": "EFSD008",
+    "category": "EU External Action Financing",
+    "sub_category": "Provisioning",
+    "question": "What is the provisioning rate for private sector operations under the 'Open Architecture' investment window, building on previous EFSD experience?",
+    "options": [
+      {
+        "text": "50%.",
+        "isCorrect": true
+      },
+      {
+        "text": "9%.",
+        "isCorrect": false
+      },
+      {
+        "text": "25%.",
+        "isCorrect": false
+      },
+      {
+        "text": "75%.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Building on previous experience with the EFSD, the provisioning rate for private sector operations under the 'Open Architecture' shall be 50% [7].",
+    "difficulty": "Easy",
+    "source": "[7]"
+  },
+  {
+    "id": "EFSD009",
+    "category": "EU External Action Financing",
+    "sub_category": "Provisioning",
+    "question": "What is the maximum amount from the general budget that may be used to provision the External Action Guarantee (EAG)?",
+    "options": [
+      {
+        "text": "EUR 10 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 53.449 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 79.46 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 39.1 billion.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "A maximum amount of EUR 10 billion from the general budget may be used to provision the EAG [8].",
+    "difficulty": "Easy",
+    "source": "[8]"
+  },
+  {
+    "id": "EFSD010",
+    "category": "EU External Action Financing",
+    "sub_category": "Macro-Financial Assistance (MFA)",
+    "question": "Which type of financial aid is the Macro-Financial Assistance (MFA)?",
+    "options": [
+      {
+        "text": "A form of financial aid extended by the EU to partner countries experiencing a balance of payments crisis.",
+        "isCorrect": true
+      },
+      {
+        "text": "A regular financial support mechanism for economic and social development.",
+        "isCorrect": false
+      },
+      {
+        "text": "A grant program for direct investments in private companies.",
+        "isCorrect": false
+      },
+      {
+        "text": "A long-term loan program for infrastructure projects within the EU.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The MFA is a form of financial aid extended by the EU to partner countries experiencing a balance of payments crisis [9].",
+    "difficulty": "Easy",
+    "source": "[9]"
+  },
+  {
+    "id": "EFSD011",
+    "category": "EU External Action Financing",
+    "sub_category": "Macro-Financial Assistance (MFA)",
+    "question": "Macro-Financial Assistance (MFA) is designed for countries geographically, economically and politically close to the EU. Which of the following is NOT typically included in the primary scope?",
+    "options": [
+      {
+        "text": "Countries in Latin America.",
+        "isCorrect": true
+      },
+      {
+        "text": "Candidate and potential candidate countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Countries bordering the EU covered by the European Neighbourhood Policy (ENP).",
+        "isCorrect": false
+      },
+      {
+        "text": "Kyrgyzstan and Tajikistan in specific circumstances.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "MFA is designed for countries geographically, economically and politically close to the EU. These include candidate and potential candidate countries, countries bordering the EU covered by the European Neighbourhood Policy (“ENP”) and, in certain circumstances, other third countries (Kyrgyzstan and Tajikistan were the only cases of MFA out of the enlargement and neighbourhood contexts) [9].",
+    "difficulty": "Medium",
+    "source": "[9]"
+  },
+  {
+    "id": "EFSD012",
+    "category": "EU External Action Financing",
+    "sub_category": "Macro-Financial Assistance (MFA)",
+    "question": "Why is Macro-Financial Assistance (MFA) not integrated into NDICI-GE, despite its provisioning being financed from geographic envelopes?",
+    "options": [
+      {
+        "text": "Due to its specific decision-making procedure, requiring ad-hoc decisions by European Parliament and Council.",
+        "isCorrect": true
+      },
+      {
+        "text": "Because it is entirely managed by the European Investment Bank (EIB) without Commission oversight.",
+        "isCorrect": false
+      },
+      {
+        "text": "As it provides regular financial support, unlike other NDICI-GE instruments.",
+        "isCorrect": false
+      },
+      {
+        "text": "It falls under a completely different EU budget heading, unrelated to external action.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "While its provisioning is financed from the geographic envelopes of the NDICI-GE, MFA is not integrated in NDICI-GE due to its specific decision-making procedure: each MFA decision is subject to the adoption by the European Parliament and the Council of an ad-hoc Decision through ordinary legislative procedure, based on a Commission proposal [10].",
+    "difficulty": "Medium",
+    "source": "[10]"
+  },
+  {
+    "id": "EFSD013",
+    "category": "EU External Action Financing",
+    "sub_category": "Budgetary Guarantees vs Blending",
+    "question": "Which of the following is a key differentiating point between Commission 'blending' and Commission 'budgetary guarantees'?",
+    "options": [
+      {
+        "text": "Blending often includes single operations, while budgetary guarantees cover a portfolio of operations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Budgetary guarantees involve an upfront transfer of all funds, while blending is only triggered by a default event.",
+        "isCorrect": false
+      },
+      {
+        "text": "Blending pursues market terms, whereas budgetary guarantees are linked to more concessional financing.",
+        "isCorrect": false
+      },
+      {
+        "text": "Budgetary guarantees include a remuneration to the implementing party, while blending foresees a fee paid by them.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The main differentiating points between Commission ‘blending’ and Commission ‘budgetary guarantees’ include: blending often includes single operations/transactions while budgetary guarantees cover a portfolio of operations [11].",
+    "difficulty": "Medium",
+    "source": "[11]"
+  },
+  {
+    "id": "EFSD014",
+    "category": "EU External Action Financing",
+    "sub_category": "Budgetary Guarantees vs Blending",
+    "question": "Regarding funding, what is a key difference between blending and budgetary guarantees?",
+    "options": [
+      {
+        "text": "Blending is mostly funded (but not always), while budgetary guarantees are unfunded.",
+        "isCorrect": true
+      },
+      {
+        "text": "Both blending and budgetary guarantees are fully funded upfront.",
+        "isCorrect": false
+      },
+      {
+        "text": "Budgetary guarantees are always fully funded, while blending is always unfunded.",
+        "isCorrect": false
+      },
+      {
+        "text": "Neither blending nor budgetary guarantees involve actual funds, only promises.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "blending is mostly funded (but not always), while budgetary guarantees are unfunded. Provisions are kept in the Common Provisioning Fund (“CPF”), subject to asset management [11].",
+    "difficulty": "Medium",
+    "source": "[11]"
+  },
+  {
+    "id": "EFSD015",
+    "category": "EU External Action Financing",
+    "sub_category": "Legacy Programmes",
+    "question": "Which of the following legacy programs was *not* covered by the European Lending Mandate (ELM) for most of its countries?",
+    "options": [
+      {
+        "text": "Most African, Caribbean, and Pacific countries.",
+        "isCorrect": true
+      },
+      {
+        "text": "Pre-accession countries and beneficiaries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Neighbourhood and Partnership countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Latin America.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The eligible countries are the Pre-accession countries and beneficiaries, the Neighbourhood and Partnership countries, Asia, Central Asia, Latin America and South Africa. Consequently, most African, Caribbean, and Pacific countries are not covered by the ELM [12].",
+    "difficulty": "Hard",
+    "source": "[12]"
+  },
+  {
+    "id": "EFSD016",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Evolution",
+    "question": "The EFSD+ is described as a 'comprehensive and simplified approach'. What does this refer to in terms of legal bases and guarantees?",
+    "options": [
+      {
+        "text": "It integrates different legal bases (EFSD Regulation, ELM Decision) and guarantees (ELM Guarantee, EFSD Guarantee, etc.).",
+        "isCorrect": true
+      },
+      {
+        "text": "It solely relies on new legal instruments, entirely discarding previous frameworks.",
+        "isCorrect": false
+      },
+      {
+        "text": "It separates blending and budgetary guarantee operations into distinct, non-overlapping legal frameworks.",
+        "isCorrect": false
+      },
+      {
+        "text": "It focuses on reducing the number of eligible counterparts, simplifying oversight.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EFSD+ is a comprehensive and simplified approach by integrating the different legal basis (EFSD Regulation, the ELM Decision) and guarantees (ELM Guarantee, EFSD Guarantee, etc.) [13].",
+    "difficulty": "Medium",
+    "source": "[13]"
+  },
+  {
+    "id": "EFSD017",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Geographic Scope",
+    "question": "How has the geographical scope of EFSD and ELM changed with the introduction of EFSD+?",
+    "options": [
+      {
+        "text": "It expands worldwide, with a specific focus on countries most in need (LDCs/fragile countries).",
+        "isCorrect": true
+      },
+      {
+        "text": "It is now limited exclusively to Sub-Saharan Africa and the European Neighbourhood.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is restricted to Upper Middle-Income Countries only.",
+        "isCorrect": false
+      },
+      {
+        "text": "It excludes all third countries and focuses solely on EU Member States.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EFSD+... expands geographically EFSD and ELM to all third countries. The new worldwide coverage has a specific focus of resources on countries most in need (LDCs/fragile countries) [14].",
+    "difficulty": "Medium",
+    "source": "[14]"
+  },
+  {
+    "id": "EFSD018",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Objectives",
+    "question": "Which of the following is a key guiding principle for the implementation of EFSD+?",
+    "options": [
+      {
+        "text": "Promote human rights, gender equality, and the empowerment of women and young people.",
+        "isCorrect": true
+      },
+      {
+        "text": "To focus exclusively on short-term economic gains, disregarding social and environmental aspects.",
+        "isCorrect": false
+      },
+      {
+        "text": "To prioritize investments that are guaranteed to yield immediate financial returns to the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "To only support projects that require no technical assistance or capacity building.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The key guiding principles that must be applied in its implementation include: Promote human rights, gender equality and the empowerment of women and young people, as well as addressing specific socio-economic root causes of irregular migration and root causes of forced displacement [15].",
+    "difficulty": "Easy",
+    "source": "[15]"
+  },
+  {
+    "id": "EFSD019",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Operations",
+    "question": "What are the three types of operations supported by the EFSD+ Guarantee?",
+    "options": [
+      {
+        "text": "Sovereign, sub-sovereign, and private operations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Grant, blending, and technical assistance operations.",
+        "isCorrect": false
+      },
+      {
+        "text": "Humanitarian aid, emergency response, and post-conflict reconstruction.",
+        "isCorrect": false
+      },
+      {
+        "text": "EU Member State, candidate country, and neighborhood country operations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "EFSD+ Guarantee supports three types of operations: sovereign, sub-sovereign and private operations [16].",
+    "difficulty": "Easy",
+    "source": "[16]"
+  },
+  {
+    "id": "EFSD020",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Operations",
+    "question": "What defines a 'sovereign operation' under EFSD+?",
+    "options": [
+      {
+        "text": "Transactions where the borrower is the State (or a public sector entity being the final beneficiary), formalized through the national financial authority.",
+        "isCorrect": true
+      },
+      {
+        "text": "Operations where the borrower is a private company, guaranteed by the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "Projects solely funded by blending operations without any guarantee.",
+        "isCorrect": false
+      },
+      {
+        "text": "Investments made directly by the European Commission in a country.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Transactions are considered sovereign operations when the borrower is the State (with the State or a public sector entity being the final beneficiary) and therefore the operation is formalised through the corresponding national financial authority [17].",
+    "difficulty": "Medium",
+    "source": "[17]"
+  },
+  {
+    "id": "EFSD021",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Operations",
+    "question": "Which of the following is NOT typically considered a sub-sovereign entity for EFSD+ operations?",
+    "options": [
+      {
+        "text": "A wholly private commercial bank without any public service mission.",
+        "isCorrect": true
+      },
+      {
+        "text": "Regional authorities.",
+        "isCorrect": false
+      },
+      {
+        "text": "Local authorities (municipalities).",
+        "isCorrect": false
+      },
+      {
+        "text": "Public enterprises owned or controlled by the State.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Transactions are considered sub-sovereign operations when the borrowers and final beneficiaries are one of the following sub-sovereign entities: Regional authorities; Local authorities (municipalities); Public institutions owned or controlled by the State; Public enterprises owned or controlled by the State, including public banks; or Private companies partially owned by the State, with a demonstrated public-service mission [18].",
+    "difficulty": "Medium",
+    "source": "[18]"
+  },
+  {
+    "id": "EFSD022",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Programming",
+    "question": "What is the 'Policy First' principle in the context of NDICI-GE Regulation and EFSD+ implementation?",
+    "options": [
+      {
+        "text": "All implementing modalities will be at the service of the Union’s policy priorities, linking fund allocation to programming documents.",
+        "isCorrect": true
+      },
+      {
+        "text": "The principle that financial returns must always take precedence over policy objectives.",
+        "isCorrect": false
+      },
+      {
+        "text": "A rule stating that all funding decisions must be made by political leaders, not experts.",
+        "isCorrect": false
+      },
+      {
+        "text": "A policy to always disburse funds before any project planning or assessment.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The NDICI-GE Regulation is based on the ‘Policy First’ principle. Consequently, all implementing modalities, including those under EFSD+, will be at the service of the Union’s policy priorities. This is ensured by linking the allocation of funds to the relevant programming documents [19].",
+    "difficulty": "Easy",
+    "source": "[19]"
+  },
+  {
+    "id": "EFSD023",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Programming",
+    "question": "What is a unique budgetary specificity of EFSD+ budgetary guarantees compared to other implementing modalities during programming?",
+    "options": [
+      {
+        "text": "The obligation to respect both EAG liability and provisioning caps, while ensuring an adequate share between regions and types of operations.",
+        "isCorrect": true
+      },
+      {
+        "text": "They always require 100% upfront budgetary commitment for the full guarantee amount.",
+        "isCorrect": false
+      },
+      {
+        "text": "Funds are directly linked to specific operations at the commitment stage.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are exempt from any budgetary appropriations requirements.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "EFSD+ budgetary guarantees have budgetary specificities compared to other implementing modalities, including: obligation to respect both EAG liability and provisioning caps, while ensuring an adequate share between regions and types of operations (subject to different provisioning percentages) [20].",
+    "difficulty": "Medium",
+    "source": "[20]"
+  },
+  {
+    "id": "EFSD024",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Programming",
+    "question": "Following the Mid-Term Review of NDICI-GE programming, where will all funds for provisioning of EFSD+ Guarantees be sourced from?",
+    "options": [
+      {
+        "text": "The regional Multiannual Indicative Programmes (MIPs) managed by DG INTPA.",
+        "isCorrect": true
+      },
+      {
+        "text": "A single, dedicated central EU budget line for all external action.",
+        "isCorrect": false
+      },
+      {
+        "text": "Voluntary contributions from private sector entities only.",
+        "isCorrect": false
+      },
+      {
+        "text": "Member States' national budgets directly.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Following the Mid-Term Review of NDICI-GE programming, all funds for provisioning of EFSD+ Guarantees will be sourced from the regional MIPs managed by DG INTPA [21].",
+    "difficulty": "Medium",
+    "source": "[21]"
+  },
+  {
+    "id": "EFSD025",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Investment Windows",
+    "question": "Which of the following is NOT one of the two types of investment windows through which EFSD+ is implemented?",
+    "options": [
+      {
+        "text": "Member State Direct Investment Window.",
+        "isCorrect": true
+      },
+      {
+        "text": "EIB dedicated windows.",
+        "isCorrect": false
+      },
+      {
+        "text": "Open Architecture investment window.",
+        "isCorrect": false
+      },
+      {
+        "text": "Commercial Sub-Sovereign Window.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "EFSD+ is implemented through Investment windows... There are 2 types of investment windows: EIB dedicated windows and Open Architecture investment window [22]. Commercial Sub-Sovereign Window is a type of EIB dedicated window, not a top-level type of window [23].",
+    "difficulty": "Easy",
+    "source": "[22, 23]"
+  },
+  {
+    "id": "EFSD026",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "Under the Open Architecture investment window, which of the following is identified as a strategic area for support?",
+    "options": [
+      {
+        "text": "Micro, Small and Medium Enterprises (MSMEs).",
+        "isCorrect": true
+      },
+      {
+        "text": "Exclusive large-scale public infrastructure projects managed by governments.",
+        "isCorrect": false
+      },
+      {
+        "text": "Direct foreign military aid.",
+        "isCorrect": false
+      },
+      {
+        "text": "High-risk speculative investments without clear development impact.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "As regards the Open Architecture investment window, the Commission has identified six strategic areas contributing to three guiding Commission priorities... Micro, Small and Medium Enterprises (MSMEs) [24, 25].",
+    "difficulty": "Easy",
+    "source": "[24, 25]"
+  },
+  {
+    "id": "EFSD027",
+    "category": "EU External Action Financing",
+    "sub_category": "EIB Dedicated Windows",
+    "question": "What does 'Window 1' under the EIB dedicated windows cover exclusively?",
+    "options": [
+      {
+        "text": "Sovereign and non-commercial sub-sovereign counterparts.",
+        "isCorrect": true
+      },
+      {
+        "text": "Commercial sub-sovereign counterparts only.",
+        "isCorrect": false
+      },
+      {
+        "text": "Private sector operations promoting foreign direct investment.",
+        "isCorrect": false
+      },
+      {
+        "text": "Blending operations in ACP countries.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 36(1) of the NDICI-GE Regulation provides that the EIB will have the right to 'an exclusive dedicated investment window covering a comprehensive risk cover for operations with sovereign counterparts and non-commercial sub-sovereign counterparts' (typically referred to as 'Window 1') [26].",
+    "difficulty": "Medium",
+    "source": "[26]"
+  },
+  {
+    "id": "EFSD028",
+    "category": "EU External Action Financing",
+    "sub_category": "EIB Dedicated Windows",
+    "question": "What is the purpose of 'Window 4' under the EIB investment windows?",
+    "options": [
+      {
+        "text": "To support private sector operations in ACP countries, partially provisioned by ACP Investment Facility reflows.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide political risk cover for private sector operations globally.",
+        "isCorrect": false
+      },
+      {
+        "text": "To offer comprehensive risk cover for commercial sub-sovereign counterparts.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fund technical assistance exclusively for sovereign entities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission established in Decision C(2022)3529 an EIB investment window for private sector operations in ACP countries (Window 4). The window is provisioned in part by ACP Investment Facility reflows (50%) and in part by the 'Open Architecture' window (50%) [27].",
+    "difficulty": "Medium",
+    "source": "[27]"
+  },
+  {
+    "id": "EFSD029",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Governance",
+    "question": "Which bodies assist the Commission in the management of the EFSD+, having an advisory role?",
+    "options": [
+      {
+        "text": "The EFSD+ Strategic Board and the Regional Boards of the Regional Investment Platforms.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only the European Parliament and the Council.",
+        "isCorrect": false
+      },
+      {
+        "text": "An independent external audit body exclusively.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Court of Auditors and the EU Anti-Fraud Office (OLAF).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission shall ensure the management of the EFSD+, with close involvement of Member States. It is assisted by the EFSD+ Strategic Board and by the Regional Boards of the Regional Investment Platforms. These boards have an advisory role [28].",
+    "difficulty": "Easy",
+    "source": "[28]"
+  },
+  {
+    "id": "EFSD030",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Governance",
+    "question": "Who are the core members of the EFSD+ Strategic Board?",
+    "options": [
+      {
+        "text": "Representatives of the European Commission, the High Representative, the Member States, and the EIB.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only representatives from the European Commission and the EIB.",
+        "isCorrect": false
+      },
+      {
+        "text": "Exclusively Member State representatives and partner countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only external experts and civil society organizations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EFSD+ Strategic Board shall be composed of representatives of the European Commission, the High Representative, the Member States and the EIB [29].",
+    "difficulty": "Easy",
+    "source": "[29]"
+  },
+  {
+    "id": "EFSD031",
+    "category": "EU External Action Financing",
+    "sub_category": "Common Provisioning Fund (CPF)",
+    "question": "What is the primary purpose of the Common Provisioning Fund (CPF)?",
+    "options": [
+      {
+        "text": "To hold provisions made to cover financial liabilities arising from budgetary guarantees and financial assistance programmes.",
+        "isCorrect": true
+      },
+      {
+        "text": "To serve as a general operational budget for all EU external actions.",
+        "isCorrect": false
+      },
+      {
+        "text": "To provide direct financial grants to EU Member States for their national projects.",
+        "isCorrect": false
+      },
+      {
+        "text": "To manage all procurement contracts for the European Commission.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 215 of the Financial Regulation provides that the provisions made to cover the financial liabilities arising from budgetary guarantees shall be held in a CPF. CPF assets constitute the capital cushion to honour any calls on the budgetary guarantees by implementing partners [30].",
+    "difficulty": "Easy",
+    "source": "[30]"
+  },
+  {
+    "id": "EFSD032",
+    "category": "EU External Action Financing",
+    "sub_category": "Common Provisioning Fund (CPF)",
+    "question": "Which of the following is NOT one of the instruments that contribute to the Common Provisioning Fund (CPF)?",
+    "options": [
+      {
+        "text": "EU structural and investment funds for internal cohesion.",
+        "isCorrect": true
+      },
+      {
+        "text": "'Legacy instruments' like the EFSD Guarantee.",
+        "isCorrect": false
+      },
+      {
+        "text": "The External Action Guarantee (EAG) established by the NDICI-GE Regulation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Returns on investments of the resources held in the CPF.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The following instruments contribute to the CPF: ‘legacy instruments’... ‘new instruments’... contributions from the EU budget; contributions from third parties; revenues received in accordance with the guarantee agreement; returns on investments of the resources held in the CPF [31, 32]. EU structural and investment funds are not mentioned as contributors.",
+    "difficulty": "Medium",
+    "source": "[31, 32]"
+  },
+  {
+    "id": "EFSD033",
+    "category": "EU External Action Financing",
+    "sub_category": "Common Provisioning Fund (CPF)",
+    "question": "What is the principle regarding the use of provisioning held in a CPF compartment?",
+    "options": [
+      {
+        "text": "Provisioning held in a compartment can only be used to fund the credit losses of operations covered by that compartment.",
+        "isCorrect": true
+      },
+      {
+        "text": "Provisioning is fully mutualized across all compartments and can be used for any instrument.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Parliament decides on a case-by-case basis how each compartment's funds are used.",
+        "isCorrect": false
+      },
+      {
+        "text": "Funds in compartments can be freely transferred to other EU budget lines.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The compartment structure of the Common Provisioning Fund (CPF) ensures that the provisioning held in a compartment can only be used to fund the credit losses of the operations covered by this compartment [33].",
+    "difficulty": "Medium",
+    "source": "[33]"
+  },
+  {
+    "id": "EFSD034",
+    "category": "EU External Action Financing",
+    "sub_category": "Provisioning Rates",
+    "question": "How do different provisioning rates for EFSD+ reflect the risk-taking capacity of the guarantees?",
+    "options": [
+      {
+        "text": "Higher rates for private sector guarantees offer substantial risk-taking capacity, while lower rates for sovereign operations cover lower risk.",
+        "isCorrect": true
+      },
+      {
+        "text": "Provisioning rates are uniform across all types of operations regardless of risk.",
+        "isCorrect": false
+      },
+      {
+        "text": "Lower rates indicate higher risk-taking capacity, encouraging more speculative investments.",
+        "isCorrect": false
+      },
+      {
+        "text": "The rates only reflect administrative overheads, not actual risk.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The different provisioning rates reflect the risk-taking capacity of the guarantees and, consequently, the leverage they can generate further down the implementation chain. For the sovereign and non-commercial sub-sovereign guarantees, provisioned at the rate of 9% and managed exclusively by the EIB, the EU budget covers the entire (relatively low) risk... In contrast, the private sector guarantees, provisioned at the rate of 50%, offer substantial risk-taking capacity [34, 35].",
+    "difficulty": "Medium",
+    "source": "[34, 35]"
+  },
+  {
+    "id": "EFSD035",
+    "category": "EU External Action Financing",
+    "sub_category": "CPF Management",
+    "question": "Who is responsible for the financial management of the Common Provisioning Fund (CPF) within the European Commission?",
+    "options": [
+      {
+        "text": "The Director General of DG BUDG.",
+        "isCorrect": true
+      },
+      {
+        "text": "The Director General of DG INTPA.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Investment Bank (EIB).",
+        "isCorrect": false
+      },
+      {
+        "text": "An independent external advisory body.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "the financial manager: the Commission is the financial manager of the CPF... Within the Commission the responsibilities and tasks of financial manager have been delegated to the Director General of DG BUDG [36].",
+    "difficulty": "Medium",
+    "source": "[36]"
+  },
+  {
+    "id": "EFSD036",
+    "category": "EU External Action Financing",
+    "sub_category": "CPF Contributions",
+    "question": "Which of the following resources does NOT contribute to the provisioning of the Common Provisioning Fund (CPF)?",
+    "options": [
+      {
+        "text": "Direct corporate sponsorship from private companies not involved in guaranteed operations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Contributions from the EU budget.",
+        "isCorrect": false
+      },
+      {
+        "text": "Contributions from third parties.",
+        "isCorrect": false
+      },
+      {
+        "text": "Revenues received in accordance with the guarantee agreement.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "According to Article 214 of the Financial Regulation, the following resources shall contribute to the provisioning of the CPF: contributions from the EU budget; contributions from third parties; revenues received in accordance with the guarantee agreement; returns on investments of the resources held in the CPF [32].",
+    "difficulty": "Hard",
+    "source": "[32]"
+  },
+  {
+    "id": "EFSD037",
+    "category": "EU External Action Financing",
+    "sub_category": "CPF Contributions",
+    "question": "What is the maximum limit for contributions from the EU budget to the provisioning of the CPF for EFSD+ budgetary guarantees, MFA, and EURATOM loans?",
+    "options": [
+      {
+        "text": "A maximum of EUR 10 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "A maximum of EUR 53.449 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "An unlimited amount, based on annual needs.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 79.46 billion, matching the overall NDICI-GE funding.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 31(5) NDICI-GE Regulation limits the contributions from the EU budget to the provisioning at a maximum EUR 10 billion. This provisioning will cover EFSD+ budgetary guarantees, MFA and EURATOM loans [37].",
+    "difficulty": "Easy",
+    "source": "[37]"
+  },
+  {
+    "id": "EFSD038",
+    "category": "EU External Action Financing",
+    "sub_category": "CPF Contributions",
+    "question": "What is the key difference in how contributions from donors (Member States, third countries) impact the EFSD+ Guarantee capacity compared to EU budget contributions?",
+    "options": [
+      {
+        "text": "Donor contributions do not create additional contingent liabilities for the EU and directly increase the guarantee capacity.",
+        "isCorrect": true
+      },
+      {
+        "text": "Donor contributions are always fully absorbed by the EU budget and do not increase guarantee capacity.",
+        "isCorrect": false
+      },
+      {
+        "text": "They create new, separate contingent liabilities for the EU, independent of the EAG cap.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are only used for technical assistance and cannot provision guarantees.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "It is important to highlight that contrary to the contributions from the Union budget, contributions from donors do not create additional contingent liabilities for the EU. These contributions increase the EFSD+ Guarantee capacity by exactly the amount of the contribution [38].",
+    "difficulty": "Medium",
+    "source": "[38]"
+  },
+  {
+    "id": "EFSD039",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Agreements",
+    "question": "According to Article 38 NDICI-GE Regulation, what must a guarantee agreement NOT contain?",
+    "options": [
+      {
+        "text": "Provisions for the EU to take over direct project management from the implementing partner.",
+        "isCorrect": true
+      },
+      {
+        "text": "Detailed rules on coverage, requirements, eligibility, and procedures.",
+        "isCorrect": false
+      },
+      {
+        "text": "The remuneration of the External Action Guarantee, reflecting the risk level.",
+        "isCorrect": false
+      },
+      {
+        "text": "Monitoring, reporting, transparency, and evaluation obligations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 38 NDICI-GE Regulation specifies the content for guarantee agreements, which includes detailed rules on coverage, remuneration, and reporting. It does not mention provisions for the EU taking over direct project management [39].",
+    "difficulty": "Medium",
+    "source": "[39]"
+  },
+  {
+    "id": "EFSD040",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Agreements",
+    "question": "What distinguishes the structure of a guarantee agreement from other agreements signed by the Commission, such as blending (Contribution Agreement)?",
+    "options": [
+      {
+        "text": "It is not based on a template and is subject to Irish Law (Common Law).",
+        "isCorrect": true
+      },
+      {
+        "text": "It has a uniform main body (General Conditions) across all agreements.",
+        "isCorrect": false
+      },
+      {
+        "text": "It does not require negotiation, only adherence to a fixed set of terms.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is always governed by the law of the partner country.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The guarantee agreement is structurally different from any other agreement signed by the Commission, including blending (Contribution Agreement), as it not based on a template and is subject to Irish Law (Common Law) [40].",
+    "difficulty": "Medium",
+    "source": "[40]"
+  },
+  {
+    "id": "EFSD041",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Agreements",
+    "question": "Why is a guarantee agreement NOT considered a 'legal commitment' under Article 2(39) of the Financial Regulation?",
+    "options": [
+      {
+        "text": "Because payments to third parties under it are made from the CPF, not directly covered by a budgetary commitment in that sense.",
+        "isCorrect": true
+      },
+      {
+        "text": "Because they are always fully covered by a specific budgetary commitment from the outset.",
+        "isCorrect": false
+      },
+      {
+        "text": "Because they are non-binding agreements between the Commission and partners.",
+        "isCorrect": false
+      },
+      {
+        "text": "Because they only involve technical assistance, not financial obligations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In contrast with contribution agreements, a guarantee agreement is not a legal commitment under Article 2(39) of the Financial Regulation, for the following reasons: (iii) payments to third parties under a guarantee agreement are made from the CPF (therefore, such payments are not covered by a budgetary commitment in the meaning of Article 2(8) of the Financial Regulation [41].",
+    "difficulty": "Hard",
+    "source": "[41]"
+  },
+  {
+    "id": "EFSD042",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Coverage",
+    "question": "What types of instruments can the External Action Guarantee (EAG) under EFSD+ be used to cover, in line with Article 35(3) NDICI-GE Regulation?",
+    "options": [
+      {
+        "text": "Loans, guarantees, counter-guarantees, capital market instruments, and equity participations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only direct cash grants and subsidies.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only short-term trade finance for EU companies.",
+        "isCorrect": false
+      },
+      {
+        "text": "Infrastructure project bonds exclusively.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In line with Article 35(3) NDICI-GE Regulation, the EAG under the EFSD+ can be used to cover the risk of the following instruments: loans, including local currency loans; guarantees; counter-guarantees; capital market instruments; any other form of funding or credit enhancement, insurance, and equity or quasi-equity participations [42].",
+    "difficulty": "Medium",
+    "source": "[42]"
+  },
+  {
+    "id": "EFSD043",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Coverage",
+    "question": "Does the EFSD+ Guarantee typically cover foreign exchange (FX) risk?",
+    "options": [
+      {
+        "text": "In principle, no, it intervenes only in case of default, not currency fluctuations, unless specifically designed for FX risk in local currency operations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Yes, it fully covers all FX risk incurred by implementing partners.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only if the currency is pegged to the Euro.",
+        "isCorrect": false
+      },
+      {
+        "text": "It covers FX risk for all operations, but only up to 10% of the guaranteed amount.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In principle, the EFSD+ Guarantee does not cover FX risk and thus cannot be called in cases of fluctuations in the value of the currency of an EFSD+ guaranteed loan vis-à-vis the currency in which such loan has been funded... In those cases (to promote investments in local currencies where no appropriate instruments to cover FX risk exists), the guarantee can be called for losses incurred by the IP which are due to exchange rate fluctuations [43, 44].",
+    "difficulty": "Medium",
+    "source": "[43, 44]"
+  },
+  {
+    "id": "EFSD044",
+    "category": "EU External Action Financing",
+    "sub_category": "Leverage Effect",
+    "question": "How should the leverage effect of EFSD+ be evaluated according to the NDICI-GE Regulation?",
+    "options": [
+      {
+        "text": "By measuring the mobilisation of additional funding for sustainable development through the use of EFSD+ financial support.",
+        "isCorrect": true
+      },
+      {
+        "text": "By calculating the total administrative costs saved by using guarantees instead of grants.",
+        "isCorrect": false
+      },
+      {
+        "text": "By assessing the political influence gained by the EU in partner countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "By simply counting the number of signed guarantee agreements.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The NDICI-GE Regulation stipulates that the leverage effect should be evaluated by measuring the mobilisation of additional funding for sustainable development through the use of EFSD+ financial support [45].",
+    "difficulty": "Easy",
+    "source": "[45]"
+  },
+  {
+    "id": "EFSD045",
+    "category": "EU External Action Financing",
+    "sub_category": "Alignment of Interests",
+    "question": "What is 'skin in the game (SITG)' in the context of EFSD+ budgetary guarantees?",
+    "options": [
+      {
+        "text": "A minimum percentage of co-investment by the Implementing Partners, ranking pari passu or junior to the EFSD/EFSD+.",
+        "isCorrect": true
+      },
+      {
+        "text": "A discretionary fee paid by the Commission to implementing partners.",
+        "isCorrect": false
+      },
+      {
+        "text": "A mandatory requirement for implementing partners to use local financial intermediaries exclusively.",
+        "isCorrect": false
+      },
+      {
+        "text": "A type of technical assistance provided to private sector entities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission generally requires a minimum percentage of co-investment ranking pari passu or junior to the EFSD/EFSD+, i.e. the so-called skin in the game (SITG), by the Implementing Partners [46].",
+    "difficulty": "Medium",
+    "source": "[46]"
+  },
+  {
+    "id": "EFSD046",
+    "category": "EU External Action Financing",
+    "sub_category": "Remuneration",
+    "question": "Which specific EFSD+ investment window is NOT remunerated for operations, according to Article 36(4) of the NDICI-GE Regulation?",
+    "options": [
+      {
+        "text": "EIB exclusive Window 1 (Sovereign and non-commercial sub-sovereign).",
+        "isCorrect": true
+      },
+      {
+        "text": "Open Architecture private sector operations.",
+        "isCorrect": false
+      },
+      {
+        "text": "EIB Window 4 (private sector operations in ACP countries).",
+        "isCorrect": false
+      },
+      {
+        "text": "EIB Window 2 (commercial sub-sovereign counterparts).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The principles for the remuneration of the EFSD+ Guarantee will be applied consistently to all investment windows (with the exception of the EIB exclusive window, because, in application of Article 36(4) of the NDICI-GE Regulation the relevant guarantee agreement “may not be remunerated for operations under” Investment Window 1) [47].",
+    "difficulty": "Medium",
+    "source": "[47]"
+  },
+  {
+    "id": "EFSD047",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "What is the primary function of 'Inclusion Notices' in the implementation of EFSD+ Guarantee Agreements?",
+    "options": [
+      {
+        "text": "They define the operations covered by the EU Guarantee and are the basis for estimating contingent liability and calculating fees.",
+        "isCorrect": true
+      },
+      {
+        "text": "They serve as a formal request for new budgetary appropriations from the EU budget.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are internal Commission documents for planning future investment windows.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are public announcements of completed projects.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Inclusion Notices define the operations covered by the EU Guarantee and for which guarantee calls may be claimed by the IPs. This concrete step also links the operations with the geographical zone covered in a more concrete way (link with actual operations covered). Inclusion Notices are also the basis for the estimation of the contingent liability in the accounts of the Commission and the base on which payments are made. The fees due by the FIs are also calculated on the basis of the operations covered, as reflected by the Inclusion Notices [48, 49].",
+    "difficulty": "Medium",
+    "source": "[48, 49]"
+  },
+  {
+    "id": "EFSD048",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "Under what circumstance may the Commission issue an 'Exclusion Notice' to an implementing Financial Institution?",
+    "options": [
+      {
+        "text": "If it becomes aware that any 'Inclusion Representation' was materially inaccurate when made, or if a covered instrument is no longer eligible due to unauthorized changes.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only if the implementing Financial Institution requests it in writing.",
+        "isCorrect": false
+      },
+      {
+        "text": "If the project achieves all its objectives ahead of schedule.",
+        "isCorrect": false
+      },
+      {
+        "text": "If the EU decides to withdraw from all external financial cooperation.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission may issue an Exclusion Notice to the implementing Financial Institution upon becoming aware through any means that any Inclusion Representation was materially inaccurate when it was made. The Commission may also issue an Exclusion Notice where any covered instrument is no longer considered an eligible instrument due to an unauthorised transfer of rights... or due to an unauthorised amendment [50].",
+    "difficulty": "Medium",
+    "source": "[50]"
+  },
+  {
+    "id": "EFSD049",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "What is the nature of the EFSD and EFSD+ guarantee agreements regarding payment of claims?",
+    "options": [
+      {
+        "text": "They are 'on demand guarantees', meaning the Commission must pay claims upon first demand if a valid inclusion notice exists and the cap is not exceeded.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are conditional guarantees, requiring extensive proof of inability to pay before any funds are released.",
+        "isCorrect": false
+      },
+      {
+        "text": "They only cover a small percentage of losses, requiring implementing partners to bear the majority of the risk.",
+        "isCorrect": false
+      },
+      {
+        "text": "Payments are discretionary and subject to annual budgetary approval by the European Parliament.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The guarantee agreement is denominated in EUR and fixed for a maximum amount. It is provided as an irrevocable and unconditional guarantee on first demand, covering the full and timely payment of guaranteed sums. As result, when a financial partner is entitled to make a call on a guarantee and that payment does not cause the aggregate guarantee cap to be exceeded, the Commission must pay on request [51]. EFSD and EFSD+ guarantee agreements are on demand guarantees [52].",
+    "difficulty": "Medium",
+    "source": "[51, 52]"
+  },
+  {
+    "id": "EFSD050",
+    "category": "EU External Action Financing",
+    "sub_category": "Monitoring & Reporting",
+    "question": "Which of the following is a mandatory reporting element for EFSD+ under the NDICI-GE Regulation?",
+    "options": [
+      {
+        "text": "An assessment of the leverage effect achieved by the operations covered.",
+        "isCorrect": true
+      },
+      {
+        "text": "A detailed list of all individual project beneficiaries' personal financial data.",
+        "isCorrect": false
+      },
+      {
+        "text": "The full operational budget for each implementing financial institution.",
+        "isCorrect": false
+      },
+      {
+        "text": "Detailed minutes of all internal meetings of implementing partners.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Comma 7 of Article 41 NDICI-GE Regulation details specific monitoring and reporting requirements for results related to EFSD+ objectives... an assessment of the leverage effect achieved by the operations covered [53].",
+    "difficulty": "Easy",
+    "source": "[53]"
+  },
+  {
+    "id": "EFSD051",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Objectives",
+    "question": "What is the overarching purpose of the EFSD+?",
+    "options": [
+      {
+        "text": "To support investments and increase access to financing to achieve NDICI-GE Regulation objectives.",
+        "isCorrect": true
+      },
+      {
+        "text": "To serve as a repository for unused EU budget funds.",
+        "isCorrect": false
+      },
+      {
+        "text": "To provide short-term emergency loans for EU Member States.",
+        "isCorrect": false
+      },
+      {
+        "text": "To manage the EU's internal market and trade policies.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The purpose of the EFSD+ is to support investments and increase access to financing, as a means of contributing to the achievement of the objectives and general principles of the NDICI-GE Regulation [15, 54].",
+    "difficulty": "Easy",
+    "source": "[15, 54]"
+  },
+  {
+    "id": "EFSD052",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Evolution",
+    "question": "The European Fund for Sustainable Development (EFSD) was pillar 1 of the European External Investment Plan (EIP). What were pillars 2 and 3 focused on?",
+    "options": [
+      {
+        "text": "Technical assistance to support local partners and improving the business environment/economic governance.",
+        "isCorrect": true
+      },
+      {
+        "text": "Direct budgetary support to governments and humanitarian aid.",
+        "isCorrect": false
+      },
+      {
+        "text": "EU Member State cohesion policy and agricultural subsidies.",
+        "isCorrect": false
+      },
+      {
+        "text": "Internal EU market regulation and trade agreements.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Alongside the fund, the EIP focused on technical assistance to support local partners prepare projects that are sustainable and attractive to investors (pillar 2), and on steps to improve the business environment and economic governance in the partner countries (pillar 3) [55].",
+    "difficulty": "Medium",
+    "source": "[55]"
+  },
+  {
+    "id": "EFSD053",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Characteristics",
+    "question": "Which of the following was NOT an objective for operations supported by the EFSD Guarantee?",
+    "options": [
+      {
+        "text": "To exclusively fund operations in developed countries.",
+        "isCorrect": true
+      },
+      {
+        "text": "Address market failures or sub-optimal investments situations.",
+        "isCorrect": false
+      },
+      {
+        "text": "Ensure complementarity with other initiatives.",
+        "isCorrect": false
+      },
+      {
+        "text": "Maximise the mobilisation of private sector capital.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EFSD Guarantee supported operations that: address market failures or sub-optimal investments situations; ensure complementarity with other initiatives; maximise the mobilisation of private sector capital [56]. The geographic scope of EFSD was Sub-Saharan Africa and the European Neighbourhood [57], not developed countries.",
+    "difficulty": "Medium",
+    "source": "[56, 57]"
+  },
+  {
+    "id": "EFSD054",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Evolution",
+    "question": "One of the key differences brought by EFSD+ is the merger of all existing Guarantee Funds (legacy programmes). Into which fund were they merged?",
+    "options": [
+      {
+        "text": "The Common Provisioning Fund (CPF).",
+        "isCorrect": true
+      },
+      {
+        "text": "The European Development Fund (EDF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The Neighbourhood Investment Facility (NIF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The European External Investment Plan (EIP).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In a nutshell, the EFSD+ merges all existing Guarantee Funds (legacy programmes) into the CPF (guarantee fund for external actions, EFSD Guarantee Fund) [14].",
+    "difficulty": "Easy",
+    "source": "[14]"
+  },
+  {
+    "id": "EFSD055",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Characteristics",
+    "question": "What does the 'strategic and coherent approach' introduced by EFSD+ mean regarding investment alignment?",
+    "options": [
+      {
+        "text": "The use of investment, including ex-ELM operations, is to ensure alignment with EU policies/strategies and is programmable ('Policy First' principle).",
+        "isCorrect": true
+      },
+      {
+        "text": "Investment decisions are made independently of EU policies.",
+        "isCorrect": false
+      },
+      {
+        "text": "All investments must be directed towards military objectives.",
+        "isCorrect": false
+      },
+      {
+        "text": "It means only EIB operations are considered strategic.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Importantly, the EFSD+ introduces a strategic and coherent approach, meaning: the use of investment, including ex ELM operations, is to ensure alignment with the EU policies/strategies programmable (so called ‘Policy First’ principle) [58].",
+    "difficulty": "Medium",
+    "source": "[58]"
+  },
+  {
+    "id": "EFSD056",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Investment Windows",
+    "question": "What are the three guiding Commission priorities that the Open Architecture investment window contributes to?",
+    "options": [
+      {
+        "text": "Green Deal, Global Gateway, and Jobs and Sustainable and Inclusive Growth.",
+        "isCorrect": true
+      },
+      {
+        "text": "Digital Transformation, Security, and Trade Facilitation.",
+        "isCorrect": false
+      },
+      {
+        "text": "Humanitarian Aid, Emergency Response, and Post-Conflict Reconstruction.",
+        "isCorrect": false
+      },
+      {
+        "text": "EU Member State Cohesion, Agricultural Reform, and Fisheries Management.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "As regards the Open Architecture investment window, the Commission has identified six strategic areas contributing to three guiding Commission priorities: Green Deal, Global Gateway as well as Jobs and Sustainable and Inclusive Growth [24].",
+    "difficulty": "Easy",
+    "source": "[24]"
+  },
+  {
+    "id": "EFSD057",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What is a key focus of the 'MSMEs' investment window under Open Architecture?",
+    "options": [
+      {
+        "text": "Improving access to finance for Micro, Small and Medium Enterprises, especially underserved groups like women entrepreneurs.",
+        "isCorrect": true
+      },
+      {
+        "text": "Providing large-scale loans to multinational corporations.",
+        "isCorrect": false
+      },
+      {
+        "text": "Funding only public sector projects in urban areas.",
+        "isCorrect": false
+      },
+      {
+        "text": "Investing solely in the development of new military technologies.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "This investment window will help MSMEs access to finance and grow by improving the supply of loans and other financial instruments to these enterprises, focusing on underserved customer groups, such as young and women entrepreneurs [25].",
+    "difficulty": "Easy",
+    "source": "[25]"
+  },
+  {
+    "id": "EFSD058",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What is the primary aim of the 'Connectivity: Energy, Transport and Digital' investment window?",
+    "options": [
+      {
+        "text": "To support green transition plans, reliable transport networks, and digital infrastructure in partner countries.",
+        "isCorrect": true
+      },
+      {
+        "text": "To fund conventional fossil fuel energy projects without environmental considerations.",
+        "isCorrect": false
+      },
+      {
+        "text": "To restrict digital access in partner countries for security reasons.",
+        "isCorrect": false
+      },
+      {
+        "text": "To build luxury transport infrastructure for tourists.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Within Energy, EFSD+ will support green transition plans... Within Transport, the instrument will support a reliable core network... Within Digital Development, digital connectivity will be supported through investments in trusted telecommunication infrastructure [59, 60].",
+    "difficulty": "Medium",
+    "source": "[59, 60]"
+  },
+  {
+    "id": "EFSD059",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What is a key focus of the 'Sustainable Agriculture, Biodiversity, Forests and Water' investment window?",
+    "options": [
+      {
+        "text": "To promote conservation, restoration, and sustainable management of natural resources, including addressing water scarcity.",
+        "isCorrect": true
+      },
+      {
+        "text": "To exclusively support large-scale industrial farming without environmental considerations.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fund deforestation projects for agricultural expansion.",
+        "isCorrect": false
+      },
+      {
+        "text": "To limit access to clean water for rural communities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "This window will target agriculture, forestry, water, oceans, land use and fisheries sectors to promote conservation, restoration and sustainable management of natural resources... This window will also contribute to irrigation and sanitation, enhancing universal access to safe and affordable water [61].",
+    "difficulty": "Medium",
+    "source": "[61]"
+  },
+  {
+    "id": "EFSD060",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What is the main objective of the 'Sustainable Cities' investment window?",
+    "options": [
+      {
+        "text": "To support sustainable and green urban development, promoting economic growth, circular economy, and access to basic services.",
+        "isCorrect": true
+      },
+      {
+        "text": "To fund only residential housing projects in rural areas.",
+        "isCorrect": false
+      },
+      {
+        "text": "To facilitate the construction of new large-scale industrial complexes outside cities.",
+        "isCorrect": false
+      },
+      {
+        "text": "To discourage public transport and promote private car ownership in urban areas.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Under this window, the EFSD+ will support sustainable and green urban development as a way of contributing to economic and social development, countering inequalities, and promoting inclusivity. This includes actions to implement cities urban development and climate action plans, such as sustainable urban mobility to urban governance and smart cities; urban economic growth, circular economy principals and decent work opportunities; broader quality of life for citizens increasing and improving access to basic urban services including sanitation and water (WASH) [62].",
+    "difficulty": "Medium",
+    "source": "[62]"
+  },
+  {
+    "id": "EFSD061",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What is the primary focus of the 'Human Development' investment window?",
+    "options": [
+      {
+        "text": "To provide additional support to healthcare priorities, including vaccine supply and local manufacturing, and address inequalities in access to healthcare, education, and social housing.",
+        "isCorrect": true
+      },
+      {
+        "text": "To invest exclusively in high-tech research for military purposes.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fund only vocational training programs in the industrial sector.",
+        "isCorrect": false
+      },
+      {
+        "text": "To support the development of luxury tourism facilities.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "It is expected that a major proportion of this window will provide additional support to these Commission priorities, including vaccine supply to low- and middle-income countries, local vaccine manufacturing, disease eradication and other healthcare priorities... In addition, the investment window will also aim to address inequalities in access to affordable and high-quality health care more broadly, education, early childhood and elderly development, and social housing [63].",
+    "difficulty": "Medium",
+    "source": "[63]"
+  },
+  {
+    "id": "EFSD062",
+    "category": "EU External Action Financing",
+    "sub_category": "Open Architecture Investment Windows",
+    "question": "What kind of financial instruments does the 'Sustainable Finance and Impact Investing' window primarily support?",
+    "options": [
+      {
+        "text": "Sustainability-driven financial instruments like green, blue, social, gender, and sustainability-linked bonds.",
+        "isCorrect": true
+      },
+      {
+        "text": "Short-term speculative derivatives for currency trading.",
+        "isCorrect": false
+      },
+      {
+        "text": "High-interest consumer loans for non-developmental purposes.",
+        "isCorrect": false
+      },
+      {
+        "text": "Traditional equity investments in fossil fuel companies.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "With EFSD+ Guarantees, this window may support financial instruments such as green, blue, social, gender and sustainability-linked bonds; also including other sustainability-related instruments like syndication platforms and SDG-structured funds [64].",
+    "difficulty": "Medium",
+    "source": "[64]"
+  },
+  {
+    "id": "EFSD063",
+    "category": "EU External Action Financing",
+    "sub_category": "Eligible Counterparts",
+    "question": "Which of the following entities is NOT listed as an eligible counterpart under Article 211(5) Financial Regulation for EFSD+ guarantees?",
+    "options": [
+      {
+        "text": "Private individuals seeking personal loans.",
+        "isCorrect": true
+      },
+      {
+        "text": "International organisations or their agencies.",
+        "isCorrect": false
+      },
+      {
+        "text": "The EIB or the European Investment Fund (EIF).",
+        "isCorrect": false
+      },
+      {
+        "text": "Public law bodies, including Member State organisations.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Eligible counterparts are those identified in Article 211(5) Financial Regulation: International organisations or their agencies; The EIB or the European Investment Fund (‘the EIF’) or both of them acting as a group (‘the EIB group’); Public law bodies, including Member State organisations; Bodies governed by private law with a public service mission... The NDICI-GE Regulation adds two additional categories: Partner countries; and Bodies governed by private law which provide adequate assurance of their financial capacity [65, 66]. Private individuals are not listed.",
+    "difficulty": "Medium",
+    "source": "[65, 66]"
+  },
+  {
+    "id": "EFSD064",
+    "category": "EU External Action Financing",
+    "sub_category": "Risk Management",
+    "question": "Who is responsible for the overall risk management of the EFSD+?",
+    "options": [
+      {
+        "text": "The European Commission.",
+        "isCorrect": true
+      },
+      {
+        "text": "An independent advisory body exclusively.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Investment Bank (EIB) alone.",
+        "isCorrect": false
+      },
+      {
+        "text": "Individual implementing partners independently.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In line with Article 8(14) of the NDICI-GE Regulation, the Commission is responsible for the risk management of the EFSD+. This is a novelty compared to the EFSD, where risk management was outsourced to an independent advisory body [67].",
+    "difficulty": "Easy",
+    "source": "[67]"
+  },
+  {
+    "id": "EFSD065",
+    "category": "EU External Action Financing",
+    "sub_category": "Risk Management",
+    "question": "What is the role of the Guarantee Risk Experts Group (GREG) within INTPA.E6?",
+    "options": [
+      {
+        "text": "To provide specialised advice on the risk profile of the EFSD+, including assessment of guarantee programmes and risk monitoring.",
+        "isCorrect": true
+      },
+      {
+        "text": "To manage all financial transactions and payments from the CPF.",
+        "isCorrect": false
+      },
+      {
+        "text": "To negotiate all guarantee agreements with eligible counterparts.",
+        "isCorrect": false
+      },
+      {
+        "text": "To conduct external audits of implementing partners' financial statements.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Within INTPA.E6, an independent group of risk experts - the Guarantee Risk Experts Group (“GREG”) - is responsible for providing specialised advice on the risk profile of the EFSD+ [68].",
+    "difficulty": "Medium",
+    "source": "[68]"
+  },
+  {
+    "id": "EFSD066",
+    "category": "EU External Action Financing",
+    "sub_category": "Risk Management",
+    "question": "What is the target confidence level for the Common Provisioning Fund (CPF)'s endowment to remain above total cumulative losses from default calls?",
+    "options": [
+      {
+        "text": "90%.",
+        "isCorrect": true
+      },
+      {
+        "text": "50%.",
+        "isCorrect": false
+      },
+      {
+        "text": "99%.",
+        "isCorrect": false
+      },
+      {
+        "text": "100%.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission intends to manage the EFSD+ Guarantee in such a way that total cumulative losses... will remain below the CPF’s endowment at 90% confidence level [69].",
+    "difficulty": "Medium",
+    "source": "[69]"
+  },
+  {
+    "id": "EFSD067",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "What is the purpose of the 'Authorisation Decision' by the College of Commissioners for Open Architecture operations?",
+    "options": [
+      {
+        "text": "It accepts taking on the liability stemming from the guarantee agreement and approves the selection of counterparts.",
+        "isCorrect": true
+      },
+      {
+        "text": "It signifies the final payment of funds from the CPF to the implementing partners.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is a non-binding recommendation from the Strategic Board.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is a yearly report on the overall financial health of the EFSD+.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Upon recommendation of the EFSD+ Operational Board and before signing any guarantee agreement the College of Commissioners shall approve the recommended PIPs. With this decision (the “Authorisation Decision”) the Commission accepts taking on the liability stemming from the guarantee agreement to be concluded, and the selection of counterparts [70].",
+    "difficulty": "Medium",
+    "source": "[70]"
+  },
+  {
+    "id": "EFSD068",
+    "category": "EU External Action Financing",
+    "sub_category": "Technical Assistance",
+    "question": "What is the main aim of EFSD+ Technical Assistance?",
+    "options": [
+      {
+        "text": "To facilitate the deployment of EFSD+ budgetary guarantees and promote development impact by enabling a viable project pipeline.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide direct financial aid to national governments for general budget support.",
+        "isCorrect": false
+      },
+      {
+        "text": "To fund non-investment related administrative costs of the Commission.",
+        "isCorrect": false
+      },
+      {
+        "text": "To conduct market research for private companies without EU policy alignment.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The main aim of the EFSD+ Technical Assistance is to facilitate deployment of the EFSD+ budgetary guarantees. The Technical assistance support plays a critical role in promoting the development impact of the guarantees because a viable project pipeline is a prerequisite for a meaningful deployment of guarantees [71].",
+    "difficulty": "Easy",
+    "source": "[71]"
+  },
+  {
+    "id": "EFSD069",
+    "category": "EU External Action Financing",
+    "sub_category": "Technical Assistance",
+    "question": "How are Technical Assistance funds for EFSD+ committed and contracted?",
+    "options": [
+      {
+        "text": "Committed through multi-annual action programmes under geographic programming and contracted with a separate agreement, not within the guarantee agreement.",
+        "isCorrect": true
+      },
+      {
+        "text": "Directly transferred from the Common Provisioning Fund within the guarantee agreement.",
+        "isCorrect": false
+      },
+      {
+        "text": "Managed solely by the European Investment Bank (EIB) with no Commission oversight.",
+        "isCorrect": false
+      },
+      {
+        "text": "Provided as direct, non-repayable grants to individual citizens.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The funds for the Technical Assistance are therefore committed through multi-annual action programmes under the geographic programming... Technical Assistance funds are not contracted within the guarantee agreement, but with a separate contract form instead [72, 73].",
+    "difficulty": "Medium",
+    "source": "[72, 73]"
+  },
+  {
+    "id": "EFSD070",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Agreements",
+    "question": "What is the 'ramp-up period' in the context of EFSD+ Guarantee agreements under the Open Architecture window?",
+    "options": [
+      {
+        "text": "The period (up to 3 years) during which eligible counterparts have to sign transactions covered by an EFSD+ Guarantee.",
+        "isCorrect": true
+      },
+      {
+        "text": "The time required to establish the Common Provisioning Fund (CPF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The period for auditing all completed EFSD+ operations.",
+        "isCorrect": false
+      },
+      {
+        "text": "The initial training phase for new Commission staff involved in EFSD+.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Under the EFSD+, NDICI-GE Regulation does not require a maximum 4-year ramp-up period... eligible counterparts under the Open Architecture window have up to 3 years to sign transactions covered by an EFSD+ Guarantee [74].",
+    "difficulty": "Medium",
+    "source": "[74]"
+  },
+  {
+    "id": "EFSD071",
+    "category": "EU External Action Financing",
+    "sub_category": "Guarantee Agreements",
+    "question": "What is the first step of the contracting process for an EFSD+ Guarantee Agreement?",
+    "options": [
+      {
+        "text": "Drafting of a Term Sheet, describing main operational/commercial elements.",
+        "isCorrect": true
+      },
+      {
+        "text": "Direct signing of the final guarantee agreement by the Commission.",
+        "isCorrect": false
+      },
+      {
+        "text": "A full external audit of the implementing partner.",
+        "isCorrect": false
+      },
+      {
+        "text": "Public announcement of funding availability without prior discussions.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The first step of the contracting process is the drafting of a Term Sheet. The aim of the Term Sheet is to describe in detail the main operational/commercial elements stemming from the approved board document [75].",
+    "difficulty": "Easy",
+    "source": "[75]"
+  },
+  {
+    "id": "EFSD072",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "When does the period during which EFSD+ guarantee agreements for supporting financing and investment operations can be concluded between the Commission and eligible counterparts end?",
+    "options": [
+      {
+        "text": "31 December 2027.",
+        "isCorrect": true
+      },
+      {
+        "text": "31 December 2024.",
+        "isCorrect": false
+      },
+      {
+        "text": "31 December 2030.",
+        "isCorrect": false
+      },
+      {
+        "text": "It is an open-ended period without a fixed end date.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The period during which EFSD+ guarantee agreements for supporting financing and investment operations can be concluded between the Commission and the eligible counterparts lasts until 31 December 2027 [75, 76].",
+    "difficulty": "Medium",
+    "source": "[75, 76]"
+  },
+  {
+    "id": "EFSD073",
+    "category": "EU External Action Financing",
+    "sub_category": "Claim Management",
+    "question": "What is the 'clawback' provision in EFSD and EFSD+ guarantee agreements?",
+    "options": [
+      {
+        "text": "The Commission's right to recover paid sums if it's determined that no sums ought to have been paid out due to a breach of 'Inclusion Representation' or 'Claim Representation'.",
+        "isCorrect": true
+      },
+      {
+        "text": "A mechanism for implementing financial institutions to request additional funds for a project.",
+        "isCorrect": false
+      },
+      {
+        "text": "A process for extending the duration of a guarantee agreement beyond its original term.",
+        "isCorrect": false
+      },
+      {
+        "text": "A provision that allows the EU to claim full ownership of a project in case of default.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Commission however retains the right to “clawback” these paid sums in situations whereby it is deemed that no sums ought to have been paid out. The Commission may enact the Clawback provision of a guarantee agreement to recover paid sums in any instance whereby it is determined that there has been a breach of any Inclusion Representation or any Claim Representation [52].",
+    "difficulty": "Medium",
+    "source": "[52]"
+  },
+  {
+    "id": "EFSD074",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting",
+    "question": "What kind of information do the 'Quarterly Reports' (soon Semi-Annual) from implementing financial institutions provide?",
+    "options": [
+      {
+        "text": "A list of all covered investments with updated financial information on losses, gains, values, and risk measures.",
+        "isCorrect": true
+      },
+      {
+        "text": "Detailed personal financial information of all project beneficiaries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Strategic policy recommendations for future EU external actions.",
+        "isCorrect": false
+      },
+      {
+        "text": "Minutes of all internal meetings of the implementing financial institution's board.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Quarterly Report... provides a list of all covered investments, with updated financial information on losses, gains, values, balances of the various tranches, as well as the risk measures. It also gathers in one single document information related to claims to be paid, reimbursement from defaults and fees [77].",
+    "difficulty": "Medium",
+    "source": "[77]"
+  },
+  {
+    "id": "EFSD075",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting",
+    "question": "What is the purpose of the 'Annual Progress Report' for EFSD+ Guarantee implementations?",
+    "options": [
+      {
+        "text": "To provide a complete account of relevant aspects, including activities, results (outcomes and outputs), and compliance information.",
+        "isCorrect": true
+      },
+      {
+        "text": "To solely list the names of all individuals involved in project implementation.",
+        "isCorrect": false
+      },
+      {
+        "text": "To detail the internal HR policies of the implementing financial institution.",
+        "isCorrect": false
+      },
+      {
+        "text": "To serve as a marketing brochure for the EU's external actions.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The Annual Progress Reports provide a complete account of all the relevant aspects of the implementation of the EFSD+ Guarantee. They present the EFSD+ Guarantee’s activities envisaged, and the results as measured by the indicators agreed among the parties... Moreover, they include the relevant indicators... information on the roadmap for visibility and communication, and a summary of controls and audits [78].",
+    "difficulty": "Medium",
+    "source": "[78]"
+  },
+  {
+    "id": "EFSD076",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting",
+    "question": "What is a 'management declaration' in the context of EFSD+ guarantee agreements?",
+    "options": [
+      {
+        "text": "A statement by the implementing financial institution confirming Union funds were used for their intended purpose, accounted for, and control systems are effective.",
+        "isCorrect": true
+      },
+      {
+        "text": "An internal document for financial institutions to declare their annual profits.",
+        "isCorrect": false
+      },
+      {
+        "text": "A formal request for additional funding from the Commission.",
+        "isCorrect": false
+      },
+      {
+        "text": "A public statement of intent regarding future investment plans.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The management declaration is a statement made by the implementing financial institution declaring that the Union funds were used for their intended purpose and accounted for, in compliance with the Financial Regulation and with the obligations laid down in the guarantee agreements [79].",
+    "difficulty": "Medium",
+    "source": "[79]"
+  },
+  {
+    "id": "EFSD077",
+    "category": "EU External Action Financing",
+    "sub_category": "Financial Circuits",
+    "question": "What two ABAC environments ('company codes') are involved in the registration and management of EFSD+ Guarantee Agreements and the payment of guarantee calls?",
+    "options": [
+      {
+        "text": "An 'on-budget' part (BG32) and an 'off-budget' part (LIGA).",
+        "isCorrect": true
+      },
+      {
+        "text": "CRIS/OPSYS and SAP ERP.",
+        "isCorrect": false
+      },
+      {
+        "text": "Eurostat and ARES.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only a single, unified ABAC system.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The registration and management of EFSD+ Guarantee Agreements and the payment of guarantee calls via the EFSD and EFSD+ compartment are carried out in ABAC LIGA (Liquidity Fund for Guarantee Agreement) which is a specific company code used to process the “off-budget” part of the EFSD and EFSD+ operations. The process is therefore built around two ABAC environments (“company codes”): an on-budget part, managed through CRIS/OPSYS and ABAC with “company code” BG32; an off-budget part, managed in the off-budget ABAC “company code” LIGA [80].",
+    "difficulty": "Hard",
+    "source": "[80]"
+  },
+  {
+    "id": "EFSD078",
+    "category": "EU External Action Financing",
+    "sub_category": "Commission Services",
+    "question": "Which Commission unit is specifically responsible for credit risk management of EFSD+ (and EFSD), serving both DG INTPA and DG NEAR?",
+    "options": [
+      {
+        "text": "Unit INTPA E6.",
+        "isCorrect": true
+      },
+      {
+        "text": "DG BUDG's Central Treasury.",
+        "isCorrect": false
+      },
+      {
+        "text": "The European Anti-Fraud Office (OLAF).",
+        "isCorrect": false
+      },
+      {
+        "text": "The Legal Service (LS).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Unit INTPA E6 is in charge of credit risk management of the EFSD+ (and the EFSD), serving both DG INTPA and DG NEAR [81].",
+    "difficulty": "Easy",
+    "source": "[81]"
+  },
+  {
+    "id": "EFSD079",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting Requirements",
+    "question": "What does the Financial Regulation require the Commission to attach to the draft budget concerning budgetary guarantees and the CPF?",
+    "options": [
+      {
+        "text": "A working document presenting for each budgetary guarantee and the CPF a detailed list of information.",
+        "isCorrect": true
+      },
+      {
+        "text": "A list of all individual financial transactions made under each guarantee.",
+        "isCorrect": false
+      },
+      {
+        "text": "A detailed personnel roster of all staff involved in guarantee management.",
+        "isCorrect": false
+      },
+      {
+        "text": "A comprehensive report on the socio-economic impact of all projects.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 41(5) of the Financial Regulation states that where the Union has granted a budgetary guarantee, the Commission shall attach to the draft budget a working document presenting for each budgetary guarantee and the CPF a detailed list of information [82].",
+    "difficulty": "Medium",
+    "source": "[82]"
+  },
+  {
+    "id": "EFSD080",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting Requirements",
+    "question": "What is the minimum reporting requirement frequency and format for EFSD+ under the NDICI-GE Regulation, as described?",
+    "options": [
+      {
+        "text": "Annual reporting on year N-1 at the beginning of year N, in an Excel flat file with one line per guarantee.",
+        "isCorrect": true
+      },
+      {
+        "text": "Monthly reporting in a narrative format only.",
+        "isCorrect": false
+      },
+      {
+        "text": "Ad-hoc reporting upon request from Member States, in a PDF format.",
+        "isCorrect": false
+      },
+      {
+        "text": "Quarterly reporting, with data transmitted via an encrypted database only accessible to the EIB.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "In terms of timing, the minimum reporting requirement is annual reporting on year N-1 at the beginning of year N. In terms of format, the standard report template should be an Excel flat file with one line per guarantee [83].",
+    "difficulty": "Medium",
+    "source": "[83]"
+  },
+  {
+    "id": "EFSD081",
+    "category": "EU External Action Financing",
+    "sub_category": "ODA Reporting",
+    "question": "How does the Commission generally report contributions to the Common Provisioning Fund (CPF) as Official Development Assistance (ODA)?",
+    "options": [
+      {
+        "text": "It uses the 'institutional approach' and reports 100% of contributions as ODA, provided all underlying operations are ODA eligible.",
+        "isCorrect": true
+      },
+      {
+        "text": "It reports 0% of contributions as ODA, as guarantees are not considered development aid.",
+        "isCorrect": false
+      },
+      {
+        "text": "It reports ODA based solely on the administrative costs of managing the CPF.",
+        "isCorrect": false
+      },
+      {
+        "text": "Only direct cash disbursements to beneficiaries are counted as ODA, not provisioning.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Regarding the budgetary guarantees, the Commission uses the 'institutional approach' and reports 100% of the contributions to the CPF as Official Development Assistance (ODA). This requires however that all budgetary guarantees and underlying operations... be eligible as ODA [84].",
+    "difficulty": "Medium",
+    "source": "[84]"
+  },
+  {
+    "id": "EFSD082",
+    "category": "EU External Action Financing",
+    "sub_category": "ODA Reporting",
+    "question": "What are the two key criteria for guaranteed loans to be considered ODA eligible, besides ODA eligible country as first recipient?",
+    "options": [
+      {
+        "text": "Comply with ODA definition (concessional and primary objective of welfare/economic development) and meet concessionality criteria for sovereign loans, and Additionality/Data Disclosure for private sector loans.",
+        "isCorrect": true
+      },
+      {
+        "text": "Be fully repaid within one year and have a market-rate interest.",
+        "isCorrect": false
+      },
+      {
+        "text": "Be exclusively managed by private financial institutions and target high-income countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "Be solely for military purposes and exclude any civilian benefit.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The guaranteed loans must meet the ODA criteria too, in particular the concessionality criteria for Sovereign Sector loans, and the Additionality / Data Disclosure criteria for the Private Sector loans [85]. Also: comply with ODA definition, namely, to be concessional in nature and to have as a primary objective the welfare of the recipient population and the economic development of the recipient country [84].",
+    "difficulty": "Hard",
+    "source": "[84, 85]"
+  },
+  {
+    "id": "EFSD083",
+    "category": "EU External Action Financing",
+    "sub_category": "Spending Targets",
+    "question": "What is one of the four horizontal spending targets defined in the NDICI-GE Regulation for EFSD+?",
+    "options": [
+      {
+        "text": "Climate.",
+        "isCorrect": true
+      },
+      {
+        "text": "Internal EU Security.",
+        "isCorrect": false
+      },
+      {
+        "text": "European Agricultural Subsidies.",
+        "isCorrect": false
+      },
+      {
+        "text": "EU Budget Deficit Reduction.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The 4 other spending targets i.e., climate, social inclusion and human development, and migration and forced displacement defined in NDICI-GE Regulation (and in IPAIII and INSC if any) should also be reported [86].",
+    "difficulty": "Easy",
+    "source": "[86]"
+  },
+  {
+    "id": "EFSD084",
+    "category": "EU External Action Financing",
+    "sub_category": "Evaluation",
+    "question": "What types of evaluation are foreseen for EFSD+?",
+    "options": [
+      {
+        "text": "Both instrument-level (by Commission services) and intervention-level (by Commission services and IFIs), with possibilities for joint evaluations.",
+        "isCorrect": true
+      },
+      {
+        "text": "Only external, independent evaluations conducted by third-party auditors.",
+        "isCorrect": false
+      },
+      {
+        "text": "Evaluations conducted solely by implementing financial institutions.",
+        "isCorrect": false
+      },
+      {
+        "text": "No formal evaluations are required for EFSD+.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The evaluation function: At instrument level will be performed by Commission services... At intervention level will be performed by both Commission services and IFIs, as per Agreements. In line with the spirit of partnership, Commission services and IFIs may also carry out joint evaluations [87].",
+    "difficulty": "Medium",
+    "source": "[87]"
+  },
+  {
+    "id": "EFSD085",
+    "category": "EU External Action Financing",
+    "sub_category": "External Lending Mandate (ELM)",
+    "question": "What was the basic rationale of the EU budgetary guarantee under the External Lending Mandate (ELM) for the EIB?",
+    "options": [
+      {
+        "text": "It enhanced the EIB's risk-bearing capacity by significantly limiting its risk exposure, allowing it to undertake external investment operations while maintaining its AAA credit rating.",
+        "isCorrect": true
+      },
+      {
+        "text": "It directly provided capital to the EIB for its internal operations.",
+        "isCorrect": false
+      },
+      {
+        "text": "It mandated the EIB to invest only in low-risk projects within the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "It functioned as a direct grant mechanism to partner countries, bypassing the EIB.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The basic rationale of the EU budgetary guarantee is that it enhances the risk-bearing capacity of the EIB by significantly limiting the EIB's risk exposure to a profile commensurate with the rules laid down by EIB’s governing bodies (providing a first loss cushion). In other words, the EU budgetary guarantee allows the EIB to undertake investment operations outside the EU based on the EIB’s existing level of capital and reserves, while helping it maintain its AAA credit rating [88].",
+    "difficulty": "Medium",
+    "source": "[88]"
+  },
+  {
+    "id": "EFSD086",
+    "category": "EU External Action Financing",
+    "sub_category": "ACP Investment Facility",
+    "question": "How are reflows from operations under the ACP Investment Facility used under the NDICI-GE framework?",
+    "options": [
+      {
+        "text": "They enter NDICI-GE as external assigned revenues to finance support to ACP countries through budgetary guarantees and blending operations under EFSD+ via the EIB.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are returned directly to EU Member States without further allocation.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are used exclusively for internal EU administrative costs.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are transferred to a separate fund outside the NDICI-GE scope.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Reflows of operations under the ACP Investment Facility (around EUR 1 billion) will enter the NDICI-GE as external assigned revenues. These funds are used to finance support to ACP countries. This support will be provided through the EIB by means of budgetary guarantees and blending operations under the EFSD+ [89].",
+    "difficulty": "Medium",
+    "source": "[89]"
+  },
+  {
+    "id": "EFSD087",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Programming",
+    "question": "What key element for EFSD+ implementation seeks to align investment objectives with EU political and policy priorities, fostering a collective European approach?",
+    "options": [
+      {
+        "text": "Team Europe Initiatives (TEIs).",
+        "isCorrect": true
+      },
+      {
+        "text": "Bilateral agreements with individual financial institutions.",
+        "isCorrect": false
+      },
+      {
+        "text": "Annual budgetary reviews by national parliaments.",
+        "isCorrect": false
+      },
+      {
+        "text": "Independent academic research on market trends.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Another key element for the implementation of the EFSD + is TEIs, which seeks to align the investment objectives of EFSD+ with the political and policy priorities of EU policy. Drawing upon the best mix of support modalities, resources and experience, the EU institutions and Member States will work together to deliver concrete results for partner countries [90].",
+    "difficulty": "Easy",
+    "source": "[90]"
+  },
+  {
+    "id": "EFSD088",
+    "category": "EU External Action Financing",
+    "sub_category": "EFSD+ Operations",
+    "question": "For 'sub-sovereign operations', what specific pre-assessment procedure have the Commission and the EIB agreed on?",
+    "options": [
+      {
+        "text": "An 'admissibility check' to verify if an entity has access to traditional financing or not.",
+        "isCorrect": true
+      },
+      {
+        "text": "A 'financial viability test' focusing solely on profitability.",
+        "isCorrect": false
+      },
+      {
+        "text": "A 'political alignment review' by the European Parliament.",
+        "isCorrect": false
+      },
+      {
+        "text": "A 'social impact assessment' before any financial consideration.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "It is important to underline that only sub sovereign entities that cannot borrow funds in the market will be considered under this category. The Commission and the EIB have agreed on a specific pre-assessment procedure (admissibility check) to verify if an entity has access to traditional financing or not [91].",
+    "difficulty": "Medium",
+    "source": "[91]"
+  },
+  {
+    "id": "EFSD089",
+    "category": "EU External Action Financing",
+    "sub_category": "Implementation Process",
+    "question": "What is the role of 'Commitment Level 2' in ABAC LIGA prior to the signature of each individual Guarantee Agreement?",
+    "options": [
+      {
+        "text": "To register the GA, consuming the corresponding global commitments and ensuring the total GA amount does not exceed available virtual commitment appropriations.",
+        "isCorrect": true
+      },
+      {
+        "text": "To transfer actual funds from the EU budget to the implementing partner.",
+        "isCorrect": false
+      },
+      {
+        "text": "To notify the European Parliament of the final project beneficiaries.",
+        "isCorrect": false
+      },
+      {
+        "text": "To initiate the external audit process for the agreement.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Prior to its signature, each GA should be registered as Commitment Level 2, consuming the corresponding global commitments. This would ensure that the total amount of the individual GAs registered in ABAC LIGA would not exceed the amount of the virtual commitment appropriations that are available on each budget line [92].",
+    "difficulty": "Hard",
+    "source": "[92]"
+  },
+  {
+    "id": "EFSD090",
+    "category": "EU External Action Financing",
+    "sub_category": "Commission Services",
+    "question": "Which two Directorates-General (DGs) within the European Commission are responsible for the current division of labour regarding the management of EFSD and EFSD+ Guarantee Agreements?",
+    "options": [
+      {
+        "text": "DG INTPA (International Partnerships) and DG NEAR (Neighbourhood and Enlargement Negotiations).",
+        "isCorrect": true
+      },
+      {
+        "text": "DG BUDG (Budget) and DG ECFIN (Economic and Financial Affairs).",
+        "isCorrect": false
+      },
+      {
+        "text": "DG COMP (Competition) and DG TRADE (Trade).",
+        "isCorrect": false
+      },
+      {
+        "text": "DG HR (Human Resources) and DG DIGIT (Informatics).",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Current division of labour between DG INTPA and DG NEAR [81]. Unit INTPA E6 is in charge of credit risk management of the EFSD+ (and the EFSD), serving both DG INTPA and DG NEAR. The two DGs are cooperating closely in all other areas of implementation [81].",
+    "difficulty": "Easy",
+    "source": "[81]"
+  },
+  {
+    "id": "EFSD091",
+    "category": "EU External Action Financing",
+    "sub_category": "Legacy Programmes",
+    "question": "What was the purpose of the ACP Investment Facility, launched in 2003?",
+    "options": [
+      {
+        "text": "To support investments by private and commercially run public entities in all economic sectors in ACP countries.",
+        "isCorrect": true
+      },
+      {
+        "text": "To provide emergency humanitarian aid to ACP countries.",
+        "isCorrect": false
+      },
+      {
+        "text": "To exclusively fund infrastructure projects within the European Union.",
+        "isCorrect": false
+      },
+      {
+        "text": "To manage trade negotiations between the EU and ACP states.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Created under the Cotonou Agreement, the ACP Investment Facility was launched in 2003. Its objective was to support investments by private and commercially run public entities in all economic sectors (services, energy, telecommunications, transport, etc.) in ACP countries [93].",
+    "difficulty": "Medium",
+    "source": "[93]"
+  },
+  {
+    "id": "EFSD092",
+    "category": "EU External Action Financing",
+    "sub_category": "External Lending Mandate (ELM)",
+    "question": "What was a perceived shortcoming of the External Lending Mandate (ELM) regarding its relevance to EU development cooperation policy?",
+    "options": [
+      {
+        "text": "Most of the EU budgetary guarantee under ELM was allocated to Upper Middle-Income Countries, with few operations in Least Developed Countries (LDCs).",
+        "isCorrect": true
+      },
+      {
+        "text": "It exclusively funded projects that were not aligned with EU policy objectives.",
+        "isCorrect": false
+      },
+      {
+        "text": "It only supported projects within the European Union.",
+        "isCorrect": false
+      },
+      {
+        "text": "It provided too much direct budgetary support to national governments.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "However, most of the EU budgetary guarantee under the ELM is currently allocated in support of operations in Upper Middle-Income Countries, and only a few operations have been financed by the EIB in Least Developed Countries. This has been perceived as a shortcoming in terms of the ELM’s relevance vis-à-vis EU development cooperation policy [54].",
+    "difficulty": "Medium",
+    "source": "[54]"
+  },
+  {
+    "id": "EFSD093",
+    "category": "EU External Action Financing",
+    "sub_category": "Financial Regulation",
+    "question": "According to the Financial Regulation, what happens to 'contingent liabilities' that arise from agreements, unlike 'standard' legal commitments?",
+    "options": [
+      {
+        "text": "They are not fully covered by a budgetary commitment, and funds are only transferred upon a triggering event.",
+        "isCorrect": true
+      },
+      {
+        "text": "They require 100% upfront budgetary commitment from the EU.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are immediately paid out to third parties upon signature of the agreement.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are managed by national treasuries, not the EU budget.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "However, and contrary to “standard” legal commitments, the full amount of the guarantee agreement is not covered by a budgetary commitment. Budgetary guarantees... therefore generate a contingent liability for the Union... With the signature of a guarantee agreement for a contingent liability, the obligation to make a payment to a third party is contingent on the realisation of a certain event, therefore there is no need to open a fiduciary account [94].",
+    "difficulty": "Medium",
+    "source": "[94]"
+  },
+  {
+    "id": "EFSD094",
+    "category": "EU External Action Financing",
+    "sub_category": "Provisioning Rates",
+    "question": "What does Article 51 NDICI-GE Regulation state about the provisioning rates for EFSD+?",
+    "options": [
+      {
+        "text": "They shall range between 9% and 50% depending on the type of operations and be reviewed at least every three years.",
+        "isCorrect": true
+      },
+      {
+        "text": "They are fixed at a standard 25% for all operations and are never reviewed.",
+        "isCorrect": false
+      },
+      {
+        "text": "They are determined solely by the implementing financial institution without Commission oversight.",
+        "isCorrect": false
+      },
+      {
+        "text": "They apply only to grant operations, not guarantees.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "According to Article 51 NDICI-GE Regulation, the provisioning rate shall range between 9% and 50% depending on the type of operations. The provisioning rates shall be reviewed at least every three years from the date of application of NDICI-GE [95].",
+    "difficulty": "Easy",
+    "source": "[95]"
+  },
+  {
+    "id": "EFSD095",
+    "category": "EU External Action Financing",
+    "sub_category": "External Action Guarantee (EAG)",
+    "question": "What is the indicative global amount dedicated to EIB operations under EFSD+ (excluding Open Architecture), as per Article 36(3) of NDICI-GE?",
+    "options": [
+      {
+        "text": "EUR 26.036 billion (revised from EUR 26.725 billion).",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 39.1 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 10 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 53.449 billion.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Article 36(3) of NDICI-GE sets the indicative global amount for the EIB operations under the EFSD+ at EUR 26.725 billion (excluding Open Architecture). Through an exchange of letters dated 12 June 2023, the Commission reiterated its support to the EIB’s new support package for Ukraine... Consequently, the EIB should reduce its planned utilisation (in terms of signatures) of the NDICI-GE dedicated windows limit set out in the Window 1 Guarantee Agreement from EUR 26.725 billion to EUR 26.036 billion [96].",
+    "difficulty": "Hard",
+    "source": "[96]"
+  },
+  {
+    "id": "EFSD096",
+    "category": "EU External Action Financing",
+    "sub_category": "Risk Management",
+    "question": "What entity was responsible for risk management under the predecessor EFSD, which is now handled directly by the Commission under EFSD+?",
+    "options": [
+      {
+        "text": "An independent advisory body called GTAG, led by the EIB.",
+        "isCorrect": true
+      },
+      {
+        "text": "The European Court of Auditors.",
+        "isCorrect": false
+      },
+      {
+        "text": "Member States' national risk committees.",
+        "isCorrect": false
+      },
+      {
+        "text": "The Commission's internal audit service.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "This is a novelty compared to the EFSD, where risk management was outsourced to an independent advisory body, so-called GTAG, led by the EIB and comprising risk expert from eligible counterparts [67].",
+    "difficulty": "Medium",
+    "source": "[67]"
+  },
+  {
+    "id": "EFSD097",
+    "category": "EU External Action Financing",
+    "sub_category": "Governance",
+    "question": "What distinguishes the EFSD+ as a 'one-stop-shop'?",
+    "options": [
+      {
+        "text": "It receives financing proposals from counterparts and investors and delivers a wide range of financial support to eligible investments.",
+        "isCorrect": true
+      },
+      {
+        "text": "It is the sole point of contact for all EU policy decisions.",
+        "isCorrect": false
+      },
+      {
+        "text": "It centralizes all EU administrative and HR services.",
+        "isCorrect": false
+      },
+      {
+        "text": "It functions as a single commercial bank for private sector loans.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The EFSD+ operates as a 'one-stop-shop’, receiving financing proposals from counterparts and public or private investors and delivering a wide range of financial support to eligible investments [97].",
+    "difficulty": "Medium",
+    "source": "[97]"
+  },
+  {
+    "id": "EFSD098",
+    "category": "EU External Action Financing",
+    "sub_category": "Legacy Programmes",
+    "question": "What was the overall ceiling of the EU budgetary guarantee for the EIB’s external operations in 2014-20 under the External Lending Mandate (ELM)?",
+    "options": [
+      {
+        "text": "EUR 32.3 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 1.5 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 4 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 750 million.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The overall ceiling of the EU budgetary guarantee for the EIB’s external operations in 2014-20 was EUR 32.3 billion [88].",
+    "difficulty": "Medium",
+    "source": "[88]"
+  },
+  {
+    "id": "EFSD099",
+    "category": "EU External Action Financing",
+    "sub_category": "EURATOM Loans",
+    "question": "What is the total maximum amount provided for EURATOM loans to third countries, as set by the Council Decision of 29 March 1977, that has not yet been reached?",
+    "options": [
+      {
+        "text": "EUR 4 billion.",
+        "isCorrect": true
+      },
+      {
+        "text": "EUR 326 million.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 11.6 billion.",
+        "isCorrect": false
+      },
+      {
+        "text": "EUR 1 billion.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "The maximum amount provided for in that Decision was 4 billion and has not been changed since then. This total amount has not yet been reached: 326 million are still available under that ceiling [98].",
+    "difficulty": "Hard",
+    "source": "[98]"
+  },
+  {
+    "id": "EFSD100",
+    "category": "EU External Action Financing",
+    "sub_category": "Reporting",
+    "question": "What does DAC reporting section refer to in the context of EFSD+?",
+    "options": [
+      {
+        "text": "Reporting of contributions as Official Development Assistance (ODA) based on eligibility criteria.",
+        "isCorrect": true
+      },
+      {
+        "text": "Reporting on climate change mitigation targets.",
+        "isCorrect": false
+      },
+      {
+        "text": "Reporting on Digital Access and Connectivity.",
+        "isCorrect": false
+      },
+      {
+        "text": "Reporting on Defense and Arms Control.",
+        "isCorrect": false
+      }
+    ],
+    "rationale": "Regarding the budgetary guarantees, the Commission uses the 'institutional approach' and reports 100% of the contributions to the CPF as Official Development Assistance (ODA) [84]. This falls under the DAC reporting section [99, 100].",
+    "difficulty": "Medium",
+    "source": "[84, 99]"
+  }
+]
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        // This array will store the shuffled options for each question
+        let shuffledOptionsForDisplay = []; 
+        let userAnswers = new Array(questions.length).fill(null); // Stores the INDEX of the selected option from the SHUFFLED list
+        let isAnswerLocked = false; 
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackDiv = document.getElementById('feedback');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultsDiv = document.getElementById('results');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const quizProgress = document.getElementById('quizProgress');
+
+        // Fisher-Yates (Knuth) Shuffle algorithm
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Initialize shuffled options for all questions at the start
+        // This ensures the order remains consistent if you go back and forth for the same quiz instance
+        function initializeQuiz() {
+            shuffledOptionsForDisplay = [];
+            questions.forEach(question => {
+                // Create a shallow copy of the options array before shuffling
+                shuffledOptionsForDisplay.push(shuffleArray([...question.options]));
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+
+        function loadQuestion() {
+            isAnswerLocked = false; 
+            const currentQuestion = questions[currentQuestionIndex];
+            // Use the pre-shuffled options for this specific question
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex]; 
+            
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackDiv.textContent = '';
+            feedbackDiv.className = 'feedback'; 
+
+            optionsToDisplay.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option.text;
+                li.classList.add('option');
+                // Store the index of this option in the *shuffled* array.
+                // We'll use option.isCorrect directly.
+                li.dataset.shuffledIndex = index; 
+                li.addEventListener('click', () => selectOption(index, option.isCorrect, li));
+                optionsContainer.appendChild(li);
+
+                // If user has already answered this question, show their selection and feedback
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    li.classList.add('disabled-click'); // Prevent re-clicking
+                    if (index === userAnswers[currentQuestionIndex]) { // If this is the option they selected
+                        li.classList.add('selected');
+                        if (option.isCorrect) {
+                            li.classList.add('correct');
+                        } else {
+                            li.classList.add('incorrect');
+                        }
+                    } 
+                    // Always show the correct answer if an answer has been made for this question
+                    if (option.isCorrect) {
+                        li.classList.add('correct');
+                    }
+                    // Display feedback for the selected answer
+                    displayFeedback(optionsToDisplay[userAnswers[currentQuestionIndex]].isCorrect, currentQuestion.rationale);
+                }
+            });
+
+            updateNavigationButtons();
+            updateProgress();
+        }
+
+        function selectOption(selectedIndex, isCorrect, clickedElement) {
+            if (isAnswerLocked) return; 
+
+            // Disable all options after one is selected
+            Array.from(optionsContainer.children).forEach(option => {
+                option.classList.add('disabled-click');
+                option.style.pointerEvents = 'none'; 
+            });
+
+            // Mark the selected option
+            clickedElement.classList.add('selected');
+            isAnswerLocked = true; // Lock answer after selection
+
+            // Store user's selected index from the CURRENTLY SHUFFLED list
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            // Apply correct/incorrect styling to the selected option
+            if (isCorrect) {
+                clickedElement.classList.add('correct');
+                // Only increment score if this is the first time the question is answered correctly
+                // (or if we reset answers and they get it right again)
+                // This logic is handled implicitly by userAnswers[currentQuestionIndex] being null
+                score++; 
+            } else {
+                clickedElement.classList.add('incorrect');
+            }
+
+            // Highlight the correct answer among all displayed options
+            const optionsToDisplay = shuffledOptionsForDisplay[currentQuestionIndex];
+            optionsToDisplay.forEach((option, index) => {
+                if (option.isCorrect) {
+                    // Find the corresponding list item by its data-shuffled-index
+                    const correctLi = document.querySelector(`[data-shuffled-index="${index}"]`);
+                    if (correctLi) {
+                        correctLi.classList.add('correct');
+                    }
+                }
+            });
+
+            displayFeedback(isCorrect, questions[currentQuestionIndex].rationale);
+            updateNavigationButtons();
+        }
+
+        function displayFeedback(isCorrect, rationale) {
+            feedbackDiv.textContent = rationale;
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateNavigationButtons() {
+            previousBtn.disabled = currentQuestionIndex === 0;
+            
+            // The next button is disabled if no answer is selected AND it's not the last question.
+            // If it's the last question, it's enabled if an answer is selected (to finish).
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < questions.length - 1;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Must answer the last question to finish
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+
+            // If the current question has been answered (i.e., userAnswers[currentQuestionIndex] is not null),
+            // the next button should be enabled regardless, allowing navigation to the next question
+            // or finishing the quiz.
+            if (userAnswers[currentQuestionIndex] !== null) {
+                nextBtn.disabled = false;
+            }
+        }
+
+
+        function updateProgress() {
+            quizProgress.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        });
+
+        previousBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        function showResults() {
+            document.getElementById('questionSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            quizProgress.style.display = 'none';
+            resultsDiv.style.display = 'block';
+            finalScoreSpan.textContent = `${score} / ${questions.length}`;
+        }
+
+        restartBtn.addEventListener('click', () => {
+            initializeQuiz(); // Re-initialize everything for a fresh quiz
+            document.getElementById('questionSection').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            quizProgress.style.display = 'block';
+            resultsDiv.style.display = 'none';
+        });
+
+        // Initial load
+        initializeQuiz(); // Call the initialization function at startup
+    </script>
+</body>
+</html>
